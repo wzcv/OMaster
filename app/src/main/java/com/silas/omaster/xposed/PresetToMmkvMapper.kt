@@ -229,17 +229,16 @@ object PresetToMmkvMapper {
     /**
      * 暗角值映射
      * 在 OPPO 相机中:
-     * - 101 = 默认值（暗角关闭）
-     * - 0 = 暗角开启（最大效果）
-     * - 中间值 = 暗角强度
+     * - 0 = 默认值（暗角关闭）
+     * - 101 = 暗角开启（最大效果）
      */
     private fun mapVignetteValue(vignette: String): Int {
         return when (vignette.trim()) {
-            "开", "开启", "on", "On", "ON" -> 0
-            "关", "关闭", "off", "Off", "OFF" -> 101
+            "开", "开启", "on", "On", "ON" -> 101
+            "关", "关闭", "off", "Off", "OFF" -> 0
             else -> {
                 // 尝试解析为数字
-                vignette.trim().toIntOrNull() ?: 101
+                vignette.trim().toIntOrNull() ?: 0
             }
         }
     }
