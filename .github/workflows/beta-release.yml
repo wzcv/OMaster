@@ -70,35 +70,35 @@ jobs:
         run: ./gradlew ${{ env.BUILD_TASK }} --no-daemon
 
       - name: Upload Universal APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-universal
           path: ${{ env.APK_PATH }}/*-universal-*.apk
           retention-days: 30
 
       - name: Upload armeabi-v7a APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-armeabi-v7a
           path: ${{ env.APK_PATH }}/*-armeabi-v7a-*.apk
           retention-days: 30
 
       - name: Upload arm64-v8a APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-arm64-v8a
           path: ${{ env.APK_PATH }}/*-arm64-v8a-*.apk
           retention-days: 30
 
       - name: Upload x86 APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-x86
           path: ${{ env.APK_PATH }}/*-x86-*.apk
           retention-days: 30
 
       - name: Upload x86_64 APK
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: ${{ env.ARTIFACT_NAME }}-x86_64
           path: ${{ env.APK_PATH }}/*-x86_64-*.apk
