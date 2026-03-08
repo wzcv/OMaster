@@ -73,6 +73,7 @@ import com.silas.omaster.ui.components.OMasterTopAppBar
 import com.silas.omaster.ui.theme.CardBorderLight
 import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.NearBlack
+import com.silas.omaster.data.local.SettingsManager
 import com.silas.omaster.util.UpdateChecker
 import com.silas.omaster.util.VersionInfo
 import kotlinx.coroutines.delay
@@ -144,6 +145,10 @@ fun AboutScreen(
     var checkError by remember { mutableStateOf<String?>(null) }
     var lastCheckTime by remember { mutableStateOf<Long?>(null) }
 
+    // 获取设置管理器和更新渠道
+    val settingsManager = remember { SettingsManager.getInstance(context) }
+    val updateChannel = settingsManager.updateChannel
+
     LaunchedEffect(isScrollingUp) {
         onScrollStateChanged(isScrollingUp)
     }
@@ -156,7 +161,7 @@ fun AboutScreen(
             isChecking = true
             checkError = null
             try {
-                val result = UpdateChecker.checkUpdate(context, currentVersionCode)
+                val result = UpdateChecker.checkUpdate(context, currentVersionCode, updateChannel)
                 if (result != null) {
                     updateInfo = result
                     lastCheckTime = System.currentTimeMillis()
@@ -176,7 +181,7 @@ fun AboutScreen(
             isChecking = true
             checkError = null
             try {
-                val result = UpdateChecker.checkUpdate(context, currentVersionCode)
+                val result = UpdateChecker.checkUpdate(context, currentVersionCode, updateChannel)
                 if (result != null) {
                     updateInfo = result
                     lastCheckTime = System.currentTimeMillis()
@@ -226,9 +231,10 @@ fun AboutScreen(
                 checkError = checkError,
                 lastCheckTime = lastCheckTime,
                 onCheckClick = { checkForUpdate() },
-                onDownloadClick = { 
+                onDownloadClick = {
                     updateInfo?.let { info ->
-                        UpdateChecker.openDownloadPage(context, info.downloadUrl)
+                        UpdateChecker.downloadAndInstall(context, info.downloadUrl, info.versionName)
+                        Toast.makeText(context, "已开始下载，请查看通知栏进度", Toast.LENGTH_SHORT).show()
                     }
                 },
                 onRetryClick = {
@@ -414,42 +420,62 @@ private fun UpdateCard(
                     }
                     updateInfo != null -> {
                         if (updateInfo.isNewer) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            Column {
                                 Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .background(
-                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                                shape = RoundedCornerShape(6.dp)
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        Box(
+                                            modifier = Modifier
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                                    shape = RoundedCornerShape(6.dp)
+                                                )
+                                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                        ) {
+                                            Text(
+                                                text = "v${updateInfo.versionName}",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                fontWeight = FontWeight.SemiBold
                                             )
-                                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                                        }
+                                    }
+                                    Button(
+                                        onClick = onDownloadClick,
+                                        colors = ButtonDefaults.buttonColors(
+                                            containerColor = MaterialTheme.colorScheme.primary
+                                        ),
+                                        shape = RoundedCornerShape(10.dp),
+                                        contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                                     ) {
                                         Text(
-                                            text = "v${updateInfo.versionName}",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontWeight = FontWeight.SemiBold
+                                            stringResource(R.string.version_download_btn),
+                                            style = MaterialTheme.typography.labelMedium
                                         )
                                     }
                                 }
-                                Button(
-                                    onClick = onDownloadClick,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary
-                                    ),
-                                    shape = RoundedCornerShape(10.dp),
-                                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                                ) {
+                                
+                                // 显示更新日志
+                                if (updateInfo.releaseNotes.isNotBlank()) {
+                                    Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        stringResource(R.string.version_download_btn),
-                                        style = MaterialTheme.typography.labelMedium
+                                        text = "更新内容",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = updateInfo.releaseNotes,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.White.copy(alpha = 0.8f),
+                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight * 1.2
                                     )
                                 }
                             }

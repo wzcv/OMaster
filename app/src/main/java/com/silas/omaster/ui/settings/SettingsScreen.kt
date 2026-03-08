@@ -45,6 +45,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.silas.omaster.R
 import com.silas.omaster.data.local.SettingsManager
+import com.silas.omaster.data.local.UpdateChannel
 import com.silas.omaster.ui.components.OMasterTopAppBar
 import com.silas.omaster.ui.theme.BrandTheme
 import com.silas.omaster.ui.theme.DarkGray
@@ -64,6 +65,8 @@ fun SettingsScreen() {
     var showTabDialog by remember { mutableStateOf(false) }
     var floatingWindowOpacity by remember { mutableStateOf(settingsManager.floatingWindowOpacity) }
     var defaultStartTab by remember { mutableStateOf(settingsManager.defaultStartTab) }
+    var updateChannel by remember { mutableStateOf(settingsManager.updateChannel) }
+    var showChannelDialog by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
 
     if (showThemeDialog) {
@@ -88,6 +91,19 @@ fun SettingsScreen() {
                 showTabDialog = false
             },
             onDismiss = { showTabDialog = false }
+        )
+    }
+
+    if (showChannelDialog) {
+        UpdateChannelDialog(
+            currentChannel = updateChannel,
+            onChannelSelected = { channel ->
+                haptic.perform(HapticFeedbackType.Confirm)
+                settingsManager.updateChannel = channel
+                updateChannel = channel
+                showChannelDialog = false
+            },
+            onDismiss = { showChannelDialog = false }
         )
     }
 
@@ -266,6 +282,35 @@ fun SettingsScreen() {
                 )
             }
         }
+
+        // Update Section
+        SettingsSectionHeader(title = "更新设置")
+
+        // Update Channel Setting
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { showChannelDialog = true }
+                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .height(56.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "更新渠道",
+                style = MaterialTheme.typography.bodyLarge,
+                color = Color.White
+            )
+
+            Text(
+                text = when (updateChannel) {
+                    UpdateChannel.GITEE -> "Gitee"
+                    UpdateChannel.GITHUB -> "GitHub"
+                },
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color.Gray
+            )
+        }
     }
 }
 
@@ -395,6 +440,70 @@ fun TabSelectionDialog(
                             style = MaterialTheme.typography.bodyLarge,
                             color = Color.White
                         )
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+        containerColor = DarkGray,
+        textContentColor = Color.White
+    )
+}
+
+@Composable
+fun UpdateChannelDialog(
+    currentChannel: UpdateChannel,
+    onChannelSelected: (UpdateChannel) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val channels = listOf(
+        UpdateChannel.GITEE to "Gitee（国内推荐）",
+        UpdateChannel.GITHUB to "GitHub（国际）"
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = "选择更新渠道")
+        },
+        text = {
+            LazyColumn {
+                items(channels) { (channel, name) ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onChannelSelected(channel) }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (channel == currentChannel),
+                            onClick = { onChannelSelected(channel) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = Color.Gray
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White
+                            )
+                            Text(
+                                text = when (channel) {
+                                    UpdateChannel.GITEE -> "国内访问速度快"
+                                    UpdateChannel.GITHUB -> "国际访问，国内可能需要代理"
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
                     }
                 }
             }

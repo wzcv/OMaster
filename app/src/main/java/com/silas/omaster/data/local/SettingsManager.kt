@@ -7,6 +7,14 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
+/**
+ * 更新渠道枚举
+ */
+enum class UpdateChannel {
+    GITEE,    // 默认，国内访问快
+    GITHUB    // GitHub，国际访问
+}
+
 class SettingsManager private constructor(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
 
@@ -46,11 +54,26 @@ class SettingsManager private constructor(context: Context) {
             prefs.edit().putInt(KEY_DEFAULT_START_TAB, value.coerceIn(0, 2)).apply()
         }
 
+    // 更新渠道（默认 Gitee）
+    var updateChannel: UpdateChannel
+        get() {
+            val value = prefs.getString(KEY_UPDATE_CHANNEL, UpdateChannel.GITEE.name)
+            return try {
+                UpdateChannel.valueOf(value ?: UpdateChannel.GITEE.name)
+            } catch (e: Exception) {
+                UpdateChannel.GITEE
+            }
+        }
+        set(value) {
+            prefs.edit().putString(KEY_UPDATE_CHANNEL, value.name).apply()
+        }
+
     companion object {
         private const val KEY_VIBRATION_ENABLED = "vibration_enabled"
         private const val KEY_THEME_ID = "theme_id"
         private const val KEY_FLOATING_WINDOW_OPACITY = "floating_window_opacity"
         private const val KEY_DEFAULT_START_TAB = "default_start_tab"
+        private const val KEY_UPDATE_CHANNEL = "update_channel"
 
         @Volatile
         private var instance: SettingsManager? = null
