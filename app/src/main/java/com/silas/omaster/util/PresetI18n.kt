@@ -308,4 +308,69 @@ object PresetI18n {
         val resId = getShootingTipsResId(presetName)
         return if (resId != null) context.getString(resId) else (defaultTips ?: "")
     }
+
+    /**
+     * 解析参数值，将其中的中文字符串转换为本地化字符串
+     * 用于处理 JSON 中存储的中文参数值（如滤镜值、柔光值、暗角开关等）
+     */
+    fun resolveValue(context: android.content.Context, value: String): String {
+        // 处理滤镜值（如 "复古 100%"）
+        val filterRegex = "^(标准|霓虹|清新|复古|通透|明艳|童话|人文|自然|美味|冷调|暖调|浓郁|高级灰|黑白|单色|赛博朋克|原图)\\s*(.*)$".toRegex()
+        val filterMatch = filterRegex.matchEntire(value)
+        if (filterMatch != null) {
+            val (filterName, percentage) = filterMatch.destructured
+            val resId = getFilterResId(filterName)
+            return if (resId != null) {
+                val localizedName = context.getString(resId)
+                if (percentage.isNotEmpty()) "$localizedName $percentage" else localizedName
+            } else value
+        }
+
+        // 处理柔光值
+        val softLightResId = getSoftLightResId(value)
+        if (softLightResId != null) {
+            return context.getString(softLightResId)
+        }
+
+        // 处理暗角开关
+        val vignetteResId = getVignetteResId(value)
+        if (vignetteResId != null) {
+            return context.getString(vignetteResId)
+        }
+
+        // 处理白平衡值（如 "2000K" 中的 "阴天"、"日光" 等）
+        val whiteBalanceResId = when (value) {
+            "阴天" -> R.string.white_balance_cloudy
+            "日光" -> R.string.white_balance_daylight
+            "荧光灯" -> R.string.white_balance_fluorescent
+            "白炽灯" -> R.string.white_balance_incandescent
+            "自动" -> R.string.white_balance_auto
+            else -> null
+        }
+        if (whiteBalanceResId != null) {
+            return context.getString(whiteBalanceResId)
+        }
+
+        // 处理色调风格值
+        val colorToneResId = when (value) {
+            "暖调" -> R.string.tone_warm
+            "冷调" -> R.string.tone_cool
+            else -> null
+        }
+        if (colorToneResId != null) {
+            return context.getString(colorToneResId)
+        }
+
+        // 无法识别的值，直接返回原值
+        return value
+    }
+
+    /**
+     * 解析参数值（Composable 版本）
+     */
+    @Composable
+    fun resolveValue(value: String): String {
+        val context = androidx.compose.ui.platform.LocalContext.current
+        return resolveValue(context, value)
+    }
 }

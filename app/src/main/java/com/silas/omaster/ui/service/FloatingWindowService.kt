@@ -408,7 +408,8 @@ class FloatingWindowService : Service() {
                     if (item.span == 2) {
                         // Full width item (highlighted)
                         val icon = getIconForLabel(item.label)
-                        addView(createHighlightedParam(icon, item.label, item.value))
+                        val localizedValue = PresetI18n.resolveValue(this@FloatingWindowService, item.value)
+                        addView(createHighlightedParam(icon, item.label, localizedValue))
                         i++
                     } else {
                         // Half width item
@@ -420,11 +421,13 @@ class FloatingWindowService : Service() {
                         }
                         
                         val leftIcon = getIconForLabel(left.label)
-                        val leftView = createSmallParamItem(leftIcon, left.label, left.value)
+                        val leftLocalizedValue = PresetI18n.resolveValue(this@FloatingWindowService, left.value)
+                        val leftView = createSmallParamItem(leftIcon, left.label, leftLocalizedValue)
                         
                         val rightView = right?.let {
                             val rightIcon = getIconForLabel(it.label)
-                            createSmallParamItem(rightIcon, it.label, it.value)
+                            val rightLocalizedValue = PresetI18n.resolveValue(this@FloatingWindowService, it.value)
+                            createSmallParamItem(rightIcon, it.label, rightLocalizedValue)
                         }
                         
                         addView(createParamRow(leftView, rightView))

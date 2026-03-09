@@ -344,7 +344,7 @@ private fun DynamicParameters(
                         // Full width
                         ParameterCard(
                             label = PresetI18n.resolveStringComposable(item.label),
-                            value = item.value,
+                            value = PresetI18n.resolveValue(item.value),
                             modifier = Modifier.fillMaxWidth()
                         )
                         i++
@@ -359,12 +359,12 @@ private fun DynamicParameters(
                             ) {
                                 ParameterCard(
                                     label = PresetI18n.resolveStringComposable(item.label),
-                                    value = item.value,
+                                    value = PresetI18n.resolveValue(item.value),
                                     modifier = Modifier.weight(1f)
                                 )
                                 ParameterCard(
                                     label = PresetI18n.resolveStringComposable(nextItem.label),
-                                    value = nextItem.value,
+                                    value = PresetI18n.resolveValue(nextItem.value),
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -377,7 +377,7 @@ private fun DynamicParameters(
                             ) {
                                 ParameterCard(
                                     label = PresetI18n.resolveStringComposable(item.label),
-                                    value = item.value,
+                                    value = PresetI18n.resolveValue(item.value),
                                     modifier = Modifier.weight(1f)
                                 )
                                 Spacer(modifier = Modifier.weight(1f))

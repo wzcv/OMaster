@@ -212,6 +212,17 @@
     <string name="vignette_on">On</string>
     <string name="vignette_off">Off</string>
 
+    <!-- White Balance Options -->
+    <string name="white_balance_cloudy">Cloudy</string>
+    <string name="white_balance_daylight">Daylight</string>
+    <string name="white_balance_fluorescent">Fluorescent</string>
+    <string name="white_balance_incandescent">Incandescent</string>
+    <string name="white_balance_auto">Auto</string>
+
+    <!-- Color Tone Options -->
+    <string name="tone_warm">Warm</string>
+    <string name="tone_cool">Cool</string>
+
     <!-- Preset Names -->
     <string name="preset_fuji_film">Fuji Classic</string>
     <string name="preset_film_feel">Film Soul</string>

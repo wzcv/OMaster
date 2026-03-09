@@ -212,6 +212,17 @@
     <string name="vignette_on">开启</string>
     <string name="vignette_off">关闭</string>
 
+    <!-- 白平衡选项 -->
+    <string name="white_balance_cloudy">阴天</string>
+    <string name="white_balance_daylight">日光</string>
+    <string name="white_balance_fluorescent">荧光灯</string>
+    <string name="white_balance_incandescent">白炽灯</string>
+    <string name="white_balance_auto">自动</string>
+
+    <!-- 色调选项 -->
+    <string name="tone_warm">暖调</string>
+    <string name="tone_cool">冷调</string>
+
     <!-- 预设名称 -->
     <string name="preset_fuji_film">富士胶片</string>
     <string name="preset_film_feel">胶片感</string>
