@@ -138,8 +138,10 @@ fun ImageGallery(
                         .diskCachePolicy(CachePolicy.ENABLED)
                         .build(),
                     contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxWidth()
+                    contentScale = ContentScale.Crop,  // 改为 Crop 填满容器
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))  // 添加圆角裁剪
                 )
             }
 
