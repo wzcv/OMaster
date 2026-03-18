@@ -770,7 +770,7 @@ private fun CreditsCard(context: android.content.Context) {
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
-                    text = "软件交流QQ群: 1083543279",
+                    text = "软件共创QQ群: 1083543279",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
