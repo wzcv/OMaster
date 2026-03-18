@@ -102,6 +102,7 @@ fun AboutScreen(
     onBack: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onScrollStateChanged: (Boolean) -> Unit,
+    onNavigateToPrivacyPolicy: () -> Unit = {},
     currentVersionCode: Int = VersionInfo.VERSION_CODE,
     currentVersionName: String = VersionInfo.VERSION_NAME
 ) {
@@ -299,7 +300,7 @@ fun AboutScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            FooterSection(context)
+            FooterSection(context, onNavigateToPrivacyPolicy)
         }
     }
 }
@@ -876,7 +877,10 @@ private fun DeveloperChip(name: String, url: String, context: android.content.Co
 }
 
 @Composable
-private fun FooterSection(context: android.content.Context) {
+private fun FooterSection(
+    context: android.content.Context,
+    onNavigateToPrivacyPolicy: () -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -893,8 +897,7 @@ private fun FooterSection(context: android.content.Context) {
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
             textDecoration = TextDecoration.Underline,
             modifier = Modifier.clickable {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://www.umeng.com/page/policy"))
-                context.startActivity(intent)
+                onNavigateToPrivacyPolicy()
             }
         )
     }
