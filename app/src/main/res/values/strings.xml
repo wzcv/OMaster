@@ -311,7 +311,7 @@
 
     <!-- 页脚 -->
     <string name="footer_local"></string>
-    <string name="privacy_policy">《用户协议和隐私政策》</string>
+    <string name="privacy_policy">《隐私政策》</string>
 
     <!-- 隐私政策页 -->
     <string name="privacy_title">用户协议和隐私政策</string>
@@ -353,18 +353,18 @@
 
     <!-- 欢迎对话框 -->
     <string name="welcome_dialog_title">欢迎使用 OMaster</string>
-    <string name="welcome_version">大师模式调色参数库 v1.0</string>
+    <string name="welcome_version">大师模式调色参数库 v%1$s</string>
     <string name="feature_1_title">专业参数</string>
     <string name="feature_1_desc">查看大师模式的专业摄影调色参数</string>
     <string name="feature_2_title">多种风格</string>
     <string name="feature_2_desc">支持多种预设风格，满足不同拍摄需求</string>
-    <string name="feature_3_title">无需联网</string>
-    <string name="feature_3_desc">无需联网即可使用</string>
+    <string name="feature_3_title">社区共创</string>
+    <string name="feature_3_desc">订阅社区分享的预设，持续更新</string>
     <string name="agree_prefix">我已阅读并同意</string>
     <string name="umeng_notice">• 我们使用友盟 SDK 进行统计分析\n• 收集设备信息以优化应用体验</string>
     <string name="privacy_hint">点击《用户协议和隐私政策》查看详细信息</string>
-    <string name="disagree">不同意</string>
-    <string name="agree_and_start">同意并开始</string>
+    <string name="disagree">退出应用</string>
+    <string name="agree_and_start">开始使用</string>
 
     <!-- 悬浮窗引导对话框 -->
     <string name="floating_guide_title">开启悬浮窗权限</string>

@@ -43,6 +43,7 @@ import androidx.compose.ui.res.stringResource
 import com.silas.omaster.R
 import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.util.VersionInfo
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -51,6 +52,7 @@ fun WelcomeDialog(
     onAgree: () -> Unit,
     onDisagree: () -> Unit,
     onViewPrivacyPolicy: () -> Unit,
+    versionName: String = VersionInfo.VERSION_NAME,
     modifier: Modifier = Modifier
 ) {
     val scope = rememberCoroutineScope()
@@ -92,7 +94,7 @@ fun WelcomeDialog(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = stringResource(R.string.welcome_version),
+                        text = stringResource(R.string.welcome_version, versionName),
                         style = MaterialTheme.typography.bodyMedium,
                         color = Color.White.copy(alpha = 0.6f),
                         textAlign = TextAlign.Center
@@ -101,7 +103,7 @@ fun WelcomeDialog(
                     Spacer(modifier = Modifier.height(32.dp))
 
                     FeatureCard(
-                        icon = "📷",
+                        iconResId = 0,
                         title = stringResource(R.string.feature_1_title),
                         description = stringResource(R.string.feature_1_desc)
                     )
@@ -109,7 +111,7 @@ fun WelcomeDialog(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     FeatureCard(
-                        icon = "🎨",
+                        iconResId = 1,
                         title = stringResource(R.string.feature_2_title),
                         description = stringResource(R.string.feature_2_desc)
                     )
@@ -117,7 +119,7 @@ fun WelcomeDialog(
                     Spacer(modifier = Modifier.height(12.dp))
 
                     FeatureCard(
-                        icon = "🔒",
+                        iconResId = 2,
                         title = stringResource(R.string.feature_3_title),
                         description = stringResource(R.string.feature_3_desc)
                     )
@@ -135,7 +137,7 @@ fun WelcomeDialog(
                         ) {
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalAlignment = Alignment.Top
                             ) {
                                 Checkbox(
                                     checked = agreedToPolicy,
@@ -148,21 +150,21 @@ fun WelcomeDialog(
 
                                 Spacer(modifier = Modifier.width(8.dp))
 
-                                Text(
-                                    text = stringResource(R.string.agree_prefix),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White
-                                )
+                                Column {
+                                    Text(
+                                        text = stringResource(R.string.agree_prefix),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = Color.White
+                                    )
 
-                                Text(
-                                    text = stringResource(R.string.privacy_policy),
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier
-                                        .padding(start = 4.dp)
-                                        .clickable { onViewPrivacyPolicy() }
-                                )
+                                    Text(
+                                        text = stringResource(R.string.privacy_policy),
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Bold,
+                                        modifier = Modifier.clickable { onViewPrivacyPolicy() }
+                                    )
+                                }
                             }
 
                             Spacer(modifier = Modifier.height(8.dp))
@@ -175,19 +177,6 @@ fun WelcomeDialog(
                             )
                         }
                     }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Text(
-                        text = stringResource(R.string.privacy_hint),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp)
-                            .clickable { onViewPrivacyPolicy() }
-                    )
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))

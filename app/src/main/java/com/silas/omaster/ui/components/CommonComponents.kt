@@ -19,8 +19,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Lightbulb
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -118,11 +121,10 @@ fun OMasterTopAppBar(
  */
 @Composable
 fun FeatureCard(
-    icon: String,
+    icon: @Composable () -> Unit,
     title: String,
     description: String,
-    modifier: Modifier = Modifier,
-    iconSize: TextUnit = 32.sp
+    modifier: Modifier = Modifier
 ) {
     Card(
         modifier = modifier.fillMaxWidth(),
@@ -136,12 +138,14 @@ fun FeatureCard(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(
-                text = icon,
-                fontSize = iconSize
-            )
+            Box(
+                modifier = Modifier.size(40.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                icon()
+            }
 
-            Spacer(modifier = Modifier.width(16.dp))
+            Spacer(modifier = Modifier.width(12.dp))
 
             Column {
                 Text(
@@ -161,6 +165,42 @@ fun FeatureCard(
             }
         }
     }
+}
+
+/**
+ * 功能特性卡片组件（带图标资源ID）
+ */
+@Composable
+fun FeatureCard(
+    iconResId: Int,
+    title: String,
+    description: String,
+    modifier: Modifier = Modifier
+) {
+    val context = LocalContext.current
+    FeatureCard(
+        icon = {
+            Icon(
+                imageVector = when (iconResId) {
+                    0 -> Icons.Default.CameraAlt
+                    1 -> Icons.Default.Palette
+                    2 -> Icons.Default.Groups
+                    else -> Icons.Default.Lightbulb
+                },
+                contentDescription = null,
+                tint = when (iconResId) {
+                    0 -> Color(0xFF4CAF50)  // 相机 - 绿色
+                    1 -> Color(0xFF2196F3)  // 调色板 - 蓝色
+                    2 -> Color(0xFFFF9800)  // 人群 - 橙色
+                    else -> MaterialTheme.colorScheme.primary
+                },
+                modifier = Modifier.size(28.dp)
+            )
+        },
+        title = title,
+        description = description,
+        modifier = modifier
+    )
 }
 
 /**

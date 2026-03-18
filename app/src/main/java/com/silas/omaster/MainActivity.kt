@@ -448,6 +448,9 @@ fun MainApp(navController: NavHostController) {
                     onScrollStateChanged = { isScrollingUp ->
                         isHomeScrollingUp = isScrollingUp
                     },
+                    onNavigateToPrivacyPolicy = {
+                        navController.navigate(Screen.PrivacyPolicy)
+                    },
                     currentVersionCode = VersionInfo.VERSION_CODE,
                     currentVersionName = VersionInfo.VERSION_NAME
                 )
@@ -460,6 +463,14 @@ fun MainApp(navController: NavHostController) {
                     },
                     onScrollStateChanged = { isScrollingUp ->
                         isHomeScrollingUp = isScrollingUp
+                    }
+                )
+            }
+
+            composable<Screen.PrivacyPolicy> {
+                PrivacyPolicyScreen(
+                    onBack = {
+                        navController.popBackStack()
                     }
                 )
             }

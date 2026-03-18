@@ -346,18 +346,18 @@
 
     <!-- Welcome Dialog -->
     <string name="welcome_dialog_title">Welcome to OMaster</string>
-    <string name="welcome_version">Master Mode Color Grading Library v1.0</string>
+    <string name="welcome_version">Master Mode Color Grading Library v%1$s</string>
     <string name="feature_1_title">Pro Parameters</string>
     <string name="feature_1_desc">View professional photography color grading parameters for Master Mode</string>
     <string name="feature_2_title">Multiple Styles</string>
     <string name="feature_2_desc">Support multiple preset styles to meet different shooting needs</string>
-    <string name="feature_3_title">Local Storage</string>
-    <string name="feature_3_desc">Pure local operation, data stored locally</string>
+    <string name="feature_3_title">Community</string>
+    <string name="feature_3_desc">Subscribe to community presets, continuously updated</string>
     <string name="agree_prefix">I have read and agree to</string>
     <string name="umeng_notice">• We use Umeng SDK for analytics\n• Collect device info to optimize app experience</string>
     <string name="privacy_hint">Tap User Agreement &amp; Privacy Policy to view details</string>
-    <string name="disagree">Disagree</string>
-    <string name="agree_and_start">Agree &amp; Start</string>
+    <string name="disagree">Exit App</string>
+    <string name="agree_and_start">Get Started</string>
 
     <!-- Floating Window Guide Dialog -->
     <string name="floating_guide_title">Enable Floating Window</string>
