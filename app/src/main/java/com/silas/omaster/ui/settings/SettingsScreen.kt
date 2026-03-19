@@ -66,6 +66,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.silas.omaster.R
+import com.silas.omaster.data.local.FloatingWindowMode
 import com.silas.omaster.data.local.SettingsManager
 import com.silas.omaster.data.local.UpdateChannel
 import com.silas.omaster.ui.components.OMasterTopAppBar
@@ -91,6 +92,8 @@ fun SettingsScreen() {
     var analyticsEnabled by remember { mutableStateOf(settingsManager.isAnalyticsEnabled) }
     var cacheSize by remember { mutableStateOf(ImageCacheManager.getCacheSize(context)) }
     var showClearCacheDialog by remember { mutableStateOf(false) }
+    var floatingWindowMode by remember { mutableStateOf(settingsManager.floatingWindowMode) }
+    var showFloatingModeDialog by remember { mutableStateOf(false) }
     val haptic = LocalHapticFeedback.current
 
     if (showThemeDialog) {
@@ -128,6 +131,19 @@ fun SettingsScreen() {
                 showChannelDialog = false
             },
             onDismiss = { showChannelDialog = false }
+        )
+    }
+
+    if (showFloatingModeDialog) {
+        FloatingWindowModeDialog(
+            currentMode = floatingWindowMode,
+            onModeSelected = { mode ->
+                haptic.perform(HapticFeedbackType.Confirm)
+                settingsManager.floatingWindowMode = mode
+                floatingWindowMode = mode
+                showFloatingModeDialog = false
+            },
+            onDismiss = { showFloatingModeDialog = false }
         )
     }
 
@@ -206,6 +222,19 @@ fun SettingsScreen() {
         // Floating Window Section
         SettingsSectionCard {
             SettingsSectionTitle(title = stringResource(R.string.settings_section_floating_window))
+
+            // Floating Window Mode Setting
+            SettingsClickableItem(
+                icon = Icons.Default.DashboardCustomize,
+                title = stringResource(R.string.floating_window_mode),
+                subtitle = when (floatingWindowMode) {
+                    FloatingWindowMode.STANDARD -> stringResource(R.string.floating_window_mode_standard)
+                    FloatingWindowMode.COMPACT -> stringResource(R.string.floating_window_mode_compact)
+                },
+                onClick = { showFloatingModeDialog = true }
+            )
+
+            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
 
             // Floating Window Opacity Setting
             Column(
@@ -671,6 +700,68 @@ fun UpdateChannelDialog(
                                     UpdateChannel.GITEE -> "国内访问速度快"
                                     UpdateChannel.GITHUB -> "国际访问，国内可能需要代理"
                                 },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+        containerColor = DarkGray,
+        textContentColor = Color.White
+    )
+}
+
+@Composable
+fun FloatingWindowModeDialog(
+    currentMode: FloatingWindowMode,
+    onModeSelected: (FloatingWindowMode) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val modes = listOf(
+        FloatingWindowMode.STANDARD to stringResource(R.string.floating_window_mode_standard) to stringResource(R.string.floating_window_mode_standard_desc),
+        FloatingWindowMode.COMPACT to stringResource(R.string.floating_window_mode_compact) to stringResource(R.string.floating_window_mode_compact_desc)
+    )
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = stringResource(R.string.floating_window_mode_dialog_title))
+        },
+        text = {
+            LazyColumn {
+                items(modes) { (pair, desc) ->
+                    val (mode, name) = pair
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onModeSelected(mode) }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (mode == currentMode),
+                            onClick = { onModeSelected(mode) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = Color.Gray
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                text = name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = Color.White
+                            )
+                            Text(
+                                text = desc,
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )

@@ -15,6 +15,14 @@ enum class UpdateChannel {
     GITHUB    // GitHub，国际访问
 }
 
+/**
+ * 悬浮窗模式枚举
+ */
+enum class FloatingWindowMode {
+    STANDARD,   // 标准模式（卡片式）
+    COMPACT     // 新版紧凑参数条
+}
+
 class SettingsManager private constructor(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences("app_settings", Context.MODE_PRIVATE)
 
@@ -75,6 +83,20 @@ class SettingsManager private constructor(context: Context) {
             prefs.edit().putBoolean(KEY_ANALYTICS_ENABLED, value).apply()
         }
 
+    // 悬浮窗模式（默认标准模式）
+    var floatingWindowMode: FloatingWindowMode
+        get() {
+            val value = prefs.getString(KEY_FLOATING_WINDOW_MODE, FloatingWindowMode.STANDARD.name)
+            return try {
+                FloatingWindowMode.valueOf(value ?: FloatingWindowMode.STANDARD.name)
+            } catch (e: Exception) {
+                FloatingWindowMode.STANDARD
+            }
+        }
+        set(value) {
+            prefs.edit().putString(KEY_FLOATING_WINDOW_MODE, value.name).apply()
+        }
+
     companion object {
         private const val KEY_VIBRATION_ENABLED = "vibration_enabled"
         private const val KEY_THEME_ID = "theme_id"
@@ -82,6 +104,7 @@ class SettingsManager private constructor(context: Context) {
         private const val KEY_DEFAULT_START_TAB = "default_start_tab"
         private const val KEY_UPDATE_CHANNEL = "update_channel"
         private const val KEY_ANALYTICS_ENABLED = "analytics_enabled"
+        private const val KEY_FLOATING_WINDOW_MODE = "floating_window_mode"
 
         @Volatile
         private var instance: SettingsManager? = null

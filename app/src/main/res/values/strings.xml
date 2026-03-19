@@ -399,4 +399,12 @@
     <string name="floating_vignette_icon">◍</string>
     <string name="floating_vignette_label">暗角</string>
 
+    <!-- 悬浮窗模式 -->
+    <string name="floating_window_mode">悬浮窗模式</string>
+    <string name="floating_window_mode_standard">标准</string>
+    <string name="floating_window_mode_compact">新版悬浮窗</string>
+    <string name="floating_window_mode_standard_desc">卡片式布局，信息完整</string>
+    <string name="floating_window_mode_compact_desc">紧凑参数条，仿原生样式</string>
+    <string name="floating_window_mode_dialog_title">选择悬浮窗模式</string>
+
 </resources>
