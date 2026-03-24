@@ -323,21 +323,25 @@
     <!-- 隐私政策页 -->
     <string name="privacy_title">用户协议和隐私政策</string>
     <string name="welcome_title">欢迎使用 OMaster</string>
-    <string name="welcome_desc">OMaster 是一款专为 OPPO/一加/Realme 手机摄影爱好者设计的调色参数管理工具。在这里，您可以查看、收藏和复现大师模式的摄影调色参数。</string>
+    <string name="welcome_desc">OMaster 是一款专为 OPPO/一加/Realme 手机摄影爱好者设计的调色参数管理工具。在这里，您可以查看、收藏和复现大师模式的摄影调色参数，并支持悬浮窗实时参考拍摄。</string>
     <string name="features_title">功能介绍</string>
-    <string name="features_list">• 查看大师模式调色参数\n• 支持多种预设风格\n• 无需联网即可使用</string>
+    <string name="features_list">• 查看大师模式调色参数\n• 悬浮窗实时参考拍摄\n• 支持多种预设风格\n• 订阅社区预设，持续更新</string>
     <string name="data_collection_title">数据收集说明</string>
-    <string name="data_collection_desc">为了提供更好的服务，我们使用了友盟统计分析 SDK 来收集应用使用数据。</string>
-    <string name="sdk_info_title">友盟 SDK 信息</string>
-    <string name="sdk_name_label">使用 SDK 名称</string>
-    <string name="sdk_name">友盟 SDK</string>
+    <string name="data_collection_desc">为提供更好的服务，我们使用了友盟统计分析 SDK 收集应用使用数据。同时，应用会从以下网络地址获取预设数据：\n\n• cdn.jsdelivr.net（预设配置文件）\n• cdn.fky.ltd（预设图片资源）</string>
+    <string name="local_storage_title">本地数据存储</string>
+    <string name="local_storage_desc">应用会在本地存储以下数据：\n\n• 订阅配置信息（订阅URL、版本号等）\n• 预设图片缓存\n• 用户设置偏好（主题、语言等）\n• 收藏的预设列表\n\n以上数据均存储在您的设备本地，我们不会上传您的个人信息。</string>
+    <string name="permission_title">权限说明</string>
+    <string name="permission_desc">悬浮窗功能需要 SYSTEM_ALERT_WINDOW 权限，用于在其他应用上层显示拍摄参数。该权限仅用于显示预设参数，不会访问您的屏幕内容或收集任何数据。</string>
+    <string name="sdk_info_title">第三方 SDK 信息</string>
+    <string name="sdk_name_label">SDK 名称</string>
+    <string name="sdk_name">友盟统计 SDK</string>
     <string name="service_type_label">服务类型</string>
-    <string name="service_type">统计分析</string>
-    <string name="collect_info_label">收集个人信息类型</string>
-    <string name="collect_info">设备信息（MAC/Android ID/IDFA/GUID/IP信息等）</string>
+    <string name="service_type">应用统计分析</string>
+    <string name="collect_info_label">收集信息类型</string>
+    <string name="collect_info">设备信息（设备型号、系统版本、网络状态等）</string>
     <string name="privacy_link_label">隐私权政策链接：</string>
     <string name="user_rights_title">用户权利</string>
-    <string name="user_rights_desc">您有权访问、更正、删除您的个人信息。如需行使这些权利，请通过应用内的联系方式与我们联系。</string>
+    <string name="user_rights_desc">您有权访问、更正、删除您的个人信息。您可以：\n\n• 清除本地缓存（设置 → 清理缓存）\n• 关闭订阅（订阅管理）\n• 重置应用设置\n\n如需行使其他权利，请通过下方联系方式与我们联系。</string>
 
     <!-- 悬浮窗引导 -->
     <string name="guide_title">开启悬浮窗权限</string>
