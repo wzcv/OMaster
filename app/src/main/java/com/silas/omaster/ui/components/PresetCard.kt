@@ -63,16 +63,28 @@ fun PresetCard(
     val isPressed by interactionSource.collectIsPressedAsState()
     val haptic = LocalHapticFeedback.current
 
-    // 卡片边框 - 更细腻的单色边框
-    val borderColor = if (isPressed) CardBorderHighlight else CardBorderLight
-    val borderWidth = if (isPressed) 1.5.dp else 0.5.dp
+    // 卡片玻璃质感边框
+    val isPressedFloat = if (isPressed) 1f else 0f
 
     Card(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = borderWidth,
-                color = borderColor,
+                width = if (isPressed) 1.5.dp else 1.dp,
+                brush = Brush.radialGradient(
+                    colors = if (isPressed)
+                        listOf(
+                            GlassBorderHighlight.copy(alpha = 0.6f),
+                            GlassBorderHighlight.copy(alpha = 0.2f)
+                        )
+                    else
+                        listOf(
+                            GlassBorder.copy(alpha = 0.4f),
+                            GlassBorder.copy(alpha = 0.1f)
+                        ),
+                    center = androidx.compose.ui.geometry.Offset(0.5f, 0.5f),
+                    radius = Float.POSITIVE_INFINITY
+                ),
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable(
@@ -85,7 +97,7 @@ fun PresetCard(
             containerColor = DarkGray
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isPressed) 8.dp else 4.dp
+            defaultElevation = if (isPressed) 10.dp else 5.dp
         )
     ) {
         Box {
