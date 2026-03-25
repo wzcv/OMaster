@@ -124,43 +124,66 @@ fun PresetCard(
                             .padding(8.dp)
                             .size(36.dp)
                     ) {
+                        // 光晕层
                         Box(
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(40.dp)
                                 .background(
                                     brush = Brush.radialGradient(
                                         colors = if (preset.isFavorite)
                                             listOf(
-                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.25f),
-                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.1f)
+                                                MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                                                Color.Transparent
                                             )
                                         else
                                             listOf(
-                                                Color.White.copy(alpha = 0.15f),
-                                                Color.White.copy(alpha = 0.05f)
+                                                Color.White.copy(alpha = 0.08f),
+                                                Color.Transparent
                                             )
                                     ),
-                                    shape = RoundedCornerShape(16.dp)
-                                )
-                                .border(
-                                    width = 0.5.dp,
-                                    color = if (preset.isFavorite)
-                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.4f)
-                                    else
-                                        Color.White.copy(alpha = 0.2f),
-                                    shape = RoundedCornerShape(16.dp)
+                                    shape = RoundedCornerShape(20.dp)
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                imageVector = if (preset.isFavorite)
-                                    Icons.Filled.Favorite
-                                else
-                                    Icons.Outlined.FavoriteBorder,
-                                contentDescription = if (preset.isFavorite) stringResource(R.string.preset_favorited) else stringResource(R.string.preset_favorite),
-                                tint = if (preset.isFavorite) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.9f),
-                                modifier = Modifier.size(18.dp)
-                            )
+                            // 按钮主体
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        brush = Brush.radialGradient(
+                                            colors = if (preset.isFavorite)
+                                                listOf(
+                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.12f)
+                                                )
+                                            else
+                                                listOf(
+                                                    Color.White.copy(alpha = 0.2f),
+                                                    Color.White.copy(alpha = 0.08f)
+                                                )
+                                        ),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .border(
+                                        width = 0.5.dp,
+                                        color = if (preset.isFavorite)
+                                            MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                                        else
+                                            Color.White.copy(alpha = 0.25f),
+                                        shape = RoundedCornerShape(16.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = if (preset.isFavorite)
+                                        Icons.Filled.Favorite
+                                    else
+                                        Icons.Outlined.FavoriteBorder,
+                                    contentDescription = if (preset.isFavorite) stringResource(R.string.preset_favorited) else stringResource(R.string.preset_favorite),
+                                    tint = if (preset.isFavorite) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.95f),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         }
                     }
                 }
@@ -176,31 +199,48 @@ fun PresetCard(
                             .padding(8.dp)
                             .size(36.dp)
                     ) {
+                        // 光晕层
                         Box(
                             modifier = Modifier
-                                .size(32.dp)
+                                .size(40.dp)
                                 .background(
                                     brush = Brush.radialGradient(
                                         colors = listOf(
-                                            Color.Red.copy(alpha = 0.2f),
-                                            Color.Red.copy(alpha = 0.08f)
+                                            Color.Red.copy(alpha = 0.12f),
+                                            Color.Transparent
                                         )
                                     ),
-                                    shape = RoundedCornerShape(16.dp)
-                                )
-                                .border(
-                                    width = 0.5.dp,
-                                    color = Color.Red.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(16.dp)
+                                    shape = RoundedCornerShape(20.dp)
                                 ),
                             contentAlignment = Alignment.Center
                         ) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = stringResource(R.string.preset_delete),
-                                tint = Color.Red.copy(alpha = 0.9f),
-                                modifier = Modifier.size(18.dp)
-                            )
+                            // 按钮主体
+                            Box(
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .background(
+                                        brush = Brush.radialGradient(
+                                            colors = listOf(
+                                                Color.Red.copy(alpha = 0.25f),
+                                                Color.Red.copy(alpha = 0.1f)
+                                            )
+                                        ),
+                                        shape = RoundedCornerShape(16.dp)
+                                    )
+                                    .border(
+                                        width = 0.5.dp,
+                                        color = Color.Red.copy(alpha = 0.4f),
+                                        shape = RoundedCornerShape(16.dp)
+                                    ),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.preset_delete),
+                                    tint = Color.Red.copy(alpha = 0.95f),
+                                    modifier = Modifier.size(18.dp)
+                                )
+                            }
                         }
                     }
                 }
