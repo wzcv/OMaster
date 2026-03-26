@@ -471,11 +471,11 @@ private fun PresetGrid(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    top = 8.dp,
-                    bottom = 100.dp
+                    top = 12.dp,  // 优化：顶部边距增加，与 Tab 栏呼吸感更好
+                    bottom = 80.dp  // 优化：底部边距减少，更紧凑
                 ),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),  // 优化：水平间距从 12dp 增加到 16dp
-                verticalItemSpacing = 16.dp,  // 优化：垂直间距从 12dp 增加到 16dp
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalItemSpacing = 16.dp,
                 modifier = Modifier.fillMaxSize()
             ) {
                 if (showTopHint) {
@@ -499,11 +499,13 @@ private fun PresetGrid(
                     items = presets,
                     key = { index, preset -> preset.id?.let { "${it}_$index" } ?: "preset_$index" }
                 ) { index, preset ->
+                    // 优化：更 subtle 的高度差，视觉更和谐
                     val imageHeight = remember(index) {
-                        when (index % 3) {
-                            0 -> 220
-                            1 -> 180
-                            else -> 260
+                        when (index % 4) {
+                            0 -> 200  // 标准
+                            1 -> 170  // 稍矮
+                            2 -> 230  // 稍高
+                            else -> 190  // 接近标准
                         }
                     }
 
