@@ -1,8 +1,10 @@
 package com.silas.omaster.ui.detail
 
+import android.app.DownloadManager
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.BorderStroke
@@ -38,17 +40,21 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Warning
+import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -83,11 +89,13 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import android.widget.Toast
-import com.silas.omaster.util.UpdateConfigManager
+import com.silas.omaster.data.config.ConfigCenter
 import com.silas.omaster.network.PresetRemoteManager
 import com.silas.omaster.data.repository.PresetRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.withContext
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -96,7 +104,9 @@ import com.silas.omaster.util.perform
 @Composable
 fun AboutScreen(
     onBack: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     onScrollStateChanged: (Boolean) -> Unit,
+    onNavigateToPrivacyPolicy: () -> Unit = {},
     currentVersionCode: Int = VersionInfo.VERSION_CODE,
     currentVersionName: String = VersionInfo.VERSION_NAME
 ) {
@@ -143,6 +153,15 @@ fun AboutScreen(
     var updateInfo by remember { mutableStateOf<UpdateChecker.UpdateInfo?>(null) }
     var checkError by remember { mutableStateOf<String?>(null) }
     var lastCheckTime by remember { mutableStateOf<Long?>(null) }
+    
+    // 下载进度相关状态
+    var downloadId by remember { mutableStateOf<Long>(-1L) }
+    var downloadProgress by remember { mutableIntStateOf(0) }
+    var isDownloading by remember { mutableStateOf(false) }
+
+    // 获取更新渠道（使用 ConfigCenter）
+    val config = remember { ConfigCenter.getInstance(context) }
+    val updateChannel by config.updateChannelFlow.collectAsState()
 
     LaunchedEffect(isScrollingUp) {
         onScrollStateChanged(isScrollingUp)
@@ -156,7 +175,7 @@ fun AboutScreen(
             isChecking = true
             checkError = null
             try {
-                val result = UpdateChecker.checkUpdate(context, currentVersionCode)
+                val result = UpdateChecker.checkUpdate(context, currentVersionCode, updateChannel)
                 if (result != null) {
                     updateInfo = result
                     lastCheckTime = System.currentTimeMillis()
@@ -176,7 +195,7 @@ fun AboutScreen(
             isChecking = true
             checkError = null
             try {
-                val result = UpdateChecker.checkUpdate(context, currentVersionCode)
+                val result = UpdateChecker.checkUpdate(context, currentVersionCode, updateChannel)
                 if (result != null) {
                     updateInfo = result
                     lastCheckTime = System.currentTimeMillis()
@@ -196,7 +215,16 @@ fun AboutScreen(
     ) {
         OMasterTopAppBar(
             title = stringResource(R.string.about_title),
-            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
+            modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
+            actions = {
+                IconButton(onClick = onNavigateToSettings) {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = stringResource(R.string.nav_settings),
+                        tint = Color.White
+                    )
+                }
+            }
         )
 
         Column(
@@ -216,10 +244,22 @@ fun AboutScreen(
                 updateInfo = updateInfo,
                 checkError = checkError,
                 lastCheckTime = lastCheckTime,
+                isDownloading = isDownloading,
+                downloadProgress = downloadProgress,
                 onCheckClick = { checkForUpdate() },
-                onDownloadClick = { 
+                onDownloadClick = {
                     updateInfo?.let { info ->
-                        UpdateChecker.openDownloadPage(context, info.downloadUrl)
+                        downloadId = UpdateChecker.downloadAndInstall(context, info.downloadUrl, info.versionName)
+                        isDownloading = true
+                        downloadProgress = 0
+                    }
+                },
+                onCancelDownload = {
+                    if (downloadId != -1L) {
+                        UpdateChecker.cancelDownload(context, downloadId)
+                        isDownloading = false
+                        downloadProgress = 0
+                        downloadId = -1L
                     }
                 },
                 onRetryClick = {
@@ -227,6 +267,32 @@ fun AboutScreen(
                     checkForUpdate()
                 }
             )
+            
+            // 监听下载进度
+            LaunchedEffect(isDownloading, downloadId) {
+                if (isDownloading && downloadId != -1L) {
+                    while (isActive) {
+                        val (status, progress) = UpdateChecker.queryDownloadProgress(context, downloadId)
+                        downloadProgress = progress
+                        
+                        when (status) {
+                            DownloadManager.STATUS_SUCCESSFUL -> {
+                                isDownloading = false
+                                downloadProgress = 100
+                                break
+                            }
+                            DownloadManager.STATUS_FAILED -> {
+                                isDownloading = false
+                                downloadProgress = -1
+                                break
+                            }
+                        }
+                        
+                        if (!isDownloading) break
+                        delay(500) // 每500ms查询一次
+                    }
+                }
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -236,9 +302,13 @@ fun AboutScreen(
 
             CreditsCard(context)
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ProjectCard(context)
+
             Spacer(modifier = Modifier.height(24.dp))
 
-            FooterSection()
+            FooterSection(context, onNavigateToPrivacyPolicy)
         }
     }
 }
@@ -296,8 +366,11 @@ private fun UpdateCard(
     updateInfo: UpdateChecker.UpdateInfo?,
     checkError: String?,
     lastCheckTime: Long?,
+    isDownloading: Boolean,
+    downloadProgress: Int,
     onCheckClick: () -> Unit,
     onDownloadClick: () -> Unit,
+    onCancelDownload: () -> Unit,
     onRetryClick: () -> Unit
 ) {
     val hasUpdate = updateInfo?.isNewer == true
@@ -405,42 +478,90 @@ private fun UpdateCard(
                     }
                     updateInfo != null -> {
                         if (updateInfo.isNewer) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
+                            Column {
                                 Row(
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .background(
-                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
-                                                shape = RoundedCornerShape(6.dp)
-                                            )
-                                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                                    Row(
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        Text(
-                                            text = "v${updateInfo.versionName}",
-                                            style = MaterialTheme.typography.labelMedium,
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontWeight = FontWeight.SemiBold
-                                        )
+                                        Box(
+                                            modifier = Modifier
+                                                .background(
+                                                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                                    shape = RoundedCornerShape(6.dp)
+                                                )
+                                                .padding(horizontal = 8.dp, vertical = 4.dp)
+                                        ) {
+                                            Text(
+                                                text = "v${updateInfo.versionName}",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.primary,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
+                                    }
+                                    if (isDownloading) {
+                                        // 显示下载进度
+                                        Column(
+                                            horizontalAlignment = Alignment.End
+                                        ) {
+                                            Text(
+                                                text = "$downloadProgress%",
+                                                style = MaterialTheme.typography.labelMedium,
+                                                color = MaterialTheme.colorScheme.primary
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            LinearProgressIndicator(
+                                                progress = { downloadProgress / 100f },
+                                                modifier = Modifier.width(120.dp),
+                                                color = MaterialTheme.colorScheme.primary,
+                                                trackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.2f),
+                                                drawStopIndicator = {}
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            Text(
+                                                text = "取消",
+                                                style = MaterialTheme.typography.labelSmall,
+                                                color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                                                modifier = Modifier.clickable { onCancelDownload() }
+                                            )
+                                        }
+                                    } else {
+                                        Button(
+                                            onClick = onDownloadClick,
+                                            colors = ButtonDefaults.buttonColors(
+                                                containerColor = MaterialTheme.colorScheme.primary
+                                            ),
+                                            shape = RoundedCornerShape(10.dp),
+                                            contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+                                        ) {
+                                            Text(
+                                                stringResource(R.string.version_download_btn),
+                                                style = MaterialTheme.typography.labelMedium
+                                            )
+                                        }
                                     }
                                 }
-                                Button(
-                                    onClick = onDownloadClick,
-                                    colors = ButtonDefaults.buttonColors(
-                                        containerColor = MaterialTheme.colorScheme.primary
-                                    ),
-                                    shape = RoundedCornerShape(10.dp),
-                                    contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-                                ) {
+                                
+                                // 显示更新日志
+                                if (updateInfo.releaseNotes.isNotBlank()) {
+                                    Spacer(modifier = Modifier.height(12.dp))
                                     Text(
-                                        stringResource(R.string.version_download_btn),
-                                        style = MaterialTheme.typography.labelMedium
+                                        text = "更新内容",
+                                        style = MaterialTheme.typography.labelMedium,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        fontWeight = FontWeight.Medium
+                                    )
+                                    Spacer(modifier = Modifier.height(4.dp))
+                                    Text(
+                                        text = updateInfo.releaseNotes,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = Color.White.copy(alpha = 0.8f),
+                                        lineHeight = MaterialTheme.typography.bodySmall.lineHeight * 1.2
                                     )
                                 }
                             }
@@ -630,7 +751,7 @@ private fun CreditsCard(context: android.content.Context) {
 
             // 开发者标签
             val developers = listOf(
-                "Silas" to "https://github.com/iCurrer",
+                "Silas" to "https://xhslink.com/m/2gh56F1blnO",
                 "Luminary" to "https://github.com/fengyec2",
                 "Charloitte" to "https://github.com/wzcv"
             )
@@ -643,6 +764,28 @@ private fun CreditsCard(context: android.content.Context) {
                 developers.forEach { (name, url) ->
                     DeveloperChip(name = name, url = url, context = context)
                 }
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // QQ群号
+            Box(
+                modifier = Modifier
+                    .padding(start = 24.dp)
+                    .clip(RoundedCornerShape(16.dp))
+                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                        shape = RoundedCornerShape(16.dp)
+                    )
+                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            ) {
+                Text(
+                    text = "软件共创QQ群: 1083543279",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.primary
+                )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -745,7 +888,81 @@ private fun DeveloperChip(name: String, url: String, context: android.content.Co
 }
 
 @Composable
-private fun FooterSection() {
+private fun ProjectCard(context: android.content.Context) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = CardBorderLight,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/iCurrer/OMaster"))
+                context.startActivity(intent)
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = DarkGray
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Code,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(22.dp)
+                    )
+                }
+                Column {
+                    Text(
+                        text = "项目地址",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = Color.White
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "GitHub - iCurrer/OMaster",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = Color.White.copy(alpha = 0.5f)
+                    )
+                }
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun FooterSection(
+    context: android.content.Context,
+    onNavigateToPrivacyPolicy: () -> Unit
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -760,7 +977,10 @@ private fun FooterSection() {
             text = stringResource(R.string.privacy_policy),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-            textDecoration = TextDecoration.Underline
+            textDecoration = TextDecoration.Underline,
+            modifier = Modifier.clickable {
+                onNavigateToPrivacyPolicy()
+            }
         )
     }
 }

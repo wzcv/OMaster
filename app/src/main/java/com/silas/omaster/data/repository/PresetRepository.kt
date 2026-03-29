@@ -1,10 +1,15 @@
 package com.silas.omaster.data.repository
 
 import android.content.Context
+import com.silas.omaster.data.config.ConfigCenter
 import com.silas.omaster.data.local.CustomPresetManager
 import com.silas.omaster.data.local.FavoriteManager
 import com.silas.omaster.model.MasterPreset
 import com.silas.omaster.util.JsonUtil
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
@@ -49,7 +54,12 @@ class PresetRepository(
      */
     private val appContext = context.applicationContext
 
-    private val subscriptionManager = com.silas.omaster.data.local.SubscriptionManager.getInstance(appContext)
+    /**
+     * 【协程作用域】
+     * 使用自定义 Scope 管理协程生命周期
+     * 避免使用 GlobalScope 导致内存泄漏
+     */
+    private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.Main)
 
     // 缓存默认预设（内存缓存，App 重启后清空）
     private val _defaultPresets = MutableStateFlow<List<MasterPreset>>(emptyList())
@@ -58,15 +68,25 @@ class PresetRepository(
     init {
         // 初始化时加载默认预设
         loadDefaultPresets()
-        
+
         // 监听订阅状态变化，自动重新加载预设
         // 注意：这里使用 Flow 的特性，只有当订阅列表内容真正发生变化时才触发重载
-        kotlinx.coroutines.GlobalScope.launch(kotlinx.coroutines.Dispatchers.Main) {
-            subscriptionManager.subscriptionsFlow.collect { subs ->
-                android.util.Log.d("PresetRepository", "Subscription status changed, reloading...")
+        repositoryScope.launch {
+            ConfigCenter.getInstance(appContext).subscriptionsFlow.collect { subs ->
+                android.util.Log.d("PresetRepository", "Subscription status changed via ConfigCenter, reloading...")
                 reloadDefaultPresets()
             }
         }
+    }
+
+    /**
+     * 【清理方法】
+     * 取消所有协程，释放资源
+     * 应在 ViewModel 销毁时调用
+     */
+    fun cleanup() {
+        android.util.Log.d("PresetRepository", "Cleaning up repository scope")
+        repositoryScope.cancel()
     }
 
     /**

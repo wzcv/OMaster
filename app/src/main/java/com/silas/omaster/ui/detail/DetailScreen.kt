@@ -125,7 +125,6 @@ fun DetailScreen(
             title = preset?.let { PresetI18n.getLocalizedPresetName(it.name) } ?: stringResource(R.string.detail_title),
             subtitle = preset?.author,
             onBack = {
-                haptic.perform(HapticFeedbackType.TextHandleMove)
                 onBack()
             },
             actions = {
@@ -146,7 +145,6 @@ fun DetailScreen(
                 // 悬浮窗按钮
                 IconButton(
                     onClick = {
-                        haptic.perform(HapticFeedbackType.Confirm)
                         preset?.let { p ->
                             val isFirstTime = guideManager.isFirstTimeUseFloatingWindow()
                             android.util.Log.d("DetailScreen", "悬浮窗按钮点击，是否首次使用: $isFirstTime")
@@ -373,7 +371,7 @@ private fun DynamicParameters(
                         // Full width
                         ParameterCard(
                             label = PresetI18n.resolveStringComposable(item.label),
-                            value = item.value,
+                            value = PresetI18n.resolveValue(item.value),
                             modifier = Modifier.fillMaxWidth()
                         )
                         i++
@@ -388,12 +386,12 @@ private fun DynamicParameters(
                             ) {
                                 ParameterCard(
                                     label = PresetI18n.resolveStringComposable(item.label),
-                                    value = item.value,
+                                    value = PresetI18n.resolveValue(item.value),
                                     modifier = Modifier.weight(1f)
                                 )
                                 ParameterCard(
                                     label = PresetI18n.resolveStringComposable(nextItem.label),
-                                    value = nextItem.value,
+                                    value = PresetI18n.resolveValue(nextItem.value),
                                     modifier = Modifier.weight(1f)
                                 )
                             }
@@ -406,7 +404,7 @@ private fun DynamicParameters(
                             ) {
                                 ParameterCard(
                                     label = PresetI18n.resolveStringComposable(item.label),
-                                    value = item.value,
+                                    value = PresetI18n.resolveValue(item.value),
                                     modifier = Modifier.weight(1f)
                                 )
                                 Spacer(modifier = Modifier.weight(1f))

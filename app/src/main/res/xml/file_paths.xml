@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 外部存储的 Download 目录 -->
+    <external-path
+        name="external_downloads"
+        path="Android/data/com.silas.omaster/files/Download/" />
+
+    <!-- 应用私有外部文件目录 -->
+    <external-files-path
+        name="downloads"
+        path="Download/" />
+
+    <!-- 所有外部文件 -->
+    <external-files-path
+        name="external_files"
+        path="." />
+
+    <!-- 应用缓存目录（用于日志导出） -->
+    <cache-path
+        name="cache_files"
+        path="logs_export/" />
+</paths>

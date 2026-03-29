@@ -31,6 +31,8 @@
     <string name="sub_empty">暂无订阅</string>
     <string name="sub_delete_confirm_title">确认删除</string>
     <string name="sub_delete_confirm_msg">确定要删除这个订阅吗？对应的预设也将不再显示。</string>
+    <string name="sub_details">订阅详情</string>
+    <string name="sub_edit_title">编辑订阅</string>
     <string name="sub_update_status">更新完成: %1$d/%2$d</string>
     <string name="sub_preset_count">预设数量: %1$d</string>
     <string name="sub_last_update">更新于: %1$s</string>
@@ -40,9 +42,72 @@
     <string name="settings_title">设置</string>
     <string name="settings_section_general">常规</string>
     <string name="settings_section_appearance">外观</string>
+    <string name="settings_section_floating_window">悬浮窗</string>
+    <string name="settings_section_privacy">隐私</string>
     <string name="vibration_feedback">震动反馈</string>
+    <string name="default_start_tab">默认启动页面</string>
     <string name="settings_theme_title">主题颜色</string>
     <string name="settings_theme_dialog_title">选择主题颜色</string>
+    <string name="floating_window_opacity">悬浮窗透明度</string>
+    <string name="analytics_enabled">启用匿名统计</string>
+    <string name="analytics_restart_hint">重启应用后生效</string>
+    <string name="clear_cache">清理图片缓存</string>
+    <string name="clear_cache_desc">释放存储空间，下次浏览时重新下载</string>
+    <string name="cache_size_format">缓存大小: %.2f MB</string>
+    <string name="cache_cleared">缓存已清理</string>
+
+    <!-- 语言设置 -->
+    <string name="language">语言</string>
+    <string name="language_system">跟随系统</string>
+    <string name="language_chinese">简体中文</string>
+    <string name="language_english">English</string>
+
+    <!-- 更新设置 -->
+    <string name="settings_section_update">更新设置</string>
+    <string name="update_channel">更新渠道</string>
+    <string name="update_channel_gitee">Gitee（国内推荐）</string>
+    <string name="update_channel_github">GitHub（国际）</string>
+
+    <!-- 存储 -->
+    <string name="settings_section_storage">存储</string>
+    <string name="export_logs">导出日志</string>
+    <string name="log_size">日志大小: %1$s</string>
+    <string name="clear_logs">清空日志</string>
+    <string name="clear_logs_confirm_title">清空日志</string>
+    <string name="clear_logs_confirm_msg">确定要清空所有日志文件吗？此操作不可恢复。</string>
+    <string name="logs_cleared">日志已清空</string>
+
+    <!-- 对话框 -->
+    <string name="cache_clear_confirm">当前缓存大小为 %.2f MB，清理后将释放存储空间，下次浏览时需要重新下载图片。</string>
+    <string name="cache_empty">当前没有缓存图片</string>
+    <string name="clear">清理</string>
+    <string name="recommended">推荐</string>
+
+    <!-- 对话框标题 -->
+    <string name="dialog_title_select_tab">选择默认启动页面</string>
+    <string name="dialog_title_select_channel">选择更新渠道</string>
+    <string name="dialog_title_select_language">选择语言</string>
+
+    <!-- Tab 名称 -->
+    <string name="tab_all">全部</string>
+    <string name="tab_favorites">收藏</string>
+    <string name="tab_my">我的</string>
+
+    <!-- 更新渠道描述 -->
+    <string name="channel_gitee_desc">国内访问速度快</string>
+    <string name="channel_github_desc">国际访问，国内可能需要代理</string>
+
+    <!-- 语言描述 -->
+    <string name="language_system_desc">使用系统默认语言</string>
+    <string name="language_chinese_desc">Simplified Chinese</string>
+    <string name="language_english_desc">英文</string>
+
+    <!-- Toast 提示 -->
+    <string name="toast_language_changed">语言已切换，正在重启应用…</string>
+
+    <!-- 外观设置 -->
+    <string name="premium_glass_effect">高级 Glass 质感</string>
+    <string name="premium_glass_effect_desc">启用 6 层玻璃效果，更具立体感</string>
 
     <!-- 品牌名称 -->
     <string name="brand_hasselblad">哈苏</string>
@@ -67,9 +132,7 @@
     <string name="color_phaseone_grey">飞思灰</string>
 
     <!-- 主页 Tab -->
-    <string name="tab_all">全部</string>
-    <string name="tab_favorites">收藏</string>
-    <string name="tab_my">我的</string>
+    <string name="tab_my_home">我的</string>
 
     <!-- 主页操作 -->
     <string name="create_preset">新建预设</string>
@@ -130,6 +193,13 @@
     <string name="param_cyan_magenta">青品</string>
     <string name="param_sharpness">锐度</string>
     <string name="param_vignette">暗角</string>
+
+    <!-- Realme 特有参数 -->
+    <string name="param_contrast">对比度</string>
+    <string name="param_contrast_highlight">对比度（亮部）</string>
+    <string name="param_contrast_shadow">对比度（暗部）</string>
+    <string name="param_clarity">清晰</string>
+    <string name="param_grain">颗粒强度</string>
 
     <!-- 拍摄模式 -->
     <string name="mode_pro">Pro 模式</string>
@@ -206,6 +276,17 @@
     <!-- 暗角选项 -->
     <string name="vignette_on">开启</string>
     <string name="vignette_off">关闭</string>
+
+    <!-- 白平衡选项 -->
+    <string name="white_balance_cloudy">阴天</string>
+    <string name="white_balance_daylight">日光</string>
+    <string name="white_balance_fluorescent">荧光灯</string>
+    <string name="white_balance_incandescent">白炽灯</string>
+    <string name="white_balance_auto">自动</string>
+
+    <!-- 色调选项 -->
+    <string name="tone_warm">暖调</string>
+    <string name="tone_cool">冷调</string>
 
     <!-- 预设名称 -->
     <string name="preset_fuji_film">富士胶片</string>
@@ -288,26 +369,30 @@
 
     <!-- 页脚 -->
     <string name="footer_local"></string>
-    <string name="privacy_policy">《用户协议和隐私政策》</string>
+    <string name="privacy_policy">《隐私政策》</string>
 
     <!-- 隐私政策页 -->
     <string name="privacy_title">用户协议和隐私政策</string>
     <string name="welcome_title">欢迎使用 OMaster</string>
-    <string name="welcome_desc">OMaster 是一款专为 OPPO/一加/Realme 手机摄影爱好者设计的调色参数管理工具。在这里，您可以查看、收藏和复现大师模式的摄影调色参数。</string>
+    <string name="welcome_desc">OMaster 是一款专为 OPPO/一加/Realme 手机摄影爱好者设计的调色参数管理工具。在这里，您可以查看、收藏和复现大师模式的摄影调色参数，并支持悬浮窗实时参考拍摄。</string>
     <string name="features_title">功能介绍</string>
-    <string name="features_list">• 查看大师模式调色参数\n• 支持多种预设风格\n• 无需联网即可使用</string>
+    <string name="features_list">• 查看大师模式调色参数\n• 悬浮窗实时参考拍摄\n• 支持多种预设风格\n• 订阅社区预设，持续更新</string>
     <string name="data_collection_title">数据收集说明</string>
-    <string name="data_collection_desc">为了持续改进应用体验，我们会统计基础功能使用情况与崩溃信息，所有数据仅用于问题定位与功能优化。</string>
-    <string name="sdk_info_title">统计功能说明</string>
-    <string name="sdk_name_label">使用 SDK 名称</string>
+    <string name="data_collection_desc">为了持续改进应用体验，我们会记录基础功能使用情况与崩溃信息，所有数据仅用于问题定位与功能优化。应用还会从以下网络地址获取预设数据：\n\n• cdn.jsdelivr.net（预设配置文件）\n• cdn.fky.ltd（预设图片资源）</string>
+    <string name="local_storage_title">本地数据存储</string>
+    <string name="local_storage_desc">应用会在本地存储以下数据：\n\n• 订阅配置信息（订阅URL、版本号等）\n• 预设图片缓存\n• 用户设置偏好（主题、语言等）\n• 收藏的预设列表\n\n以上数据均存储在您的设备本地，我们不会上传您的个人信息。</string>
+    <string name="permission_title">权限说明</string>
+    <string name="permission_desc">悬浮窗功能需要 SYSTEM_ALERT_WINDOW 权限，用于在其他应用上层显示拍摄参数。该权限仅用于显示预设参数，不会访问您的屏幕内容或收集任何数据。</string>
+    <string name="sdk_info_title">统计模块信息</string>
+    <string name="sdk_name_label">模块名称</string>
     <string name="sdk_name">应用内统计模块</string>
     <string name="service_type_label">服务类型</string>
-    <string name="service_type">统计分析</string>
-    <string name="collect_info_label">收集个人信息类型</string>
+    <string name="service_type">匿名统计分析</string>
+    <string name="collect_info_label">收集信息类型</string>
     <string name="collect_info">应用功能使用情况、崩溃信息、设备基础信息（系统版本、机型等）</string>
     <string name="privacy_link_label">隐私权政策链接：</string>
     <string name="user_rights_title">用户权利</string>
-    <string name="user_rights_desc">您有权访问、更正、删除您的个人信息。如需行使这些权利，请通过应用内的联系方式与我们联系。</string>
+    <string name="user_rights_desc">您有权访问、更正、删除您的个人信息。您可以：\n\n• 清除本地缓存（设置 → 清理缓存）\n• 关闭订阅（订阅管理）\n• 重置应用设置\n\n如需行使其他权利，请通过下方联系方式与我们联系。</string>
 
     <!-- 悬浮窗引导 -->
     <string name="guide_title">开启悬浮窗权限</string>
@@ -330,18 +415,18 @@
 
     <!-- 欢迎对话框 -->
     <string name="welcome_dialog_title">欢迎使用 OMaster</string>
-    <string name="welcome_version">大师模式调色参数库 v1.0</string>
+    <string name="welcome_version">大师模式调色参数库 v%1$s</string>
     <string name="feature_1_title">专业参数</string>
     <string name="feature_1_desc">查看大师模式的专业摄影调色参数</string>
     <string name="feature_2_title">多种风格</string>
     <string name="feature_2_desc">支持多种预设风格，满足不同拍摄需求</string>
-    <string name="feature_3_title">无需联网</string>
-    <string name="feature_3_desc">无需联网即可使用</string>
+    <string name="feature_3_title">社区共创</string>
+    <string name="feature_3_desc">订阅社区分享的预设，持续更新</string>
     <string name="agree_prefix">我已阅读并同意</string>
     <string name="analytics_notice">• 我们会收集必要的匿名统计信息\n• 数据仅用于稳定性改进和功能优化</string>
     <string name="privacy_hint">点击《用户协议和隐私政策》查看详细信息</string>
-    <string name="disagree">不同意</string>
-    <string name="agree_and_start">同意并开始</string>
+    <string name="disagree">退出应用</string>
+    <string name="agree_and_start">开始使用</string>
 
     <!-- 悬浮窗引导对话框 -->
     <string name="floating_guide_title">开启悬浮窗权限</string>
@@ -375,6 +460,14 @@
     <string name="floating_sharpness_label">锐度</string>
     <string name="floating_vignette_icon">◍</string>
     <string name="floating_vignette_label">暗角</string>
+
+    <!-- 悬浮窗模式 -->
+    <string name="floating_window_mode">悬浮窗模式</string>
+    <string name="floating_window_mode_standard">标准</string>
+    <string name="floating_window_mode_compact">新版悬浮窗</string>
+    <string name="floating_window_mode_standard_desc">卡片式布局，信息完整</string>
+    <string name="floating_window_mode_compact_desc">紧凑参数条，仿原生样式</string>
+    <string name="floating_window_mode_dialog_title">选择悬浮窗模式</string>
 
     <!-- Xposed 工具 -->
     <string name="xposed_tool_entry">Xposed 工具</string>

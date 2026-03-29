@@ -44,9 +44,9 @@ import coil.request.CachePolicy
 import com.silas.omaster.ui.animation.AnimationSpecs
 import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.NearBlack
+import com.silas.omaster.util.ImageCacheManager
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.File
 
 /**
  * 图片画廊组件
@@ -118,21 +118,18 @@ fun ImageGallery(
                 modifier = Modifier.fillMaxWidth(),
                 beyondViewportPageCount = 1  // 预加载相邻页面，避免卡顿
             ) { page ->
-                // 判断图片路径类型
+                // 使用 ImageCacheManager 获取加载路径（优先本地缓存）
                 val imagePath = images[page]
-                val imageUri = when {
-                    // 网络图片：以 http 或 https 开头
-                    imagePath.startsWith("http") -> imagePath
-                    // 绝对路径
-                    imagePath.startsWith("/") -> File(imagePath).toUri().toString()
-                    // 内部存储路径：以 presets/ 开头
-                    imagePath.startsWith("presets/") -> {
-                        File(context.filesDir, imagePath).toUri().toString()
+                val imageUri = ImageCacheManager.getImageLoadPath(context, imagePath)
+
+                // 如果是网络图片且未缓存，后台下载
+                LaunchedEffect(imagePath) {
+                    if (imagePath.startsWith("http") &&
+                        !ImageCacheManager.isImageCached(context, imagePath)) {
+                        ImageCacheManager.downloadAndCacheImage(context, imagePath)
                     }
-                    // 默认 assets 路径
-                    else -> "file:///android_asset/$imagePath"
                 }
-                
+
                 AsyncImage(
                     model = ImageRequest.Builder(context)
                         .data(imageUri)
@@ -141,8 +138,10 @@ fun ImageGallery(
                         .diskCachePolicy(CachePolicy.ENABLED)
                         .build(),
                     contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.fillMaxWidth()
+                    contentScale = ContentScale.Crop,  // 改为 Crop 填满容器
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clip(RoundedCornerShape(16.dp))  // 添加圆角裁剪
                 )
             }
 

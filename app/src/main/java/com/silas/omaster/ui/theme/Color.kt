@@ -48,3 +48,40 @@ val CardBorderHighlight = Color(0xFFFF6600).copy(alpha = 0.3f)
 val SurfaceElevated = Color(0xFF222222)
 val GradientOrangeStart = Color(0xFFFF6600)
 val GradientOrangeEnd = Color(0xFFFF8533)
+
+/**
+ * 玻璃质感 (Glassmorphism) 配色 - 统一系统
+ */
+object GlassColors {
+    // 基础层 - 深色半透明背景
+    val Base = Color(0xFF1A1A1A).copy(alpha = 0.75f)
+
+    // 表面层 - 带微妙蓝紫色调的玻璃表面
+    val Surface = Color(0xFF2A2A3A).copy(alpha = 0.60f)
+
+    // 边框系统 - 双层边框结构
+    val BorderOuter = Color(0xFFFFFFFF).copy(alpha = 0.18f)      // 外边框 - 更明显
+    val BorderInner = Color(0xFFFFFFFF).copy(alpha = 0.06f)      // 内边框 -  subtle
+    val BorderHighlight = Color(0xFFFF6600).copy(alpha = 0.7f)   // 高亮状态
+
+    // 高光系统 - 玻璃的关键特征
+    val HighlightTop = Color(0xFFFFFFFF).copy(alpha = 0.30f)     // 顶部高光
+    val HighlightGlow = Color(0xFFFF6600).copy(alpha = 0.20f)    // 橙色光晕
+
+    // 兼容旧代码的别名
+    val Background = Base
+    val Border = BorderOuter
+}
+
+// 保留旧名称兼容已有代码 (标记为废弃，逐步迁移)
+@Deprecated("使用 GlassColors.Base 代替", ReplaceWith("GlassColors.Base"))
+val GlassBackground = GlassColors.Base
+
+@Deprecated("使用 GlassColors.BorderOuter 代替", ReplaceWith("GlassColors.BorderOuter"))
+val GlassBorder = GlassColors.BorderOuter
+
+@Deprecated("使用 GlassColors.BorderHighlight 代替", ReplaceWith("GlassColors.BorderHighlight"))
+val GlassBorderHighlight = GlassColors.BorderHighlight
+
+@Deprecated("使用 GlassColors.Surface 代替", ReplaceWith("GlassColors.Surface"))
+val GlassSurface = GlassColors.Surface

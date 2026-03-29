@@ -31,6 +31,8 @@
     <string name="sub_empty">No subscriptions available</string>
     <string name="sub_delete_confirm_title">Confirm Delete</string>
     <string name="sub_delete_confirm_msg">Confirm deletion? Associated presets will also be removed.</string>
+    <string name="sub_details">Details</string>
+    <string name="sub_edit_title">Edit</string>
     <string name="sub_update_status">Updates complete: %1$d/%2$d</string>
     <string name="sub_preset_count">Presets: %1$d</string>
     <string name="sub_last_update">Updated: %1$s</string>
@@ -40,9 +42,72 @@
     <string name="settings_title">Settings</string>
     <string name="settings_section_general">General</string>
     <string name="settings_section_appearance">Appearance</string>
+    <string name="settings_section_floating_window">Floating Window</string>
+    <string name="settings_section_privacy">Privacy</string>
     <string name="vibration_feedback">Vibration Feedback</string>
+    <string name="default_start_tab">Default Start Tab</string>
     <string name="settings_theme_title">Theme Color</string>
     <string name="settings_theme_dialog_title">Select Theme Color</string>
+    <string name="floating_window_opacity">Floating Window Opacity</string>
+    <string name="analytics_enabled">Enable Analytics</string>
+    <string name="analytics_restart_hint">Restart app to apply</string>
+    <string name="clear_cache">Clear Image Cache</string>
+    <string name="clear_cache_desc">Free up storage space, images will be re-downloaded next time</string>
+    <string name="cache_cleared">Cache cleared</string>
+
+    <!-- Language Settings -->
+    <string name="language">Language</string>
+    <string name="language_system">System Default</string>
+    <string name="language_chinese">Simplified Chinese</string>
+    <string name="language_english">English</string>
+
+    <!-- Update Settings -->
+    <string name="settings_section_update">Update</string>
+    <string name="update_channel">Update Channel</string>
+    <string name="update_channel_gitee">Gitee (China)</string>
+    <string name="update_channel_github">GitHub (International)</string>
+
+    <!-- Storage -->
+    <string name="settings_section_storage">Storage</string>
+    <string name="export_logs">Export Logs</string>
+    <string name="log_size">Log size: %1$s</string>
+    <string name="clear_logs">Clear Logs</string>
+    <string name="clear_logs_confirm_title">Clear Logs</string>
+    <string name="clear_logs_confirm_msg">Are you sure you want to clear all log files? This action cannot be undone.</string>
+    <string name="logs_cleared">Logs cleared</string>
+
+    <!-- Dialogs -->
+    <string name="cache_clear_confirm">Current cache size is %.2f MB. Clearing will free up storage space, images will be re-downloaded next time.</string>
+    <string name="cache_empty">No cached images</string>
+    <string name="clear">Clear</string>
+    <string name="recommended">Recommended</string>
+    <string name="cache_size_format">Cache size: %.2f MB</string>
+
+    <!-- Dialog Titles -->
+    <string name="dialog_title_select_tab">Select Default Tab</string>
+    <string name="dialog_title_select_channel">Select Update Channel</string>
+    <string name="dialog_title_select_language">Select Language</string>
+
+    <!-- Tab Names -->
+    <string name="tab_all">All</string>
+    <string name="tab_favorites">Favorites</string>
+    <string name="tab_my">My Presets</string>
+
+    <!-- Channel Descriptions -->
+    <string name="channel_gitee_desc">Fast access in China</string>
+    <string name="channel_github_desc">International access, may need proxy in China</string>
+
+    <!-- Language Descriptions -->
+    <string name="language_system_desc">Use system default language</string>
+    <string name="language_chinese_desc">Simplified Chinese</string>
+    <string name="language_english_desc">English</string>
+
+    <!-- Toast Messages -->
+    <string name="toast_language_changed">Language changed, restarting app…</string>
+
+    <!-- Appearance Settings -->
+    <string name="premium_glass_effect">Premium Glass Effect</string>
+    <string name="premium_glass_effect_desc">Enable 6-layer glass effect for more depth</string>
 
     <!-- Brand Names -->
     <string name="brand_hasselblad">Hasselblad</string>
@@ -67,9 +132,7 @@
     <string name="color_phaseone_grey">Phase One Grey</string>
 
     <!-- Home Tabs -->
-    <string name="tab_all">All</string>
-    <string name="tab_favorites">Favorites</string>
-    <string name="tab_my">My</string>
+    <string name="tab_my_home">My</string>
 
     <!-- Home Actions -->
     <string name="create_preset">Create Preset</string>
@@ -119,6 +182,13 @@
     <string name="param_tone">Tone</string>
     <string name="param_tone_style">Tone Style</string>
     <string name="param_pro_adjust">Pro Parameters (Adjust based on environment)</string>
+
+    <!-- Realme Specific Parameters -->
+    <string name="param_contrast">Contrast</string>
+    <string name="param_contrast_highlight">Contrast (Highlight)</string>
+    <string name="param_contrast_shadow">Contrast (Shadow)</string>
+    <string name="param_clarity">Clarity</string>
+    <string name="param_grain">Grain Intensity</string>
 
     <!-- Color Grading Parameters -->
     <string name="section_color_grading">Color Grading</string>
@@ -206,6 +276,17 @@
     <!-- Vignette Options -->
     <string name="vignette_on">On</string>
     <string name="vignette_off">Off</string>
+
+    <!-- White Balance Options -->
+    <string name="white_balance_cloudy">Cloudy</string>
+    <string name="white_balance_daylight">Daylight</string>
+    <string name="white_balance_fluorescent">Fluorescent</string>
+    <string name="white_balance_incandescent">Incandescent</string>
+    <string name="white_balance_auto">Auto</string>
+
+    <!-- Color Tone Options -->
+    <string name="tone_warm">Warm</string>
+    <string name="tone_cool">Cool</string>
 
     <!-- Preset Names -->
     <string name="preset_fuji_film">Fuji Classic</string>
@@ -297,13 +378,17 @@
     <string name="features_title">Features</string>
     <string name="features_list">• View Master Mode color grading parameters\n• Support multiple preset styles\n• Pure local operation, data stored locally\n• No internet required</string>
     <string name="data_collection_title">Data Collection</string>
-    <string name="data_collection_desc">To improve app quality, we collect basic usage and crash diagnostics for stability and feature optimization.</string>
-    <string name="sdk_info_title">Analytics Info</string>
-    <string name="sdk_name_label">SDK Name</string>
+    <string name="data_collection_desc">To improve app quality, we collect anonymous feature usage and crash diagnostics for stability and feature optimization. The app also fetches preset data from:\n\n• cdn.jsdelivr.net (preset config)\n• cdn.fky.ltd (preset images)</string>
+    <string name="local_storage_title">Local Data Storage</string>
+    <string name="local_storage_desc">The app stores the following data locally:\n\n• Subscription config (URL, version, etc.)\n• Preset image cache\n• User preferences (theme, language, etc.)\n• Favorite presets list\n\nAll data is stored on your device, we do not upload your personal information.</string>
+    <string name="permission_title">Permissions</string>
+    <string name="permission_desc">Floating window feature requires SYSTEM_ALERT_WINDOW permission to display shooting parameters over other apps. This permission is only used to display preset parameters, and will not access your screen content or collect any data.</string>
+    <string name="sdk_info_title">Analytics Module Info</string>
+    <string name="sdk_name_label">Module Name</string>
     <string name="sdk_name">In-app Analytics Module</string>
     <string name="service_type_label">Service Type</string>
-    <string name="service_type">Analytics</string>
-    <string name="collect_info_label">Personal Info Collected</string>
+    <string name="service_type">Anonymous Analytics</string>
+    <string name="collect_info_label">Collected Info</string>
     <string name="collect_info">Feature usage, crash diagnostics, and basic device info (OS version, model).</string>
     <string name="privacy_link_label">Privacy Policy Link:</string>
     <string name="user_rights_title">User Rights</string>
@@ -330,18 +415,18 @@
 
     <!-- Welcome Dialog -->
     <string name="welcome_dialog_title">Welcome to OMaster</string>
-    <string name="welcome_version">Master Mode Color Grading Library v1.0</string>
+    <string name="welcome_version">Master Mode Color Grading Library v%1$s</string>
     <string name="feature_1_title">Pro Parameters</string>
     <string name="feature_1_desc">View professional photography color grading parameters for Master Mode</string>
     <string name="feature_2_title">Multiple Styles</string>
     <string name="feature_2_desc">Support multiple preset styles to meet different shooting needs</string>
-    <string name="feature_3_title">Local Storage</string>
-    <string name="feature_3_desc">Pure local operation, data stored locally</string>
+    <string name="feature_3_title">Community</string>
+    <string name="feature_3_desc">Subscribe to community presets, continuously updated</string>
     <string name="agree_prefix">I have read and agree to</string>
     <string name="analytics_notice">• We collect necessary anonymous analytics\n• Data is only used for stability and feature optimization</string>
     <string name="privacy_hint">Tap User Agreement &amp; Privacy Policy to view details</string>
-    <string name="disagree">Disagree</string>
-    <string name="agree_and_start">Agree &amp; Start</string>
+    <string name="disagree">Exit App</string>
+    <string name="agree_and_start">Get Started</string>
 
     <!-- Floating Window Guide Dialog -->
     <string name="floating_guide_title">Enable Floating Window</string>
@@ -375,6 +460,14 @@
     <string name="floating_sharpness_label">Sharp</string>
     <string name="floating_vignette_icon">◍</string>
     <string name="floating_vignette_label">Vignette</string>
+
+    <!-- Floating Window Mode -->
+    <string name="floating_window_mode">Floating Window Mode</string>
+    <string name="floating_window_mode_standard">Standard</string>
+    <string name="floating_window_mode_compact">Compact</string>
+    <string name="floating_window_mode_standard_desc">Card layout with complete information</string>
+    <string name="floating_window_mode_compact_desc">Compact parameter bar, native style</string>
+    <string name="floating_window_mode_dialog_title">Select Floating Window Mode</string>
 
     <!-- Xposed Tool -->
     <string name="xposed_tool_entry">Xposed Tool</string>

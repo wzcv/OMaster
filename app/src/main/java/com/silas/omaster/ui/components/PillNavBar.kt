@@ -8,7 +8,9 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
@@ -17,6 +19,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -40,6 +43,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -50,6 +54,9 @@ import com.silas.omaster.R
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.silas.omaster.util.perform
+import com.silas.omaster.ui.theme.GlassColors
+import com.silas.omaster.ui.components.glass.GlassEffectConfig
+import com.silas.omaster.ui.components.glass.GlassButton
 
 private val NavBarBackground = Color(0xFF1A1A1A)
 private val NavBarBorder = Color(0xFF2A2A2A)
@@ -65,12 +72,12 @@ fun PillNavBar(
     visible: Boolean,
     currentRoute: String,
     onNavigate: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    usePremiumGlass: Boolean = true
 ) {
     val navItems = listOf(
         NavItem("home", stringResource(R.string.nav_home), Icons.Default.Home),
         NavItem("subscription", stringResource(R.string.nav_subscription), Icons.Default.RssFeed),
-        NavItem("settings", stringResource(R.string.nav_settings), Icons.Default.Settings),
         NavItem("about", stringResource(R.string.nav_about), Icons.Default.Info)
     )
 
@@ -105,7 +112,7 @@ fun PillNavBar(
                 // 磨砂玻璃背景层
                 Box(
                     modifier = Modifier
-                        .width(320.dp)
+                        .width(260.dp)
                         .height(64.dp)
                         .clip(RoundedCornerShape(32.dp))
                         .background(
@@ -121,14 +128,14 @@ fun PillNavBar(
                 // 顶部高光线条
                 Box(
                     modifier = Modifier
-                        .width(320.dp)
+                        .width(260.dp)
                         .height(64.dp)
                         .clip(RoundedCornerShape(32.dp))
                         .background(
                             brush = Brush.verticalGradient(
                                 colors = listOf(
-                                    Color.White.copy(alpha = 0.15f),
-                                    Color.White.copy(alpha = 0.05f),
+                                    Color.White.copy(alpha = 0.22f),
+                                    Color.White.copy(alpha = 0.08f),
                                     Color.Transparent
                                 )
                             )
@@ -138,7 +145,7 @@ fun PillNavBar(
                 // 边框
                 Box(
                     modifier = Modifier
-                        .width(320.dp)
+                        .width(260.dp)
                         .height(64.dp)
                         .clip(RoundedCornerShape(32.dp))
                         .background(
@@ -169,22 +176,58 @@ fun PillNavBar(
                 }
 
                 // 导航项
-                Row(
+                Box(
                     modifier = Modifier
-                        .width(320.dp)
+                        .width(260.dp)
                         .height(64.dp)
-                        .padding(horizontal = 8.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
+                        .padding(horizontal = 8.dp, vertical = 8.dp)
                 ) {
-                    navItems.forEach { item ->
-                        val selected = currentRoute == item.route
+                    // 滑动选中胶囊背景
+                    val selectedIndex = navItems.indexOfFirst { it.route == currentRoute }
+                    val itemWidth = 244f / 3f // (260dp - 16dp padding) / 3 items
+                    val capsuleOffset by animateFloatAsState(
+                        targetValue = selectedIndex * itemWidth,
+                        animationSpec = spring(
+                            dampingRatio = Spring.DampingRatioMediumBouncy,
+                            stiffness = Spring.StiffnessLow
+                        ),
+                        label = "capsuleOffset"
+                    )
 
-                        NavItemButton(
-                            item = item,
-                            selected = selected,
-                            onClick = { onNavigate(item.route) }
-                        )
+                    // 选中胶囊背景 - 统一使用 GlassButton 组件
+                    if (selectedIndex >= 0) {
+                        GlassButton(
+                            isActive = true,
+                            glowColor = MaterialTheme.colorScheme.primary,
+                            isPremium = usePremiumGlass,
+                            width = 80.dp,
+                            height = 48.dp,
+                            config = GlassEffectConfig.NavigationCapsule,
+                            modifier = Modifier
+                                .offset(x = capsuleOffset.dp),
+                            onClick = { }
+                        ) {
+                            // 内容为空，只需要背景效果
+                        }
+                    }
+
+                    // 导航按钮
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(64.dp),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        navItems.forEach { item ->
+                            val selected = currentRoute == item.route
+
+                            NavItemButton(
+                                item = item,
+                                selected = selected,
+                                onClick = { onNavigate(item.route) }
+                            )
+                        }
                     }
                 }
             }
@@ -212,14 +255,9 @@ private fun NavItemButton(
         label = "scale"
     )
 
-    val backgroundColor = when {
-        selected -> MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)
-        else -> Color.Transparent
-    }
-
     val contentColor = when {
         selected -> MaterialTheme.colorScheme.primary
-        else -> Color.White.copy(alpha = 0.5f)
+        else -> Color.White  // 非选中状态改为纯白
     }
 
     val iconScale by animateFloatAsState(
@@ -233,11 +271,10 @@ private fun NavItemButton(
 
     Column(
         modifier = Modifier
-            .width(76.dp)
+            .width(80.dp)
             .height(48.dp)
             .scale(scale)
             .clip(RoundedCornerShape(24.dp))
-            .background(backgroundColor)
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,

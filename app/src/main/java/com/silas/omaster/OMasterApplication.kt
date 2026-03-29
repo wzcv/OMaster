@@ -3,8 +3,9 @@ package com.silas.omaster
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
-import com.silas.omaster.data.local.SettingsManager
+import com.silas.omaster.data.config.ConfigCenter
 import com.silas.omaster.util.HapticSettings
+import com.silas.omaster.util.Logger
 
 class OMasterApplication : Application() {
     companion object {
@@ -23,8 +24,11 @@ class OMasterApplication : Application() {
         instance = this
         prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
+        // 初始化日志系统
+        Logger.init(this)
+
         // 初始化震动设置
-        HapticSettings.enabled = SettingsManager.getInstance(this).isVibrationEnabled
+        HapticSettings.enabled = ConfigCenter.getInstance(this).isVibrationEnabled
     }
 
     fun hasUserAgreed(): Boolean {

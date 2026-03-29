@@ -1,6 +1,8 @@
 package com.silas.omaster.util
 
 import android.content.Context
+import com.silas.omaster.data.config.ConfigCenter
+import com.silas.omaster.data.config.SubscriptionConfig
 import com.silas.omaster.model.MasterPreset
 import com.silas.omaster.model.PresetList
 import com.google.gson.Gson
@@ -44,6 +46,27 @@ object JsonUtil {
     var currentPresetsVersion: Int = 2
         private set
 
+    private const val PREFS_NAME = "json_util_prefs"
+    private const val KEY_MIGRATION_DONE = "migration_done"
+
+    /**
+     * 检查是否已经完成数据迁移
+     */
+    private fun isMigrationDone(context: Context): Boolean {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .getBoolean(KEY_MIGRATION_DONE, false)
+    }
+
+    /**
+     * 标记数据迁移已完成
+     */
+    private fun setMigrationDone(context: Context) {
+        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putBoolean(KEY_MIGRATION_DONE, true)
+            .apply()
+    }
+
     /**
      * 【内置预设加载方法】
      * 从 assets 目录加载 presets.json 文件
@@ -61,33 +84,33 @@ object JsonUtil {
     fun loadPresets(context: Context, fileName: String = "presets.json"): List<MasterPreset> {
         // 如果已有缓存，直接返回缓存（性能优化）
         cachedPresets?.let {
-            android.util.Log.d("JsonUtil", "Returning cached presets, count: ${it.size}")
+            Logger.d("JsonUtil", "Returning cached presets, count: ${it.size}")
             return it
         }
 
         // 特殊逻辑：检查是否存在旧版的远程更新文件（presets_remote.json）
-        // 如果存在，说明用户是从旧版本升级上来的，需要提示迁移
+        // 如果存在且未完成迁移，说明用户是从旧版本升级上来的，需要提示迁移
         val oldRemoteFile = java.io.File(context.filesDir, "presets_remote.json")
-        if (oldRemoteFile.exists()) {
-            android.util.Log.d("JsonUtil", "Old remote presets file detected, triggering migration")
+        if (oldRemoteFile.exists() && !isMigrationDone(context)) {
+            Logger.d("JsonUtil", "Old remote presets file detected, triggering migration")
             currentPresetsVersion = 1
         } else {
-            // 如果不存在旧文件，默认设为当前最新版本
+            // 如果不存在旧文件或已完成迁移，默认设为当前最新版本
             currentPresetsVersion = 2
         }
 
         val allPresets = mutableListOf<MasterPreset>()
-        
-        val subManager = com.silas.omaster.data.local.SubscriptionManager.getInstance(context)
-        val subscriptions = subManager.subscriptionsFlow.value
+
+        val config = ConfigCenter.getInstance(context)
+        val subscriptions = config.subscriptionsFlow.value
 
         // 1. 加载所有开启的订阅预设
         try {
             val enabledSubs = subscriptions.filter { it.isEnabled }
-            
+
             for (sub in enabledSubs) {
                 // 检查是否存在下载的订阅文件
-                val subFile = java.io.File(context.filesDir, subManager.getFileNameForUrl(sub.url))
+                val subFile = java.io.File(context.filesDir, config.getSubscriptionFileName(sub.url))
                 if (subFile.exists()) {
                     // 如果存在订阅文件，加载它
                     try {
@@ -97,17 +120,16 @@ object JsonUtil {
                                 val presetList: PresetList? = gson.fromJson(reader, presetListType)
                                 if (presetList != null) {
                                     val processed = processPresets(presetList.presets ?: emptyList(), sub.url)
-                                    if (sub.url == UpdateConfigManager.DEFAULT_PRESET_URL) {
-                                        currentPresetsVersion = presetList.version
-                                    }
+                                    // 注意：不再从订阅文件读取 version 覆盖 currentPresetsVersion
+                                    // currentPresetsVersion 只用于检测 presets_remote.json 旧文件迁移
                                     allPresets.addAll(processed)
                                 }
                             }
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("JsonUtil", "Failed to load sub file: ${sub.url}", e)
+                        Logger.e("JsonUtil", "Failed to load sub file: ${sub.url}", e)
                     }
-                } else if (sub.url == UpdateConfigManager.DEFAULT_PRESET_URL) {
+                } else if (sub.url == SubscriptionConfig.DEFAULT_PRESET_URL) {
                     // 如果是官方订阅但文件不存在，则从 assets 加载
                     try {
                         context.assets.open(fileName).use { inputStream ->
@@ -122,26 +144,26 @@ object JsonUtil {
                             }
                         }
                     } catch (e: Exception) {
-                        android.util.Log.e("JsonUtil", "Failed to load presets from assets", e)
+                        Logger.e("JsonUtil", "Failed to load presets from assets", e)
                     }
                 }
             }
         } catch (e: Exception) {
-            android.util.Log.e("JsonUtil", "Failed to load presets from subscriptions", e)
+            Logger.e("JsonUtil", "Failed to load presets from subscriptions", e)
         }
 
         // 如果没有任何预设，返回空
         if (allPresets.isEmpty()) return emptyList()
 
         cachedPresets = allPresets
-        android.util.Log.d("JsonUtil", "Total presets loaded: ${allPresets.size}")
+        Logger.d("JsonUtil", "Total presets loaded: ${allPresets.size}")
         return allPresets
     }
 
     private fun processPresets(presets: List<MasterPreset>, sourceId: String): List<MasterPreset> {
         return presets.mapIndexed { index, preset ->
             // 对于官方内置预设，无论从 assets 还是远程加载，都保持一致的 ID
-            val effectiveSourceId = if (sourceId == "asset" || sourceId == UpdateConfigManager.DEFAULT_PRESET_URL) {
+            val effectiveSourceId = if (sourceId == "asset" || sourceId == SubscriptionConfig.DEFAULT_PRESET_URL) {
                 "official"
             } else {
                 sourceId
@@ -218,7 +240,7 @@ object JsonUtil {
      */
     fun invalidateCache() {
         cachedPresets = null
-        android.util.Log.d("JsonUtil", "Cache invalidated")
+        Logger.d("JsonUtil", "Cache invalidated")
     }
 
     /**
@@ -229,11 +251,14 @@ object JsonUtil {
             val remoteFile = java.io.File(context.filesDir, "presets_remote.json")
             if (remoteFile.exists()) {
                 remoteFile.delete()
-                android.util.Log.d("JsonUtil", "Deleted remote presets file for migration")
+                Logger.d("JsonUtil", "Deleted remote presets file for migration")
             }
+            // 标记迁移已完成，防止重复弹窗
+            setMigrationDone(context)
+            Logger.d("JsonUtil", "Migration marked as done")
             invalidateCache()
         } catch (e: Exception) {
-            android.util.Log.e("JsonUtil", "Failed to delete remote presets file", e)
+            Logger.e("JsonUtil", "Failed to delete remote presets file", e)
         }
     }
 }

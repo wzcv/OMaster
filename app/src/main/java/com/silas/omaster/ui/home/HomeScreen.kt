@@ -56,6 +56,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.res.stringResource
 import com.silas.omaster.R
+import com.silas.omaster.data.config.ConfigCenter
 import com.silas.omaster.data.repository.PresetRepository
 import com.silas.omaster.model.MasterPreset
 import com.silas.omaster.ui.animation.AnimationSpecs
@@ -80,6 +81,7 @@ import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.unit.sp
+import android.widget.Toast
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -88,12 +90,13 @@ fun HomeScreen(
     onNavigateToCreate: () -> Unit,
     onScrollStateChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    refreshTrigger: Int = 0
+    refreshTrigger: Int = 0,
+    usePremiumGlass: Boolean = true
 ) {
     val context = LocalContext.current
     val repository = remember { PresetRepository.getInstance(context) }
     val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModelFactory(repository)
+        factory = HomeViewModelFactory(repository, context)
     )
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()
@@ -110,7 +113,18 @@ fun HomeScreen(
         }
     }
 
-    val pagerState = rememberPagerState(pageCount = { 3 })
+    // 读取默认启动 Tab 设置
+    val config = remember { ConfigCenter.getInstance(context) }
+    val defaultStartTab by config.defaultStartTabFlow.collectAsState()
+
+    val pagerState = rememberPagerState(initialPage = defaultStartTab, pageCount = { 3 })
+    
+    // 初始化时同步默认 Tab
+    LaunchedEffect(Unit) {
+        if (selectedTab != defaultStartTab) {
+            viewModel.selectTab(defaultStartTab)
+        }
+    }
 
     // 全局悬浮窗控制器
     val floatingWindowController = remember { FloatingWindowController.getInstance(context) }
@@ -129,11 +143,15 @@ fun HomeScreen(
     // 删除确认对话框状态
     var showDeleteConfirm by remember { mutableStateOf(false) }
     var presetToDelete by remember { mutableStateOf<String?>(null) }
+    
+    // 提取 usePremiumGlass 为局部变量，便于在 lambda 中使用
+    val usePremiumGlassLocal = usePremiumGlass
 
     // 同步 Tab 和 Pager 的状态
     LaunchedEffect(selectedTab) {
         if (pagerState.currentPage != selectedTab) {
-            pagerState.animateScrollToPage(selectedTab)
+            // 禁用动画，直接跳转，避免动画过程中的中间状态导致页面卡住
+            pagerState.scrollToPage(selectedTab)
         }
     }
 
@@ -243,7 +261,8 @@ fun HomeScreen(
                                 showDeleteConfirm = true
                             },
                             onScrollStateChanged = onScrollStateChanged,
-                            onRefresh = { onComplete -> viewModel.refresh(onComplete) }
+                            onRefresh = { onComplete -> viewModel.refresh(onComplete) },
+                            usePremiumGlass = usePremiumGlass
                         )
                         1 -> PresetGrid(
                             presets = favorites,
@@ -256,7 +275,8 @@ fun HomeScreen(
                             },
                             onScrollStateChanged = onScrollStateChanged,
                             showLoadingTip = false,
-                            onRefresh = { onComplete -> viewModel.refresh(onComplete) }
+                            onRefresh = { onComplete -> viewModel.refresh(onComplete) },
+                            usePremiumGlass = usePremiumGlass
                         )
                         2 -> PresetGrid(
                             presets = customPresets,
@@ -270,7 +290,8 @@ fun HomeScreen(
                             showLoadingTip = false,
                             showTopHint = false,
                             onScrollStateChanged = onScrollStateChanged,
-                            onRefresh = { onComplete -> viewModel.refresh(onComplete) }
+                            onRefresh = { onComplete -> viewModel.refresh(onComplete) },
+                            usePremiumGlass = usePremiumGlass
                         )
                     }
                 }
@@ -355,16 +376,31 @@ private fun PresetGrid(
     onScrollStateChanged: (Boolean) -> Unit = {},
     showLoadingTip: Boolean = true,
     showTopHint: Boolean = false,
-    onRefresh: (onComplete: () -> Unit) -> Unit = {}
+    onRefresh: (onComplete: (HomeViewModel.RefreshResult) -> Unit) -> Unit = {},
+    usePremiumGlass: Boolean = true
 ) {
     val listState = rememberLazyStaggeredGridState()
     val haptic = LocalHapticFeedback.current
+    val context = LocalContext.current
 
     // Pull-to-refresh state
     var refreshing by remember { mutableStateOf(false) }
     val pullRefreshState = rememberPullRefreshState(refreshing, onRefresh = {
         refreshing = true
-        onRefresh { refreshing = false }
+        onRefresh { result ->
+            refreshing = false
+            // 显示刷新结果 Toast
+            val message = when (result) {
+                is HomeViewModel.RefreshResult.Success -> "成功更新 ${result.count} 个订阅"
+                is HomeViewModel.RefreshResult.PartialUpdate -> "成功更新 ${result.updated} 个，${result.upToDate} 个已是最新"
+                is HomeViewModel.RefreshResult.UpToDate -> "所有订阅均已是最新"
+                is HomeViewModel.RefreshResult.Failed -> "更新失败，请检查网络"
+                is HomeViewModel.RefreshResult.NoSubscriptions -> ""
+            }
+            if (message.isNotEmpty()) {
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            }
+        }
     })
 
     // Remove the problematic LaunchedEffect
@@ -444,11 +480,11 @@ private fun PresetGrid(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    top = 8.dp,
-                    bottom = 100.dp
+                    top = 12.dp,  // 优化：顶部边距增加，与 Tab 栏呼吸感更好
+                    bottom = 80.dp  // 优化：底部边距减少，更紧凑
                 ),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),  // 优化：水平间距从 12dp 增加到 16dp
-                verticalItemSpacing = 16.dp,  // 优化：垂直间距从 12dp 增加到 16dp
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalItemSpacing = 16.dp,
                 modifier = Modifier.fillMaxSize()
             ) {
                 if (showTopHint) {
@@ -472,11 +508,13 @@ private fun PresetGrid(
                     items = presets,
                     key = { index, preset -> preset.id?.let { "${it}_$index" } ?: "preset_$index" }
                 ) { index, preset ->
+                    // 优化：更 subtle 的高度差，视觉更和谐
                     val imageHeight = remember(index) {
-                        when (index % 3) {
-                            0 -> 220
-                            1 -> 180
-                            else -> 260
+                        when (index % 4) {
+                            0 -> 200  // 标准
+                            1 -> 170  // 稍矮
+                            2 -> 230  // 稍高
+                            else -> 190  // 接近标准
                         }
                     }
 
@@ -498,6 +536,7 @@ private fun PresetGrid(
                             onNavigateToDetail = onNavigateToDetail,
                             onToggleFavorite = onToggleFavorite,
                             onDeletePreset = onDeletePreset,
+                            usePremiumGlass = usePremiumGlass,
                             modifier = Modifier.animateItem(
                                 fadeInSpec = ListItemFadeInSpec,
                                 placementSpec = ListItemPlacementSpec
@@ -535,6 +574,7 @@ private fun PresetCardItem(
     onNavigateToDetail: (MasterPreset) -> Unit,
     onToggleFavorite: (String) -> Unit,
     onDeletePreset: (String) -> Unit,
+    usePremiumGlass: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     // 使用统一的动画状态管理，减少 Animatable 实例
@@ -574,7 +614,8 @@ private fun PresetCardItem(
             onDeleteClick = { onDeletePreset(preset.id!!) },
             showFavoriteButton = true,
             showDeleteButton = tabIndex == 2,
-            imageHeight = imageHeight
+            imageHeight = imageHeight,
+            usePremiumGlass = usePremiumGlass
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.silas.omaster
 
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -46,13 +47,16 @@ import com.silas.omaster.ui.home.HomeScreen
 import com.silas.omaster.ui.service.FloatingWindowController
 import com.silas.omaster.ui.theme.OMasterTheme
 import com.silas.omaster.util.JsonUtil
+import com.silas.omaster.util.LanguageUtil
 import com.silas.omaster.util.VersionInfo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.Serializable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.silas.omaster.data.repository.PresetRepository
 
 import androidx.compose.runtime.collectAsState
-import com.silas.omaster.data.local.SettingsManager
+import com.silas.omaster.data.config.ConfigCenter
 import com.silas.omaster.ui.settings.SettingsScreen
 import com.silas.omaster.ui.xposed.XposedToolScreen
 
@@ -95,6 +99,12 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var floatingWindowController: FloatingWindowController
 
+    override fun attachBaseContext(newBase: Context?) {
+        // 在 Activity 创建前应用语言设置
+        val context = newBase?.let { LanguageUtil.applyLanguage(it) }
+        super.attachBaseContext(context)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -105,8 +115,8 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             CompositionLocalProvider(LocalActivity provides this) {
-                val settingsManager = remember { SettingsManager.getInstance(applicationContext) }
-                val currentTheme by settingsManager.themeFlow.collectAsState()
+                val config = remember { ConfigCenter.getInstance(applicationContext) }
+                val currentTheme by config.themeFlow.collectAsState()
 
                 OMasterTheme(brandTheme = currentTheme) {
                     Surface(
@@ -128,7 +138,10 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         } else {
-                            MainApp(navController = navController)
+                            MainApp(
+                                navController = navController,
+                                config = config
+                            )
                         }
                     }
                 }
@@ -176,7 +189,10 @@ fun WelcomeFlow(
 }
 
 @Composable
-fun MainApp(navController: NavHostController) {
+fun MainApp(
+    navController: NavHostController,
+    config: ConfigCenter
+) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
 
@@ -184,8 +200,17 @@ fun MainApp(navController: NavHostController) {
     val repository = remember { PresetRepository.getInstance(context) }
     var showMigrationDialog by remember { mutableStateOf(false) }
 
+    // 检查是否需要数据迁移
     LaunchedEffect(Unit) {
-        if (JsonUtil.currentPresetsVersion != 2) {
+        // 先触发 loadPresets 来正确检测版本
+        // 使用 IO 线程避免阻塞 UI
+        withContext(Dispatchers.IO) {
+            JsonUtil.loadPresets(context)
+        }
+        
+        // 现在 currentPresetsVersion 已经被正确设置
+        // 支持 version 2 和 3，只有旧版本 (version 1) 才需要迁移
+        if (JsonUtil.currentPresetsVersion == 1) {
             showMigrationDialog = true
         }
     }
@@ -222,16 +247,18 @@ fun MainApp(navController: NavHostController) {
 
     val showBottomNav = currentRoute?.contains("Home") == true || 
                         currentRoute?.contains("About") == true || 
-                        currentRoute?.contains("Subscription") == true || 
-                        currentRoute?.contains("Settings") == true
+                        currentRoute?.contains("Subscription") == true
 
     var isHomeScrollingUp by remember { mutableStateOf(true) }
     
     // 用于触发 HomeScreen 刷新的状态
     var refreshTrigger by remember { mutableStateOf(0) }
+    
+    // 读取高级 Glass 质感配置
+    val usePremiumGlass by config.premiumGlassFlow.collectAsState()
 
     // 底部导航栏页面顺序，用于决定切换动画方向
-    val mainRouteList = remember { listOf("Home", "Subscription", "Settings", "About") }
+    val mainRouteList = remember { listOf("Home", "Subscription", "About") }
     fun getNavIndex(route: String?): Int {
         return mainRouteList.indexOfFirst { route?.contains(it) == true }
     }
@@ -339,7 +366,8 @@ fun MainApp(navController: NavHostController) {
                     onScrollStateChanged = { isScrollingUp ->
                         isHomeScrollingUp = isScrollingUp
                     },
-                    refreshTrigger = refreshTrigger
+                    refreshTrigger = refreshTrigger,
+                    usePremiumGlass = usePremiumGlass
                 )
             }
 
@@ -448,8 +476,14 @@ fun MainApp(navController: NavHostController) {
                     onBack = {
                         navController.popBackStack()
                     },
+                    onNavigateToSettings = {
+                        navController.navigate(Screen.Settings)
+                    },
                     onScrollStateChanged = { isScrollingUp ->
                         isHomeScrollingUp = isScrollingUp
+                    },
+                    onNavigateToPrivacyPolicy = {
+                        navController.navigate(Screen.PrivacyPolicy)
                     },
                     currentVersionCode = VersionInfo.VERSION_CODE,
                     currentVersionName = VersionInfo.VERSION_NAME
@@ -466,6 +500,14 @@ fun MainApp(navController: NavHostController) {
                     }
                 )
             }
+
+            composable<Screen.PrivacyPolicy> {
+                PrivacyPolicyScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         if (showBottomNav) {
@@ -475,7 +517,6 @@ fun MainApp(navController: NavHostController) {
                     currentRoute?.contains("Home") == true -> "home"
                     currentRoute?.contains("Subscription") == true -> "subscription"
                     currentRoute?.contains("About") == true -> "about"
-                    currentRoute?.contains("Settings") == true -> "settings"
                     else -> "home"
                 },
                 onNavigate = { route ->
@@ -488,17 +529,6 @@ fun MainApp(navController: NavHostController) {
                         "subscription" -> {
                             if (currentRoute?.contains("Subscription") != true) {
                                 navController.navigate(Screen.Subscription) {
-                                    popUpTo(Screen.Home) {
-                                        saveState = true
-                                    }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            }
-                        }
-                        "settings" -> {
-                            if (currentRoute?.contains("Settings") != true) {
-                                navController.navigate(Screen.Settings) {
                                     popUpTo(Screen.Home) {
                                         saveState = true
                                     }
@@ -520,7 +550,8 @@ fun MainApp(navController: NavHostController) {
                         }
                     }
                 },
-                modifier = Modifier.align(Alignment.BottomCenter)
+                modifier = Modifier.align(Alignment.BottomCenter),
+                usePremiumGlass = usePremiumGlass
             )
         }
     }

@@ -62,6 +62,20 @@ fun PrivacyPolicyContent(
 
         Spacer(modifier = Modifier.height(12.dp))
 
+        PolicySection(
+            title = stringResource(R.string.local_storage_title),
+            content = stringResource(R.string.local_storage_desc)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
+        PolicySection(
+            title = stringResource(R.string.permission_title),
+            content = stringResource(R.string.permission_desc)
+        )
+
+        Spacer(modifier = Modifier.height(12.dp))
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -128,7 +142,7 @@ fun PrivacyPolicyContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = stringResource(R.string.last_updated, "2026-02-09"),
+            text = stringResource(R.string.last_updated, "2025-03-24"),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
             textAlign = TextAlign.Center,

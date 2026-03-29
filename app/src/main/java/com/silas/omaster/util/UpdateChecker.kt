@@ -1,48 +1,41 @@
 package com.silas.omaster.util
 
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
+import android.os.Environment
 import android.util.Log
+import androidx.core.content.FileProvider
+import com.silas.omaster.data.local.UpdateChannel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONObject
+import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 import com.silas.omaster.R
 
 /**
- * GitHub 更新检查工具
- * 从 GitHub Releases API 获取最新版本信息
- * 
- * 【国内下载方案】
- * 在 GitHub Release 的 body 中按以下格式填写国内下载链接：
- * 
- * ## 更新内容
- * - 新增 xxx 功能
- * - 修复 xxx 问题
- * 
- * ## 下载地址
- * - 国内下载：https://www.pgyer.com/omaster
- * - 备用下载：https://wwp.lanzoup.com/xxxx
- * 
- * 支持的关键字：国内下载、备用下载、蒲公英、蓝奏云
+ * 更新检查工具
+ * 支持 GitHub 和 Gitee 双渠道更新检查
  */
 object UpdateChecker {
 
     private const val TAG = "UpdateChecker"
-    private const val GITHUB_API_URL = "https://api.github.com/repos/iCurrer/OMaster/releases/latest"
-    private const val GITHUB_RELEASE_URL = "https://github.com/iCurrer/OMaster/releases/latest"
 
-    /**
-     * 更新信息数据类
-     * 
-     * @param versionName 版本名称
-     * @param versionCode 版本号
-     * @param downloadUrl 国内下载链接（优先）或 GitHub 链接
-     * @param releaseNotes 更新日志（已清理下载链接部分）
-     * @param isNewer 是否为新版本
-     */
+    // GitHub 配置
+    private const val GITHUB_OWNER = "iCurrer"
+    private const val GITHUB_REPO = "OMaster"
+    private const val GITHUB_API_URL = "https://api.github.com/repos/$GITHUB_OWNER/$GITHUB_REPO/releases/latest"
+
+    // Gitee 配置
+    private const val GITEE_OWNER = "qiublog"
+    private const val GITEE_REPO = "OMaster"
+    private const val GITEE_API_URL = "https://gitee.com/api/v5/repos/$GITEE_OWNER/$GITEE_REPO/releases/latest"
+
     data class UpdateInfo(
         val versionName: String,
         val versionCode: Int,
@@ -52,165 +45,277 @@ object UpdateChecker {
     )
 
     /**
-     * 检查更新
+     * 检查更新（根据渠道选择）
+     * @param context 上下文
      * @param currentVersionCode 当前版本号
-     * @return 版本信息，如果失败返回 null
+     * @param channel 更新渠道，默认 Gitee
+     * @return 更新信息，失败返回 null
      */
-    suspend fun checkUpdate(context: Context, currentVersionCode: Int): UpdateInfo? = withContext(Dispatchers.IO) {
+    suspend fun checkUpdate(
+        context: Context,
+        currentVersionCode: Int,
+        channel: UpdateChannel = UpdateChannel.GITEE
+    ): UpdateInfo? = withContext(Dispatchers.IO) {
+        return@withContext when (channel) {
+            UpdateChannel.GITEE -> checkGiteeUpdate(context, currentVersionCode)
+            UpdateChannel.GITHUB -> checkGithubUpdate(context, currentVersionCode)
+        }
+    }
+
+    /**
+     * Gitee 更新检查
+     */
+    private suspend fun checkGiteeUpdate(context: Context, currentVersionCode: Int): UpdateInfo? {
+        return checkUpdateFromApi(context, currentVersionCode, GITEE_API_URL, isGitee = true)
+    }
+
+    /**
+     * GitHub 更新检查
+     */
+    private suspend fun checkGithubUpdate(context: Context, currentVersionCode: Int): UpdateInfo? {
+        return checkUpdateFromApi(context, currentVersionCode, GITHUB_API_URL, isGitee = false)
+    }
+
+    /**
+     * 通用 API 检查逻辑
+     */
+    private fun checkUpdateFromApi(
+        context: Context,
+        currentVersionCode: Int,
+        apiUrl: String,
+        isGitee: Boolean
+    ): UpdateInfo? {
         try {
-            val url = URL(GITHUB_API_URL)
+            val url = URL(apiUrl)
             val connection = url.openConnection() as HttpURLConnection
             connection.apply {
                 requestMethod = "GET"
-                setRequestProperty("Accept", "application/vnd.github.v3+json")
-                connectTimeout = 10000
-                readTimeout = 10000
+                connectTimeout = 15000
+                readTimeout = 15000
+                // GitHub 需要特殊请求头
+                if (!isGitee) {
+                    setRequestProperty("Accept", "application/vnd.github.v3+json")
+                }
             }
 
-            val responseCode = connection.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
+            if (connection.responseCode == HttpURLConnection.HTTP_OK) {
                 val response = connection.inputStream.bufferedReader().use { it.readText() }
                 val json = JSONObject(response)
 
-                // 解析版本信息
-                val tagName = json.getString("tag_name") // 例如 "v1.1.0"
+                val tagName = json.getString("tag_name")
                 val versionName = tagName.removePrefix("v")
-
-                // 从 tag_name 解析 versionCode (1.1.0 -> 10100)
                 val versionCode = VersionInfo.parseVersionCode(versionName)
 
-                // 获取 GitHub 下载链接（作为备用）
+                // 获取 app-universal-release.apk 下载链接
                 val assets = json.getJSONArray("assets")
-                var githubDownloadUrl = GITHUB_RELEASE_URL
+                var downloadUrl = ""
                 for (i in 0 until assets.length()) {
                     val asset = assets.getJSONObject(i)
                     val assetName = asset.getString("name")
-                    if (assetName.endsWith(".apk", ignoreCase = true)) {
-                        githubDownloadUrl = asset.getString("browser_download_url")
+                    // 两个渠道都使用固定文件名
+                    if (assetName == "app-universal-release.apk") {
+                        downloadUrl = asset.getString("browser_download_url")
                         break
                     }
                 }
 
-                // 获取原始更新日志
-                val rawReleaseNotes = json.optString("body", context.getString(R.string.no_release_notes))
-                
-                // 【新增】解析国内下载链接
-                val domesticUrl = extractDomesticUrl(rawReleaseNotes)
-                
-                // 【新增】清理更新日志，移除下载链接部分
-                val cleanReleaseNotes = cleanReleaseNotes(rawReleaseNotes)
-                
-                // 优先使用国内链接，如果没有则使用 GitHub 链接
-                val finalDownloadUrl = domesticUrl ?: githubDownloadUrl
-                
-                if (domesticUrl != null) {
-                    Log.d(TAG, "使用国内下载链接: $domesticUrl")
-                } else {
-                    Log.d(TAG, "未找到国内下载链接，使用 GitHub 链接: $githubDownloadUrl")
-                }
+                val releaseNotes = json.optString("body", context.getString(R.string.no_release_notes))
 
-                // 判断是否为新版本
-                val isNewer = versionCode > currentVersionCode
-
-                UpdateInfo(
+                return UpdateInfo(
                     versionName = versionName,
                     versionCode = versionCode,
-                    downloadUrl = finalDownloadUrl,
-                    releaseNotes = cleanReleaseNotes,
-                    isNewer = isNewer
+                    downloadUrl = downloadUrl,
+                    releaseNotes = releaseNotes,
+                    isNewer = versionCode > currentVersionCode && downloadUrl.isNotEmpty()
                 )
             } else {
-                Log.e(TAG, "检查更新失败，HTTP 状态码: $responseCode")
-                null
+                Log.e(TAG, "检查更新失败，HTTP 状态码: ${connection.responseCode}")
+                return null
             }
         } catch (e: Exception) {
-            Log.e(TAG, "检查更新出错", e)
+            Log.e(TAG, "检查更新出错 [${if (isGitee) "Gitee" else "GitHub"}]", e)
+            return null
+        }
+    }
+
+    /**
+     * 使用系统 DownloadManager 下载并安装
+     * @return 下载任务 ID，用于查询进度
+     */
+    fun downloadAndInstall(context: Context, downloadUrl: String, versionName: String): Long {
+        val fileName = "app-universal-release.apk"
+
+        // 清理旧文件
+        val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+        File(downloadDir, fileName).delete()
+
+        val request = DownloadManager.Request(Uri.parse(downloadUrl)).apply {
+            setTitle("OMaster 更新")
+            setDescription("正在下载 v$versionName...")
+            setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            setDestinationInExternalFilesDir(context, Environment.DIRECTORY_DOWNLOADS, fileName)
+            setAllowedOverMetered(true)
+            setAllowedOverRoaming(true)
+        }
+
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        return downloadManager.enqueue(request)
+    }
+
+    /**
+     * 查询下载进度
+     * @return Pair<下载状态, 进度百分比> 状态：1=等待中, 2=下载中, 4=完成, 8=失败, 16=暂停
+     */
+    fun queryDownloadProgress(context: Context, downloadId: Long): Pair<Int, Int> {
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        val cursor = downloadManager.query(query)
+
+        var status = -1
+        var progress = 0
+
+        if (cursor.moveToFirst()) {
+            status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+
+            when (status) {
+                DownloadManager.STATUS_PENDING -> {
+                    progress = 0
+                }
+                DownloadManager.STATUS_RUNNING -> {
+                    val downloaded = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val total = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                    progress = if (total > 0) ((downloaded * 100) / total).toInt() else 0
+                }
+                DownloadManager.STATUS_SUCCESSFUL -> {
+                    progress = 100
+                }
+                DownloadManager.STATUS_FAILED -> {
+                    progress = -1
+                }
+                DownloadManager.STATUS_PAUSED -> {
+                    val downloaded = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR))
+                    val total = cursor.getLong(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_TOTAL_SIZE_BYTES))
+                    progress = if (total > 0) ((downloaded * 100) / total).toInt() else 0
+                }
+            }
+        }
+        cursor.close()
+        return Pair(status, progress)
+    }
+
+    /**
+     * 取消下载
+     */
+    fun cancelDownload(context: Context, downloadId: Long) {
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        downloadManager.remove(downloadId)
+    }
+}
+
+/**
+ * 下载完成广播接收器（静态注册）
+ */
+class DownloadCompleteReceiver : BroadcastReceiver() {
+
+    override fun onReceive(context: Context, intent: Intent) {
+        val downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+        if (downloadId == -1L) return
+
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val query = DownloadManager.Query().setFilterById(downloadId)
+        val cursor = downloadManager.query(query)
+
+        if (cursor.moveToFirst()) {
+            val status = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_STATUS))
+            if (status == DownloadManager.STATUS_SUCCESSFUL) {
+                // 获取本地文件路径
+                val localUriString = cursor.getString(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_LOCAL_URI))
+                Log.d("DownloadReceiver", "下载完成，URI: $localUriString")
+
+                val apkFile = if (localUriString != null) {
+                    val localUri = Uri.parse(localUriString)
+                    if (localUri.scheme == "file") {
+                        // 直接是文件路径
+                        File(localUri.path!!)
+                    } else {
+                        // content:// URI，尝试通过 ContentResolver 获取真实路径
+                        getFileFromContentUri(context, localUri)
+                    }
+                } else {
+                    // 备用方案：直接找已知文件名
+                    val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                    File(downloadDir, "app-universal-release.apk")
+                }
+
+                if (apkFile != null && apkFile.exists()) {
+                    installApk(context, apkFile)
+                } else {
+                    Log.e("DownloadReceiver", "APK 文件不存在")
+                }
+            } else if (status == DownloadManager.STATUS_FAILED) {
+                val reason = cursor.getInt(cursor.getColumnIndexOrThrow(DownloadManager.COLUMN_REASON))
+                Log.e("DownloadReceiver", "下载失败，错误码: $reason")
+            }
+        }
+        cursor.close()
+    }
+
+    private fun getFileFromContentUri(context: Context, uri: Uri): File? {
+        return try {
+            // 对于 DownloadManager 下载的文件，通常可以直接从 URI 解析
+            if (uri.path?.contains("/Android/data/") == true) {
+                // 提取真实路径
+                val path = uri.path
+                if (path != null) {
+                    File(path)
+                } else null
+            } else {
+                // 备用：通过 ContentResolver 查询
+                context.contentResolver.query(uri, null, null, null, null)?.use { cursor ->
+                    if (cursor.moveToFirst()) {
+                        val displayNameIndex = cursor.getColumnIndex(android.provider.OpenableColumns.DISPLAY_NAME)
+                        if (displayNameIndex != -1) {
+                            val displayName = cursor.getString(displayNameIndex)
+                            val downloadDir = context.getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS)
+                            File(downloadDir, displayName)
+                        } else null
+                    } else null
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("DownloadReceiver", "解析文件路径失败", e)
             null
         }
     }
 
-    /**
-     * 【新增】从 Release Notes 中提取国内下载链接
-     * 
-     * 支持的关键字（按优先级排序）：
-     * 1. 国内下载
-     * 2. 备用下载
-     * 3. 蒲公英
-     * 4. 蓝奏云
-     * 
-     * @param body GitHub Release 的 body 内容
-     * @return 国内下载链接，如果没有找到返回 null
-     */
-    private fun extractDomesticUrl(body: String): String? {
-        val patterns = listOf(
-            // 匹配 "国内下载" 关键字
-            Regex("国内下载[：:]\\s*(https?://[^\\s\\n]+)", RegexOption.IGNORE_CASE),
-            // 匹配 "备用下载" 关键字
-            Regex("备用下载[：:]\\s*(https?://[^\\s\\n]+)", RegexOption.IGNORE_CASE),
-            // 匹配 "蒲公英" 关键字
-            Regex("蒲公英[：:]\\s*(https?://[^\\s\\n]+)", RegexOption.IGNORE_CASE),
-            // 匹配 "蓝奏云" 关键字
-            Regex("蓝奏云[：:]\\s*(https?://[^\\s\\n]+)", RegexOption.IGNORE_CASE),
-            // 匹配 "国内镜像" 关键字
-            Regex("国内镜像[：:]\\s*(https?://[^\\s\\n]+)", RegexOption.IGNORE_CASE),
-            // 匹配 "下载地址" 后面的链接
-            Regex("下载地址[：:]\\s*(https?://[^\\s\\n]+)", RegexOption.IGNORE_CASE)
-        )
-        
-        for (pattern in patterns) {
-            pattern.find(body)?.groupValues?.get(1)?.let { url ->
-                Log.d(TAG, "找到国内下载链接: $url (匹配模式: ${pattern.pattern})")
-                return url
-            }
-        }
-        
-        return null
-    }
+    private fun installApk(context: Context, apkFile: File) {
+        try {
+            Log.d("DownloadReceiver", "准备安装 APK: ${apkFile.absolutePath}, 大小: ${apkFile.length()}")
 
-    /**
-     * 【新增】清理更新日志，移除下载链接部分
-     * 
-     * 保留 "## 下载地址" 或 "国内下载" 之前的所有内容
-     * 让更新日志更干净，不包含下载链接
-     * 
-     * @param body 原始 Release Notes
-     * @return 清理后的更新日志
-     */
-    private fun cleanReleaseNotes(body: String): String {
-        // 按优先级查找需要截断的位置
-        val cutPoints = listOf(
-            "## 下载地址",
-            "## 国内下载",
-            "## 备用下载",
-            "国内下载：",
-            "国内下载:",
-            "备用下载：",
-            "备用下载:",
-            "下载地址：",
-            "下载地址:"
-        )
-        
-        var result = body
-        for (cutPoint in cutPoints) {
-            val index = result.indexOf(cutPoint, ignoreCase = true)
-            if (index != -1) {
-                result = result.substring(0, index).trim()
-                Log.d(TAG, "清理更新日志，截断点: $cutPoint")
-                break
-            }
-        }
-        
-        // 如果清理后为空，返回原始内容
-        return if (result.isBlank()) body.trim() else result
-    }
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                val apkUri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile)
+                } else {
+                    Uri.fromFile(apkFile)
+                }
 
-    /**
-     * 打开浏览器下载页面
-     * @param context 上下文
-     * @param url 下载链接（优先使用国内链接）
-     */
-    fun openDownloadPage(context: Context, url: String = GITHUB_RELEASE_URL) {
-        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
-        context.startActivity(intent)
+                setDataAndType(apkUri, "application/vnd.android.package-archive")
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+            }
+
+            // 检查是否有应用可以处理这个 intent
+            if (intent.resolveActivity(context.packageManager) != null) {
+                context.startActivity(intent)
+                Log.d("DownloadReceiver", "已启动安装界面")
+            } else {
+                Log.e("DownloadReceiver", "没有找到可以处理安装的应用")
+            }
+        } catch (e: Exception) {
+            Log.e("DownloadReceiver", "安装失败: ${e.message}", e)
+        }
     }
 }

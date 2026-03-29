@@ -7,8 +7,12 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import com.silas.omaster.ui.components.glass.GlassButton
+import com.silas.omaster.ui.components.glass.GlassEffectConfig
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -28,6 +32,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -40,6 +46,7 @@ import com.silas.omaster.model.MasterPreset
 import com.silas.omaster.ui.theme.CardBorderHighlight
 import com.silas.omaster.ui.theme.CardBorderLight
 import com.silas.omaster.ui.theme.DarkGray
+import com.silas.omaster.ui.theme.GlassColors
 import com.silas.omaster.util.PresetI18n
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -54,40 +61,45 @@ fun PresetCard(
     showFavoriteButton: Boolean = false,
     showDeleteButton: Boolean = false,
     modifier: Modifier = Modifier,
-    imageHeight: Int = 200
+    imageHeight: Int = 200,
+    usePremiumGlass: Boolean = true
 ) {
     val interactionSource = remember { MutableInteractionSource() }
     val isPressed by interactionSource.collectIsPressedAsState()
     val haptic = LocalHapticFeedback.current
-    
-    val borderColor = if (isPressed) CardBorderHighlight else CardBorderLight
-    val borderWidth = if (isPressed) 1.5.dp else 1.dp
 
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .border(
-                width = borderWidth,
-                color = borderColor,
-                shape = RoundedCornerShape(16.dp)
-            )
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = {
-                    haptic.perform(HapticFeedbackType.TextHandleMove)
-                    onClick()
-                }
+                onClick = onClick
             ),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = DarkGray
         ),
         elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isPressed) 8.dp else 4.dp
+            defaultElevation = if (isPressed) 10.dp else 5.dp
         )
     ) {
-        Column {
+        Box {
+            // Glass 效果层
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .border(
+                        width = if (isPressed) 1.5.dp else 1.dp,
+                        color = if (isPressed)
+                            GlassColors.BorderHighlight
+                        else
+                            GlassColors.BorderOuter,
+                        shape = RoundedCornerShape(16.dp)
+                    )
+            )
+
+            // 图片区域
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,68 +112,60 @@ fun PresetCard(
                 )
 
                 if (showFavoriteButton) {
-                    IconButton(
-            onClick = {
-                haptic.perform(HapticFeedbackType.ToggleOn)
-                onFavoriteClick()
-            },
-            modifier = Modifier
-                .align(Alignment.TopEnd)
-                .padding(8.dp)
-                .size(36.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .size(28.dp)
-                    .background(
-                        color = if (preset.isFavorite) 
-                            MaterialTheme.colorScheme.primary.copy(alpha = 0.2f) 
-                        else 
-                            Color.Black.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(14.dp)
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = if (preset.isFavorite)
-                        Icons.Filled.Favorite
-                    else
-                        Icons.Outlined.FavoriteBorder,
-                    contentDescription = if (preset.isFavorite) stringResource(R.string.preset_favorited) else stringResource(R.string.preset_favorite),
-                    tint = if (preset.isFavorite) MaterialTheme.colorScheme.primary else Color.White,
-                    modifier = Modifier.size(18.dp)
-                )
-            }
-        }
+                    // 统一使用 GlassButton 组件，根据 usePremiumGlass 参数切换模式
+                    GlassButton(
+                        isActive = preset.isFavorite,
+                        glowColor = MaterialTheme.colorScheme.primary,
+                        isPremium = usePremiumGlass,
+                        size = 36.dp,
+                        config = GlassEffectConfig.DefaultButton,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp),
+                        onClick = {
+                            haptic.perform(HapticFeedbackType.ToggleOn)
+                            onFavoriteClick()
+                        }
+                    ) {
+                        Icon(
+                            imageVector = if (preset.isFavorite)
+                                Icons.Filled.Favorite
+                            else
+                                Icons.Outlined.FavoriteBorder,
+                            contentDescription = if (preset.isFavorite)
+                                stringResource(R.string.preset_favorited)
+                            else
+                                stringResource(R.string.preset_favorite),
+                            tint = if (preset.isFavorite)
+                                MaterialTheme.colorScheme.primary
+                            else
+                                Color.White.copy(alpha = 0.95f),
+                            modifier = Modifier.size(18.dp)
+                        )
+                    }
                 }
 
                 if (showDeleteButton && preset.isCustom) {
-                    IconButton(
+                    // 统一使用 GlassButton 组件，根据 usePremiumGlass 参数切换模式
+                    GlassButton(
+                        isActive = false,
+                        glowColor = MaterialTheme.colorScheme.error,
+                        isPremium = usePremiumGlass,
+                        size = 36.dp,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .padding(8.dp),
                         onClick = {
                             haptic.perform(HapticFeedbackType.Confirm)
                             onDeleteClick()
-                        },
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(8.dp)
-                            .size(36.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .size(28.dp)
-                                .background(
-                                    color = Color.Black.copy(alpha = 0.3f),
-                                    shape = RoundedCornerShape(14.dp)
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = stringResource(R.string.preset_delete),
-                                tint = Color.Red,
-                                modifier = Modifier.size(18.dp)
-                            )
                         }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Delete,
+                            contentDescription = stringResource(R.string.preset_delete),
+                            tint = MaterialTheme.colorScheme.error.copy(alpha = 0.9f),
+                            modifier = Modifier.size(18.dp)
+                        )
                     }
                 }
 
@@ -171,35 +175,54 @@ fun PresetCard(
                             .align(Alignment.TopStart)
                             .padding(8.dp)
                             .background(
-                                brush = Brush.horizontalGradient(
+                                brush = Brush.linearGradient(
                                     colors = listOf(
-                                        MaterialTheme.colorScheme.primary,
-                                        MaterialTheme.colorScheme.tertiary
+                                        MaterialTheme.colorScheme.primary.copy(alpha = 0.9f),
+                                        MaterialTheme.colorScheme.tertiary.copy(alpha = 0.7f)
                                     )
                                 ),
-                                shape = RoundedCornerShape(4.dp)
+                                shape = RoundedCornerShape(6.dp)
                             )
-                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                            .border(
+                                width = 0.5.dp,
+                                color = Color.White.copy(alpha = 0.3f),
+                                shape = RoundedCornerShape(6.dp)
+                            )
+                            .padding(horizontal = 10.dp, vertical = 5.dp)
                     ) {
                         Text(
                             text = stringResource(R.string.preset_new),
                             fontSize = 10.sp,
                             color = Color.White,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
+                            letterSpacing = 0.5.sp
                         )
                     }
                 }
             }
 
-            Column(
+            // 玻璃质感文字区域 - 叠加在图片底部
+            Box(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .align(Alignment.BottomCenter)
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                GlassColors.Base.copy(alpha = 0.7f),
+                                GlassColors.Base.copy(alpha = 0.95f)
+                            ),
+                            startY = 0f,
+                            endY = Float.POSITIVE_INFINITY
+                        )
+                    )
                     .padding(horizontal = 16.dp, vertical = 12.dp)
             ) {
                 Text(
                     text = PresetI18n.getLocalizedPresetName(preset.name),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White,
+                    color = Color.White.copy(alpha = 0.95f),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )

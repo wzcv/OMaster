@@ -22,8 +22,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.silas.omaster.R
+import com.silas.omaster.data.config.ConfigCenter
+import com.silas.omaster.data.local.FloatingWindowMode
 import com.silas.omaster.model.PresetItem
 import com.silas.omaster.model.PresetSection
+import com.silas.omaster.util.IconFont
+import com.silas.omaster.util.Logger
 import com.silas.omaster.util.PresetI18n
 import com.silas.omaster.util.formatSigned
 
@@ -48,11 +52,17 @@ class FloatingWindowService : Service() {
     // 配色方案
     private val primaryColor = Color.parseColor("#FF6B35")      // 品牌橙色
     private val primaryDark = Color.parseColor("#E55A2B")       // 深橙色
-    private val backgroundColor = Color.parseColor("#801A1A1A") // 毛玻璃背景（50%透明度，更透明便于取景）
     private val cardBackground = Color.parseColor("#26FFFFFF")  // 卡片背景
     private val textPrimary = Color.parseColor("#FFFFFF")       // 主文字
     private val textSecondary = Color.parseColor("#B3FFFFFF")   // 次要文字
     private val textMuted = Color.parseColor("#80FFFFFF")       // 弱化文字
+    
+    // 背景颜色根据设置动态计算
+    private fun getBackgroundColor(context: Context): Int {
+        val opacity = ConfigCenter.getInstance(context).floatingWindowOpacity
+        val alpha = (opacity * 255 / 100).coerceIn(30, 255)
+        return Color.argb(alpha, 26, 26, 26) // #1A1A1A with dynamic alpha
+    }
 
     companion object {
         private const val EXTRA_NAME = "name"
@@ -80,13 +90,14 @@ class FloatingWindowService : Service() {
         private var instance: FloatingWindowService? = null
 
         fun show(context: Context, preset: com.silas.omaster.model.MasterPreset, presetIndex: Int = 0, presetIds: List<String> = emptyList()) {
+            Logger.i("FloatingWindowService", "显示悬浮窗: ${preset.name}, 索引: $presetIndex, 总数: ${presetIds.size}")
             val intent = Intent(context, FloatingWindowService::class.java).apply {
                 putExtra(EXTRA_ACTION, ACTION_SHOW)
                 putExtra(EXTRA_NAME, preset.name)
                 // 获取动态生成的 sections
                 val sections = preset.getDisplaySections(context)
                 putParcelableArrayListExtra(EXTRA_SECTIONS, ArrayList(sections))
-                
+
                 putExtra(EXTRA_PRESET_ID, preset.id ?: "")
                 putExtra(EXTRA_PRESET_INDEX, presetIndex)
                 putStringArrayListExtra(EXTRA_PRESET_LIST, ArrayList(presetIds))
@@ -99,12 +110,13 @@ class FloatingWindowService : Service() {
          * 更新悬浮窗内容（不重启服务，避免闪动）
          */
         fun update(context: Context, preset: com.silas.omaster.model.MasterPreset, presetIndex: Int = 0, presetIds: List<String> = emptyList()) {
+            Logger.d("FloatingWindowService", "更新悬浮窗: ${preset.name}, 索引: $presetIndex")
             val intent = Intent(context, FloatingWindowService::class.java).apply {
                 putExtra(EXTRA_ACTION, ACTION_UPDATE)
                 putExtra(EXTRA_NAME, preset.name)
                 val sections = preset.getDisplaySections(context)
                 putParcelableArrayListExtra(EXTRA_SECTIONS, ArrayList(sections))
-                
+
                 putExtra(EXTRA_PRESET_ID, preset.id ?: "")
                 putExtra(EXTRA_PRESET_INDEX, presetIndex)
                 putStringArrayListExtra(EXTRA_PRESET_LIST, ArrayList(presetIds))
@@ -114,6 +126,7 @@ class FloatingWindowService : Service() {
         }
 
         fun hide(context: Context) {
+            Logger.i("FloatingWindowService", "隐藏悬浮窗")
             context.stopService(Intent(context, FloatingWindowService::class.java))
         }
 
@@ -156,21 +169,30 @@ class FloatingWindowService : Service() {
         val presetList = intent.getStringArrayListExtra(EXTRA_PRESET_LIST) ?: arrayListOf()
         val totalCount = presetList.size
 
+        // 读取悬浮窗模式设置
+        val mode = ConfigCenter.getInstance(this).floatingWindowMode
+
         when (action) {
             ACTION_UPDATE -> {
                 // 更新模式：只更新内容，不移除窗口（避免闪动）
                 updateWindowContent(
-                    name, sections, currentIndex, totalCount
+                    name, sections, currentIndex, totalCount, mode
                 )
             }
             else -> {
                 // 显示模式：重新创建窗口
                 removeWindow()
                 if (isExpanded) {
-                    showExpandedWindow(
-                        name, sections, savedX, savedY,
-                        currentIndex, totalCount
-                    )
+                    when (mode) {
+                        FloatingWindowMode.STANDARD -> showExpandedWindow(
+                            name, sections, savedX, savedY,
+                            currentIndex, totalCount
+                        )
+                        FloatingWindowMode.COMPACT -> showCompactWindow(
+                            name, sections, savedX, savedY,
+                            currentIndex, totalCount
+                        )
+                    }
                 } else {
                     showCollapsedWindow(
                         name, sections, savedX, savedY
@@ -193,14 +215,21 @@ class FloatingWindowService : Service() {
         name: String,
         sections: ArrayList<PresetSection>,
         currentIndex: Int,
-        totalCount: Int
+        totalCount: Int,
+        mode: FloatingWindowMode = FloatingWindowMode.STANDARD
     ) {
         // 如果窗口不存在，直接创建新窗口
         if (floatingView == null || mainContainer == null) {
-            showExpandedWindow(
-                name, sections, 50, 300,
-                currentIndex, totalCount
-            )
+            when (mode) {
+                FloatingWindowMode.STANDARD -> showExpandedWindow(
+                    name, sections, 50, 300,
+                    currentIndex, totalCount
+                )
+                FloatingWindowMode.COMPACT -> showCompactWindow(
+                    name, sections, 50, 300,
+                    currentIndex, totalCount
+                )
+            }
             return
         }
 
@@ -217,7 +246,10 @@ class FloatingWindowService : Service() {
                 // 使用 post 确保在 UI 线程执行
                 container.post {
                     container.removeAllViews()
-                    container.addView(createContentArea(sections))
+                    when (mode) {
+                        FloatingWindowMode.STANDARD -> container.addView(createContentArea(sections))
+                        FloatingWindowMode.COMPACT -> container.addView(createCompactContentArea(sections))
+                    }
                     // 请求重新布局
                     container.requestLayout()
                     floatingView?.requestLayout()
@@ -226,10 +258,16 @@ class FloatingWindowService : Service() {
         } catch (e: Exception) {
             e.printStackTrace()
             // 如果更新失败，重新创建窗口
-            showExpandedWindow(
-                name, sections, params?.x ?: 50, params?.y ?: 300,
-                currentIndex, totalCount
-            )
+            when (mode) {
+                FloatingWindowMode.STANDARD -> showExpandedWindow(
+                    name, sections, params?.x ?: 50, params?.y ?: 300,
+                    currentIndex, totalCount
+                )
+                FloatingWindowMode.COMPACT -> showCompactWindow(
+                    name, sections, params?.x ?: 50, params?.y ?: 300,
+                    currentIndex, totalCount
+                )
+            }
         }
     }
 
@@ -330,6 +368,323 @@ class FloatingWindowService : Service() {
     }
 
     /**
+     * 显示新版紧凑悬浮窗（参数条样式）
+     */
+    private fun showCompactWindow(
+        name: String,
+        sections: ArrayList<PresetSection>,
+        savedX: Int = -1,
+        savedY: Int = -1,
+        currentIndex: Int = 0,
+        totalCount: Int = 1
+    ) {
+        try {
+            val wm = windowManager ?: return
+
+            // 获取屏幕宽度，计算悬浮窗宽度（屏幕宽度 - 32dp）
+            val metrics = DisplayMetrics()
+            wm.defaultDisplay.getMetrics(metrics)
+            val screenWidth = metrics.widthPixels
+            val windowWidth = screenWidth - dpToPx(32)
+
+            params = WindowManager.LayoutParams(
+                windowWidth,
+                dpToPx(120), // 高度增加到 120dp（标题栏40dp + 参数区80dp）
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+                } else {
+                    @Suppress("DEPRECATION")
+                    WindowManager.LayoutParams.TYPE_PHONE
+                },
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+            ).apply {
+                gravity = Gravity.TOP or Gravity.START
+                // 默认位置：屏幕底部偏上，避开相机控制区
+                x = if (savedX >= 0) savedX else dpToPx(16)
+                y = if (savedY >= 0) savedY else metrics.heightPixels - dpToPx(300)
+            }
+
+            val rootLayout = createCompactView(
+                name, sections, currentIndex, totalCount, windowWidth
+            ) { collapseToBubble(name, sections) }
+
+            floatingView = rootLayout
+            wm.addView(floatingView, params)
+            setupDrag(wm)
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+            stopSelf()
+        }
+    }
+
+    /**
+     * 创建紧凑视图 - 新版参数条样式
+     */
+    private fun createCompactView(
+        name: String,
+        sections: ArrayList<PresetSection>,
+        currentIndex: Int = 0,
+        totalCount: Int = 1,
+        windowWidth: Int,
+        onCollapse: () -> Unit
+    ): FrameLayout {
+        return FrameLayout(this).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                windowWidth,
+                dpToPx(120)
+            )
+
+            // 主容器
+            val container = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(
+                    windowWidth,
+                    dpToPx(120)
+                )
+                background = createCompactBackground(context)
+            }
+            mainContainer = container
+
+            // 添加标题栏（预设名称 + 切换按钮 + 收起按钮）
+            container.addView(createCompactHeader(name, onCollapse, currentIndex, totalCount))
+
+            // 内容容器（带tag，用于更新时查找）
+            val contentContainer = LinearLayout(context).apply {
+                orientation = LinearLayout.VERTICAL
+                tag = "content_container"
+            }
+            contentContainer.addView(createCompactContentArea(sections))
+            container.addView(contentContainer)
+
+            addView(container)
+        }
+    }
+
+    /**
+     * 创建紧凑标题栏
+     */
+    private fun createCompactHeader(
+        name: String,
+        onCollapse: () -> Unit,
+        currentIndex: Int = 0,
+        totalCount: Int = 1
+    ): LinearLayout {
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dpToPx(40)
+            )
+            setPadding(dpToPx(12), dpToPx(4), dpToPx(12), dpToPx(4))
+
+            // 上一个预设按钮
+            val prevBtn = createCompactIconButton("◀") {
+                sendPresetSwitchBroadcast("prev")
+            }
+            addView(prevBtn)
+
+            addView(createSpacing(dpToPx(8)))
+
+            // 预设名称
+            val titleView = TextView(context).apply {
+                text = name
+                textSize = 14f
+                setTextColor(primaryColor)
+                gravity = Gravity.CENTER
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                maxLines = 1
+                ellipsize = android.text.TextUtils.TruncateAt.END
+            }
+            titleTextView = titleView
+            addView(titleView)
+
+            addView(createSpacing(dpToPx(8)))
+
+            // 下一个预设按钮
+            val nextBtn = createCompactIconButton("▶") {
+                sendPresetSwitchBroadcast("next")
+            }
+            addView(nextBtn)
+
+            addView(createSpacing(dpToPx(8)))
+
+            // 收起按钮
+            val collapseBtn = createCompactIconButton("▼") { onCollapse() }
+            addView(collapseBtn)
+
+            addView(createSpacing(dpToPx(4)))
+
+            // 关闭按钮
+            val closeBtn = createCompactIconButton("✕") { stopSelf() }
+            addView(closeBtn)
+        }
+    }
+
+    /**
+     * 创建紧凑图标按钮
+     */
+    private fun createCompactIconButton(icon: String, onClick: () -> Unit): TextView {
+        return TextView(this).apply {
+            text = icon
+            textSize = 12f
+            setTextColor(textSecondary)
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(dpToPx(28), dpToPx(28))
+            background = GradientDrawable().apply {
+                cornerRadius = dpToPx(6).toFloat()
+                setColor(cardBackground)
+            }
+            // 禁用父视图拦截按钮的触摸事件
+            setOnTouchListener { _, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        // 请求父视图不要拦截此事件
+                        parent.requestDisallowInterceptTouchEvent(true)
+                    }
+                    MotionEvent.ACTION_UP, MotionEvent.ACTION_CANCEL -> {
+                        parent.requestDisallowInterceptTouchEvent(false)
+                    }
+                }
+                false // 继续传递给 onClickListener
+            }
+            setOnClickListener { onClick() }
+        }
+    }
+
+    /**
+     * 创建紧凑内容区域 - 8参数横向排列
+     */
+    private fun createCompactContentArea(sections: List<PresetSection>): LinearLayout {
+        return LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dpToPx(80) // 参数区域高度80dp
+            )
+            setPadding(dpToPx(8), dpToPx(4), dpToPx(8), dpToPx(4))
+
+            // 提取8个参数值
+            val paramValues = extract8Params(sections)
+
+            // 第一行：参数值
+            val valuesRow = LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    1f
+                )
+                gravity = Gravity.CENTER_VERTICAL
+
+                paramValues.forEach { value ->
+                    addView(createCompactValueCell(value))
+                }
+            }
+            addView(valuesRow)
+
+            // 分割线
+            addView(View(context).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    dpToPx(1)
+                )
+                setBackgroundColor(Color.parseColor("#20FFFFFF"))
+            })
+
+            // 第二行：图标（使用 Iconfont）
+            val iconsRow = LinearLayout(context).apply {
+                orientation = LinearLayout.HORIZONTAL
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    0,
+                    1f
+                )
+                gravity = Gravity.CENTER_VERTICAL
+
+                IconFont.ICONS.forEach { iconCode ->
+                    addView(createCompactIconCell(iconCode))
+                }
+            }
+            addView(iconsRow)
+        }
+    }
+
+    /**
+     * 从 sections 中提取8个参数值
+     */
+    private fun extract8Params(sections: List<PresetSection>): List<String> {
+        val result = MutableList(8) { "-" }
+
+        // 参数标签到索引的映射
+        val labelToIndex = mapOf(
+            "滤镜" to 0, "Filter" to 0,
+            "柔光" to 1, "Soft" to 1,
+            "影调" to 2, "Tone" to 2,
+            "饱和" to 3, "Saturation" to 3,
+            "冷暖" to 4, "Warm" to 4,
+            "青品" to 5, "Cyan" to 5,
+            "锐度" to 6, "Sharpness" to 6,
+            "暗角" to 7, "Vignette" to 7
+        )
+
+        sections.forEach { section ->
+            section.items.forEach { item ->
+                labelToIndex.forEach { (label, index) ->
+                    if (item.label.contains(label)) {
+                        result[index] = PresetI18n.resolveValue(this, item.value)
+                    }
+                }
+            }
+        }
+
+        return result
+    }
+
+    /**
+     * 创建紧凑参数值单元格
+     */
+    private fun createCompactValueCell(value: String): TextView {
+        return TextView(this).apply {
+            text = value
+            textSize = 11f
+            setTextColor(textPrimary)
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            setPadding(0, dpToPx(4), 0, dpToPx(4))
+        }
+    }
+
+    /**
+     * 创建紧凑图标单元格（使用 Iconfont）
+     */
+    private fun createCompactIconCell(iconCode: String): TextView {
+        return TextView(this).apply {
+            text = iconCode
+            textSize = 16f
+            setTextColor(primaryColor)
+            gravity = Gravity.CENTER
+            layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            setPadding(0, dpToPx(4), 0, dpToPx(4))
+            // 使用 Iconfont 字体
+            typeface = IconFont.getTypeface(this@FloatingWindowService)
+        }
+    }
+
+    /**
+     * 创建紧凑背景
+     */
+    private fun createCompactBackground(context: Context): GradientDrawable {
+        return GradientDrawable().apply {
+            cornerRadius = dpToPx(16).toFloat()
+            setColor(getBackgroundColor(context))
+            setStroke(dpToPx(1), Color.parseColor("#33FFFFFF"))
+        }
+    }
+
+    /**
      * 创建展开视图 - 高级美观设计
      */
     private fun createExpandedView(
@@ -354,7 +709,7 @@ class FloatingWindowService : Service() {
                     windowWidth,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 )
-                background = createGlassmorphismBackground()
+                background = createGlassmorphismBackground(context)
                 setPadding(dpToPx(20), dpToPx(16), dpToPx(20), dpToPx(20))
             }
             mainContainer = container
@@ -401,7 +756,8 @@ class FloatingWindowService : Service() {
                     if (item.span == 2) {
                         // Full width item (highlighted)
                         val icon = getIconForLabel(item.label)
-                        addView(createHighlightedParam(icon, item.label, item.value))
+                        val localizedValue = PresetI18n.resolveValue(this@FloatingWindowService, item.value)
+                        addView(createHighlightedParam(icon, item.label, localizedValue))
                         i++
                     } else {
                         // Half width item
@@ -413,11 +769,13 @@ class FloatingWindowService : Service() {
                         }
                         
                         val leftIcon = getIconForLabel(left.label)
-                        val leftView = createSmallParamItem(leftIcon, left.label, left.value)
+                        val leftLocalizedValue = PresetI18n.resolveValue(this@FloatingWindowService, left.value)
+                        val leftView = createSmallParamItem(leftIcon, left.label, leftLocalizedValue)
                         
                         val rightView = right?.let {
                             val rightIcon = getIconForLabel(it.label)
-                            createSmallParamItem(rightIcon, it.label, it.value)
+                            val rightLocalizedValue = PresetI18n.resolveValue(this@FloatingWindowService, it.value)
+                            createSmallParamItem(rightIcon, it.label, rightLocalizedValue)
                         }
                         
                         addView(createParamRow(leftView, rightView))
@@ -429,18 +787,18 @@ class FloatingWindowService : Service() {
     }
     
     /**
-     * 根据标签获取对应图标
+     * 根据标签获取对应图标（使用 Iconfont）
      */
     private fun getIconForLabel(label: String): String {
         return when {
-            label.contains("滤镜") || label.contains("Filter") -> getString(R.string.floating_filter_icon)
-            label.contains("柔光") || label.contains("Soft") -> getString(R.string.floating_soft_icon)
-            label.contains("影调") || label.contains("Tone") -> getString(R.string.floating_tone_icon)
-            label.contains("饱和") || label.contains("Saturation") -> getString(R.string.floating_saturation_icon)
-            label.contains("冷暖") || label.contains("Warm") -> getString(R.string.floating_warm_icon)
-            label.contains("青品") || label.contains("Cyan") -> getString(R.string.floating_cyan_icon)
-            label.contains("锐度") || label.contains("Sharpness") -> getString(R.string.floating_sharpness_icon)
-            label.contains("暗角") || label.contains("Vignette") -> getString(R.string.floating_vignette_icon)
+            label.contains("滤镜") || label.contains("Filter") -> IconFont.FILTER
+            label.contains("柔光") || label.contains("Soft") -> IconFont.SOFT_LIGHT
+            label.contains("影调") || label.contains("Tone") -> IconFont.TONE
+            label.contains("饱和") || label.contains("Saturation") -> IconFont.SATURATION
+            label.contains("冷暖") || label.contains("Warm") -> IconFont.WARM_COOL
+            label.contains("青品") || label.contains("Cyan") -> IconFont.CYAN
+            label.contains("锐度") || label.contains("Sharpness") -> IconFont.SHARPNESS
+            label.contains("暗角") || label.contains("Vignette") -> IconFont.VIGNETTE
             label.contains("白平衡") || label.contains("WB") -> "🌡️"
             label.contains("曝光") || label.contains("EV") -> "☀️"
             label.contains("ISO") -> "📸"
@@ -511,10 +869,10 @@ class FloatingWindowService : Service() {
     /**
      * 创建毛玻璃背景
      */
-    private fun createGlassmorphismBackground(): GradientDrawable {
+    private fun createGlassmorphismBackground(context: Context): GradientDrawable {
         return GradientDrawable().apply {
             cornerRadius = dpToPx(24).toFloat()
-            setColor(backgroundColor)
+            setColor(getBackgroundColor(context))
             // 添加边框效果
             setStroke(dpToPx(1), Color.parseColor("#33FFFFFF"))
         }
@@ -641,11 +999,12 @@ class FloatingWindowService : Service() {
                 setMargins(0, 0, 0, dpToPx(8))
             }
 
-            // 图标
+            // 图标（使用 Iconfont）
             addView(TextView(context).apply {
                 text = icon
-                textSize = 16f
+                textSize = 18f
                 setTextColor(primaryColor)
+                typeface = IconFont.getTypeface(this@FloatingWindowService)
             })
 
             addView(createSpacing(dpToPx(8)))
@@ -692,10 +1051,12 @@ class FloatingWindowService : Service() {
                 setMargins(0, 0, dpToPx(4), 0)
             }
 
+            // 图标（使用 Iconfont）
             addView(TextView(context).apply {
                 text = icon
-                textSize = 12f
+                textSize = 14f
                 setTextColor(primaryColor)
+                typeface = IconFont.getTypeface(this@FloatingWindowService)
             })
 
             addView(createSpacing(dpToPx(4)))
@@ -863,7 +1224,10 @@ class FloatingWindowService : Service() {
                         }
                     }
                 }
-                return false
+                // 返回 true 消费事件，防止传递给子视图造成冲突
+                // 但这样会导致按钮无法点击，所以需要在按钮上单独设置点击监听
+                // 这里改为：如果是点击操作，返回 false 让子视图处理；如果是拖动，返回 true
+                return !isClick && event.action == MotionEvent.ACTION_MOVE
             }
         })
     }
