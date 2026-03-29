@@ -207,7 +207,7 @@ class ConfigCenter private constructor(context: Context) {
         }
 
     private fun loadPremiumGlass(): Boolean {
-        return prefs.getBoolean(KEY_PREMIUM_GLASS_ENABLED, true)
+        return prefs.getBoolean(KEY_PREMIUM_GLASS_ENABLED, false)  // 默认关闭，用户需手动开启
     }
 
     private fun loadAnalytics(): Boolean {
