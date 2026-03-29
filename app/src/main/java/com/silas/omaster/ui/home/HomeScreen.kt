@@ -150,7 +150,8 @@ fun HomeScreen(
     // 同步 Tab 和 Pager 的状态
     LaunchedEffect(selectedTab) {
         if (pagerState.currentPage != selectedTab) {
-            pagerState.animateScrollToPage(selectedTab)
+            // 禁用动画，直接跳转，避免动画过程中的中间状态导致页面卡住
+            pagerState.scrollToPage(selectedTab)
         }
     }
 
