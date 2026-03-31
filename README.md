@@ -20,7 +20,7 @@
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">
     <img src="https://img.shields.io/badge/协议-CC%20BY--NC--SA%204.0-orange.svg?style=flat-square" alt="License"/>
   </a>
-  <img src="https://img.shields.io/badge/平台-Android%206+-brightgreen.svg?style=flat-square" alt="Platform"/>
+  <img src="https://img.shields.io/badge/平台-Android%2013+-brightgreen.svg?style=flat-square" alt="Platform"/>
   <img src="https://img.shields.io/badge/技术-Jetpack%20Compose-4285F4.svg?style=flat-square" alt="Tech"/>
   <img src="https://img.shields.io/github/actions/workflow/status/iCurrer/OMaster/beta-release.yml" alt="Build"/>
 </p>
@@ -92,7 +92,7 @@
 - 蓝奏云：[https://wwbwy.lanzouu.com/b016klqmib](https://wwbwy.lanzouu.com/b016klqmib)
 
 ### 系统要求
-- Android 6 (API 23) 及以上
+- Android 13 (API 33) 及以上
 - 你的手机系统允许浮窗显示在相机应用上方
 
 ---
