@@ -19,12 +19,12 @@
 
     <!-- Bottom Navigation -->
     <string name="nav_home">Home</string>
-    <string name="nav_subscription">Subscribe</string>
-    <string name="nav_settings">Settings</string>
+    <string name="nav_discover">Discover</string>
     <string name="nav_about">About</string>
+    <string name="nav_settings">Settings</string>
 
     <!-- Subscription -->
-    <string name="sub_title">Subscribe</string>
+    <string name="sub_title">Subscription Management</string>
     <string name="sub_add">Add Subscription</string>
     <string name="sub_url_label">Link (JSON URL)</string>
     <string name="sub_name_label">Name (Optional)</string>
@@ -48,6 +48,8 @@
     <string name="default_start_tab">Default Start Tab</string>
     <string name="settings_theme_title">Theme Color</string>
     <string name="settings_theme_dialog_title">Select Theme Color</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_dark_mode_desc">Switch between dark and light theme</string>
     <string name="floating_window_opacity">Floating Window Opacity</string>
     <string name="analytics_enabled">Enable Analytics</string>
     <string name="analytics_restart_hint">Help us understand app usage and improve product experience. Collected data is used for statistical analysis only and does not contain personal privacy information. Restart app to apply</string>
@@ -144,7 +146,7 @@
     <string name="empty_no_favorites">No favorite presets</string>
     <string name="empty_no_custom">No custom presets</string>
     <string name="empty_no_data">No data available</string>
-    <string name="empty_hint_add_presets">Please add data to assets/presets.json</string>
+    <string name="empty_hint_add_presets">Add subscriptions in "About" or create new presets</string>
     <string name="empty_hint_favorite">Tap the heart icon to favorite presets</string>
     <string name="empty_hint_create">Tap the bottom right button to create a preset</string>
     <string name="load_more_hint">More coming soon · Stay tuned</string>
@@ -499,5 +501,219 @@
     <string name="floating_window_mode_compact_desc">Compact parameter bar, native style</string>
     <string name="floating_window_mode_dialog_title">Select Floating Window Mode</string>
     <string name="floating_window_realme_tip">Note: Realme presets will automatically use standard floating window (compact mode icons are not compatible with Realme camera UI)</string>
+
+    <!-- Discover Page -->
+    <string name="discover_title">Discover</string>
+    <string name="discover_subtitle">Explore more photography features</string>
+
+    <!-- Color Walk Feature Card -->
+    <string name="colorwalk_card_title">Color Walk</string>
+    <string name="colorwalk_card_desc">Daily color challenge, discover the city through colors</string>
+    <string name="colorwalk_card_button">Start Exploring</string>
+
+    <!-- Color Walk Guide -->
+    <string name="colorwalk_guide_title">What is Color Walk?</string>
+    <string name="colorwalk_guide_desc">Take a color card, wander the streets, find matching colors, and capture the city\'s beauty</string>
+    <string name="colorwalk_guide_step1_title">Draw a Card</string>
+    <string name="colorwalk_guide_step1_desc">3 chances daily, get a random color mission</string>
+    <string name="colorwalk_guide_step2_title">Street Hunt</string>
+    <string name="colorwalk_guide_step2_desc">Go out with your card, find matching colors in the city</string>
+    <string name="colorwalk_guide_step3_title">Capture &amp; Record</string>
+    <string name="colorwalk_guide_step3_desc">Photograph the colors, complete today\'s challenge</string>
+    <string name="colorwalk_guide_start">Start Exploring</string>
+    <string name="colorwalk_guide_next">Next</string>
+    <string name="colorwalk_guide_skip">Skip</string>
+
+    <!-- Color Walk Main Page -->
+    <string name="colorwalk_title">Color Walk</string>
+    <string name="colorwalk_subtitle">Daily color card challenge, discover the city through colors</string>
+    <string name="colorwalk_empty_title">Discover Today\'s Color Inspiration</string>
+    <string name="colorwalk_empty_subtitle">Tap the button below to draw your exclusive color card</string>
+    <string name="colorwalk_draw_button">Draw Today\'s Card</string>
+    <string name="colorwalk_draw_hint">3 draws per day, resets at 0:00</string>
+    <string name="colorwalk_drawn_today">Drawn Today</string>
+    <string name="colorwalk_draw_count">Draw #%d</string>
+    <string name="colorwalk_redraw_remaining">Redraw (%d)</string>
+    <string name="colorwalk_no_more_draws">No more draws today</string>
+    <string name="colorwalk_redraw">Redraw</string>
+    <string name="colorwalk_clear">Clear Card</string>
+    <string name="colorwalk_hide_today_card">Hide Today\'s Card</string>
+    <string name="colorwalk_history">History</string>
+    <string name="colorwalk_no_history">No history yet</string>
+    <string name="colorwalk_history_preview_title">Color Card Review</string>
+    <string name="colorwalk_close_preview">Close</string>
+    <string name="colorwalk_clear_history">Clear History</string>
+    <string name="colorwalk_clear_history_confirm">Are you sure you want to clear all history? This action cannot be undone.</string>
+    <string name="colorwalk_confirm_clear">Clear</string>
+    <string name="colorwalk_cancel">Cancel</string>
+    <string name="colorwalk_today_challenge">Today\'s Challenge</string>
+    <string name="colorwalk_best_scenes">Best Scenes</string>
+    <string name="colorwalk_theme_primary">Primary</string>
+    <string name="colorwalk_theme_accent">Accent</string>
+    <string name="colorwalk_shooting_tips">Shooting Tips</string>
+    <string name="colorwalk_scene_architecture">Architecture</string>
+    <string name="colorwalk_scene_street">Street</string>
+    <string name="colorwalk_scene_light">Warm Light</string>
+    <string name="colorwalk_scene_seaside">Seaside</string>
+    <string name="colorwalk_scene_sky">Sky</string>
+    <string name="colorwalk_scene_minimal">Minimal</string>
+    <string name="colorwalk_scene_park">Park</string>
+    <string name="colorwalk_scene_plants">Plants</string>
+    <string name="colorwalk_scene_nature">Nature</string>
+    <string name="colorwalk_scene_industrial">Industrial</string>
+    <string name="colorwalk_scene_geometry">Geometry</string>
+    <string name="colorwalk_scene_bridge">Bridge</string>
+    <string name="colorwalk_scene_sunset">Sunset</string>
+    <string name="colorwalk_scene_skyline">Skyline</string>
+    <string name="colorwalk_scene_reflection">Reflection</string>
+    <string name="colorwalk_scene_night">Night</string>
+    <string name="colorwalk_scene_neon">Neon</string>
+    <string name="colorwalk_scene_city">City</string>
+    <string name="colorwalk_scene_old_street">Old Street</string>
+    <string name="colorwalk_scene_cafe">Cafe</string>
+    <string name="colorwalk_scene_story">Storytelling</string>
+    <string name="colorwalk_scene_black_white">Black &amp; White</string>
+    <string name="colorwalk_scene_shadow">Shadow</string>
+    <string name="colorwalk_scene_flower">Flowers</string>
+    <string name="colorwalk_scene_soft_light">Soft Light</string>
+    <string name="colorwalk_scene_still_life">Still Life</string>
+    <string name="colorwalk_scene_indoor">Indoor</string>
+    <string name="colorwalk_scene_water">Water</string>
+    <string name="colorwalk_scene_blue_hour">Blue Hour</string>
+    <string name="colorwalk_scene_autumn">Autumn</string>
+    <string name="colorwalk_scene_backlight">Backlight</string>
+
+    <!-- Color Walk Themes -->
+    <string name="colorwalk_theme_urban_warm">Urban Warmth</string>
+    <string name="colorwalk_theme_seaside_fresh">Seaside Fresh</string>
+    <string name="colorwalk_theme_forest_green">Forest Green</string>
+    <string name="colorwalk_theme_industrial_cool">Industrial Cool</string>
+    <string name="colorwalk_theme_sunset_glow">Sunset Glow</string>
+    <string name="colorwalk_theme_neon_night">Neon Night</string>
+    <string name="colorwalk_theme_vintage_film">Vintage Film</string>
+    <string name="colorwalk_theme_minimalist_bw">Minimalist B&amp;W</string>
+    <string name="colorwalk_theme_spring_blossom">Spring Blossom</string>
+    <string name="colorwalk_theme_coffee_time">Coffee Time</string>
+    <string name="colorwalk_theme_ocean_deep">Ocean Deep</string>
+    <string name="colorwalk_theme_autumn_leaves">Autumn Leaves</string>
+
+    <!-- Color Walk Descriptions -->
+    <string name="colorwalk_desc_urban_warm">Find red brick buildings, wooden doors, warm street lights, capture the city\'s warm texture</string>
+    <string name="colorwalk_desc_seaside_fresh">Seaside, sky, beach, record the tranquility and openness of the coast with fresh blue and white tones</string>
+    <string name="colorwalk_desc_forest_green">Parks, trees, grass, find vitality and tranquility in nature\'s green</string>
+    <string name="colorwalk_desc_industrial_cool">Steel structures, factories, bridges, show the power of industrial aesthetics with cool tones</string>
+    <string name="colorwalk_desc_sunset_glow">Dusk, skyline, capture the romance and gentleness of the city under sunset glow</string>
+    <string name="colorwalk_desc_neon_night">Night markets, neon signs, find the city\'s most dazzling colors in the night</string>
+    <string name="colorwalk_desc_vintage_film">Old streets, vintage items, retro scenes, record traces of time with film tones</string>
+    <string name="colorwalk_desc_minimalist_bw">Architectural lines, light and shadow contrast, show pure formal beauty with minimalist black and white</string>
+    <string name="colorwalk_desc_spring_blossom">Flower paths, parks, spring scenes, record spring romance with pink tones</string>
+    <string name="colorwalk_desc_coffee_time">Cafes, bookstores, artsy shops, record leisure time with warm brown tones</string>
+    <string name="colorwalk_desc_ocean_deep">Deep sea, aquariums, blue buildings, explore the mysterious ocean world with deep blue tones</string>
+    <string name="colorwalk_desc_autumn_leaves">Fallen leaves, autumn forests, golden streets, capture autumn poetry with warm tones</string>
+
+    <!-- Color Walk Tips -->
+    <string name="colorwalk_tips_urban_warm">[Find] Red brick walls, old buildings, wooden frames, warm street lights [Tips] Use light-shadow contrast for depth, warm tones work well with backlight [Best Time] 3-5 PM, when sunlight is angled</string>
+    <string name="colorwalk_tips_seaside_fresh">[Find] Seaside boardwalks, blue sky, beaches, white buildings [Tips] Large white space for openness, horizontal composition [Best Time] Sunny morning, when sky is bluest</string>
+    <string name="colorwalk_tips_forest_green">[Find] Park woods, grass, vines, moss [Tips] Use foreground leaves for depth, find light spots through canopy [Best Time] Early morning or dusk, soft light</string>
+    <string name="colorwalk_tips_industrial_cool">[Find] Steel bridges, factory walls, pipes, concrete buildings [Tips] Emphasize geometric lines, low angle for power [Best Time] Overcast, even light</string>
+    <string name="colorwalk_tips_sunset_glow">[Find] City skyline, building silhouettes, water reflections [Tips] Backlight for silhouettes, use water reflections [Best Time] 20 min after sunset, blue hour</string>
+    <string name="colorwalk_tips_neon_night">[Find] Neon signs, night market stalls, light trails [Tips] Slight underexposure for neon details, use halos [Best Time] 8-10 PM, all neon lights on</string>
+    <string name="colorwalk_tips_vintage_film">[Find] Old streets, bookstores, retro cafes, vintage items [Tips] Find aged elements, leave white space for story [Best Time] Afternoon soft light, or indoor warm light</string>
+    <string name="colorwalk_tips_minimalist_bw">[Find] Modern architecture, geometric lines, strong light-shadow scenes [Tips] Simplify composition, emphasize shapes and textures [Best Time] Sunny, strongest light-shadow contrast</string>
+    <string name="colorwalk_tips_spring_blossom">[Find] Cherry blossom paths, flower fields, parks [Tips] Use blurred foreground flowers for dreamy feel [Best Time] Early morning or dusk, soft light</string>
+    <string name="colorwalk_tips_coffee_time">[Find] Cafe interiors, bookshelves, coffee cups, artsy shops [Tips] Use window side light, warm tones for still life [Best Time] 2-4 PM, best indoor light</string>
+    <string name="colorwalk_tips_ocean_deep">[Find] Aquariums, blue walls, deep pools, rainy scenes [Tips] Use water reflections, dark backgrounds [Best Time] Overcast or indoor, dimmer light</string>
+    <string name="colorwalk_tips_autumn_leaves">[Find] Leaf-covered paths, maple trees, autumn parks [Tips] Use fallen leaves as foreground, backlight for transparency [Best Time] Sunny afternoon, light through leaves</string>
+    <string name="colorwalk_challenge_urban_warm">Find two warm building materials and one warm light source in the same frame.</string>
+    <string name="colorwalk_challenge_seaside_fresh">Make the sky or sea occupy more than half of the frame and keep one bright accent.</string>
+    <string name="colorwalk_challenge_forest_green">Use foreground leaves to frame a quiet green subject with layered depth.</string>
+    <string name="colorwalk_challenge_industrial_cool">Shoot a low-angle composition using strong lines and one cool metallic color block.</string>
+    <string name="colorwalk_challenge_sunset_glow">Capture a warm-to-cool transition between the skyline and the sky.</string>
+    <string name="colorwalk_challenge_neon_night">Find a neon scene with one dominant color and one small contrasting highlight.</string>
+    <string name="colorwalk_challenge_vintage_film">Photograph an object or corner that feels like it has a story from another decade.</string>
+    <string name="colorwalk_challenge_minimalist_bw">Reduce the frame to bold shapes, clean lines, and only one visual subject.</string>
+    <string name="colorwalk_challenge_spring_blossom">Use soft light and floral tones to create one airy, romantic composition.</string>
+    <string name="colorwalk_challenge_coffee_time">Build a cozy still life with coffee tones, paper texture, or warm window light.</string>
+    <string name="colorwalk_challenge_ocean_deep">Look for layered blues and add a reflective surface to deepen the atmosphere.</string>
+    <string name="colorwalk_challenge_autumn_leaves">Use fallen leaves or golden foliage as foreground to make the season feel tangible.</string>
+
+    <!-- Color Names -->
+    <string name="color_brick_red">Brick Red</string>
+    <string name="color_dark_brown">Dark Brown</string>
+    <string name="color_bisque">Bisque</string>
+    <string name="color_dark_gray">Dark Gray</string>
+    <string name="color_sky_blue">Sky Blue</string>
+    <string name="color_powder_blue">Powder Blue</string>
+    <string name="color_white">White</string>
+    <string name="color_wheat">Wheat</string>
+    <string name="color_forest_green">Forest Green</string>
+    <string name="color_light_green">Light Green</string>
+    <string name="color_saddle_brown">Saddle Brown</string>
+    <string name="color_beige">Beige</string>
+    <string name="color_slate_gray">Slate Gray</string>
+    <string name="color_steel_blue">Steel Blue</string>
+    <string name="color_dark_slate_gray">Dark Slate Gray</string>
+    <string name="color_silver">Silver</string>
+    <string name="color_coral">Coral</string>
+    <string name="color_light_pink">Light Pink</string>
+    <string name="color_medium_purple">Medium Purple</string>
+    <string name="color_midnight_blue">Midnight Blue</string>
+    <string name="color_deep_pink">Deep Pink</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_gold">Gold</string>
+    <string name="color_navy">Navy</string>
+    <string name="color_tan">Tan</string>
+    <string name="color_sienna">Sienna</string>
+    <string name="color_khaki">Khaki</string>
+    <string name="color_dark_olive_green">Dark Olive Green</string>
+    <string name="color_black">Black</string>
+    <string name="color_gray">Gray</string>
+    <string name="color_light_gray">Light Gray</string>
+    <string name="color_cherry_blossom">Cherry Blossom</string>
+    <string name="color_hot_pink">Hot Pink</string>
+    <string name="color_pale_green">Pale Green</string>
+    <string name="color_lemon_chiffon">Lemon Chiffon</string>
+    <string name="color_coffee">Coffee</string>
+    <string name="color_chocolate">Chocolate</string>
+    <string name="color_cornsilk">Cornsilk</string>
+    <string name="color_ocean_blue">Ocean Blue</string>
+    <string name="color_dark_blue">Dark Blue</string>
+    <string name="color_turquoise">Turquoise</string>
+    <string name="color_honeydew">Honeydew</string>
+    <string name="color_orange_red">Orange Red</string>
+    <string name="color_goldenrod">Goldenrod</string>
+    <string name="color_dark_red">Dark Red</string>
+
+    <!-- Discover / Check-in -->
+    <string name="discover_more_coming">More features are on the way...</string>
+    <string name="discover_stay_tuned">Stay tuned</string>
+    <string name="discover_checkin_title">Photo Habit Log</string>
+    <string name="discover_checkin_subtitle">Keep a record of your shooting rhythm</string>
+    <string name="discover_checkin_subtitle_active">Active for %1$d days in a row</string>
+    <string name="checkin_sheet_title">Photo Habit Log</string>
+    <string name="checkin_current_streak">Current Streak</string>
+    <string name="checkin_longest_streak">Best Streak</string>
+    <string name="checkin_month_total">This Month</string>
+    <string name="checkin_days_unit">%1$d days</string>
+    <string name="checkin_calendar_previous_month">Previous month</string>
+    <string name="checkin_calendar_next_month">Next month</string>
+    <string name="checkin_no_record">No activity recorded for this day yet.</string>
+    <string name="checkin_activity_draw">Drew a color card</string>
+    <string name="checkin_activity_draw_default">Today’s color inspiration</string>
+    <string name="checkin_activity_challenge">Completed the challenge</string>
+    <string name="checkin_activity_challenge_desc">Today’s shooting task was marked complete.</string>
+    <string name="checkin_activity_favorite">Saved inspiration</string>
+    <string name="checkin_activity_favorite_desc">A color card or related inspiration was saved today.</string>
+    <string name="checkin_activity_visit">Checked in</string>
+    <string name="checkin_activity_visit_desc">You opened Discover and left a trace for today.</string>
+    <string name="checkin_weekday_sun">S</string>
+    <string name="checkin_weekday_mon">M</string>
+    <string name="checkin_weekday_tue">T</string>
+    <string name="checkin_weekday_wed">W</string>
+    <string name="checkin_weekday_thu">T</string>
+    <string name="checkin_weekday_fri">F</string>
+    <string name="checkin_weekday_sat">S</string>
+    <string name="checkin_mark_complete">Mark complete</string>
+    <string name="checkin_completed">Completed</string>
 
 </resources>

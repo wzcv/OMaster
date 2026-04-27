@@ -34,18 +34,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Update
-import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -86,6 +88,11 @@ import com.silas.omaster.ui.theme.AppDesign
 import com.silas.omaster.ui.theme.CardBorderLight
 import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.NearBlack
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
+import com.silas.omaster.ui.theme.themedBorderLight
 import com.silas.omaster.util.UpdateChecker
 import com.silas.omaster.util.VersionInfo
 import kotlinx.coroutines.delay
@@ -108,9 +115,9 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import com.silas.omaster.util.perform
 
 @Composable
-fun AboutScreen(
-    onBack: () -> Unit,
+fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
+    onNavigateToSubscription: () -> Unit,
     onScrollStateChanged: (Boolean) -> Unit,
     onNavigateToPrivacyPolicy: () -> Unit = {},
     onNavigateToOpenSourceLicense: () -> Unit = {},
@@ -221,14 +228,14 @@ fun AboutScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         OMasterTopAppBar(
-            title = stringResource(R.string.about_title),
+            title = stringResource(R.string.nav_about),
             modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
             actions = {
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(R.string.nav_settings),
-                        tint = Color.White
+                        tint = themedTextPrimary()
                     )
                 }
             }
@@ -243,7 +250,14 @@ fun AboutScreen(
         ) {
             AppTitleSection(currentVersionName)
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 功能入口列表
+            ProfileMenuList(
+                onNavigateToSubscription = onNavigateToSubscription
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             UpdateCard(
                 currentVersionName = currentVersionName,
@@ -341,7 +355,7 @@ private fun AppTitleSection(currentVersionName: String) {
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                     append("O")
                 }
-                withStyle(style = SpanStyle(color = Color.White)) {
+                withStyle(style = SpanStyle(color = themedTextPrimary())) {
                     append("Master")
                 }
             },
@@ -355,7 +369,7 @@ private fun AppTitleSection(currentVersionName: String) {
         Text(
             text = stringResource(R.string.app_slogan),
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.White.copy(alpha = 0.6f)
+            color = themedTextSecondary().copy(alpha = 0.8f)
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -405,11 +419,11 @@ private fun UpdateCard(
             .fillMaxWidth()
             .border(
                 width = if (hasUpdate) 1.5.dp else 1.dp,
-                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else CardBorderLight,
+                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else themedBorderLight(),
                 shape = RoundedCornerShape(16.dp)
             ),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -431,7 +445,7 @@ private fun UpdateCard(
                         modifier = Modifier
                             .size(36.dp)
                             .background(
-                                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.05f),
+                                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else themedTextPrimary().copy(alpha = 0.05f),
                                 shape = RoundedCornerShape(10.dp)
                             ),
                         contentAlignment = Alignment.Center
@@ -439,7 +453,7 @@ private fun UpdateCard(
                         Icon(
                             imageVector = Icons.Default.Download,
                             contentDescription = null,
-                            tint = if (hasUpdate) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.6f),
+                            tint = if (hasUpdate) MaterialTheme.colorScheme.primary else themedTextSecondary().copy(alpha = 0.6f),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -448,7 +462,7 @@ private fun UpdateCard(
                             text = "v$currentVersionName",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = themedTextPrimary()
                         )
                         if (lastCheckTime != null && !isChecking) {
                             val diff = System.currentTimeMillis() - lastCheckTime
@@ -461,7 +475,7 @@ private fun UpdateCard(
                             Text(
                                 text = stringResource(R.string.last_check, timeText),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.4f)
+                                color = themedTextSecondary().copy(alpha = 0.6f)
                             )
                         }
                     }
@@ -497,7 +511,7 @@ private fun UpdateCard(
                             Text(
                                 text = stringResource(R.string.checking),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.7f)
+                                color = themedTextSecondary().copy(alpha = 0.8f)
                             )
                         }
                     }
@@ -585,7 +599,7 @@ private fun UpdateCard(
                                     Text(
                                         text = updateInfo.releaseNotes,
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Color.White.copy(alpha = 0.8f),
+                                        color = themedTextPrimary().copy(alpha = 0.8f),
                                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight * 1.2
                                     )
                                 }
@@ -604,7 +618,7 @@ private fun UpdateCard(
                                 Text(
                                     text = stringResource(R.string.version_is_latest),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.7f)
+                                    color = themedTextSecondary().copy(alpha = 0.8f)
                                 )
                             }
                         }
@@ -637,13 +651,13 @@ private fun UpdateCard(
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = null,
-                                tint = Color.White.copy(alpha = 0.5f),
+                                tint = themedTextSecondary().copy(alpha = 0.5f),
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
                                 text = stringResource(R.string.version_check),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.5f)
+                                color = themedTextSecondary().copy(alpha = 0.5f)
                             )
                         }
                     }
@@ -678,11 +692,11 @@ private fun FeatureList() {
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = CardBorderLight,
+                color = themedBorderLight(),
                 shape = AppDesign.CardShape
             ),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = AppDesign.CardShape
     ) {
@@ -706,7 +720,7 @@ private fun FeatureList() {
                     text = stringResource(R.string.feature_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
             }
 
@@ -739,12 +753,12 @@ private fun FeatureListItem(feature: FeatureItem) {
                 text = feature.title,
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.Medium,
-                color = Color.White
+                color = themedTextPrimary()
             )
             Text(
                 text = feature.description,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = AppDesign.SecondaryAlpha),
+                color = themedTextSecondary().copy(alpha = AppDesign.SecondaryAlpha),
                 textAlign = TextAlign.Start
             )
         }
@@ -785,7 +799,7 @@ private fun CreditsCard(context: android.content.Context) {
                 shape = RoundedCornerShape(16.dp)
             ),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -808,7 +822,7 @@ private fun CreditsCard(context: android.content.Context) {
                     text = stringResource(R.string.credits_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
             }
 
@@ -819,7 +833,7 @@ private fun CreditsCard(context: android.content.Context) {
                 Text(
                     text = stringResource(R.string.developer),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.5f)
+                    color = themedTextSecondary().copy(alpha = 0.6f)
                 )
 
                 val developers = listOf(
@@ -843,7 +857,7 @@ private fun CreditsCard(context: android.content.Context) {
                 Text(
                     text = stringResource(R.string.material_provider),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.5f)
+                    color = themedTextSecondary().copy(alpha = 0.6f)
                 )
 
                 // 贡献者标签云
@@ -874,10 +888,10 @@ private fun ContributorChip(
     Box(
         modifier = Modifier
             .clip(RoundedCornerShape(12.dp))
-            .background(Color.White.copy(alpha = 0.08f))
+            .background(themedTextPrimary().copy(alpha = 0.08f))
             .border(
                 width = 1.dp,
-                color = Color.White.copy(alpha = 0.15f),
+                color = themedTextPrimary().copy(alpha = 0.15f),
                 shape = RoundedCornerShape(12.dp)
             )
             .clickable {
@@ -889,7 +903,7 @@ private fun ContributorChip(
         Text(
             text = name,
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.8f)
+            color = themedTextPrimary().copy(alpha = 0.8f)
         )
     }
 }
@@ -927,7 +941,7 @@ private fun ProjectCard(context: android.content.Context) {
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = CardBorderLight,
+                color = themedBorderLight(),
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
@@ -935,7 +949,7 @@ private fun ProjectCard(context: android.content.Context) {
                 context.startActivity(intent)
             },
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -971,13 +985,13 @@ private fun ProjectCard(context: android.content.Context) {
                         text = "项目地址",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = themedTextPrimary()
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "GitHub - iCurrer/OMaster",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.5f)
+                        color = themedTextSecondary().copy(alpha = 0.6f)
                     )
                 }
             }
@@ -1046,7 +1060,7 @@ private fun QQGroupCard(context: android.content.Context) {
                 }
             },
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -1082,13 +1096,13 @@ private fun QQGroupCard(context: android.content.Context) {
                         text = "加入QQ群",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = themedTextPrimary()
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "群号: 1083543279",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.5f)
+                        color = themedTextSecondary().copy(alpha = 0.6f)
                     )
                 }
             }
@@ -1099,6 +1113,75 @@ private fun QQGroupCard(context: android.content.Context) {
                 modifier = Modifier.size(20.dp)
             )
         }
+    }
+}
+
+@Composable
+private fun ProfileMenuList(
+    onNavigateToSubscription: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = themedBorderLight(),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = themedCardBackground()
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
+            // 订阅管理
+            ProfileMenuItem(
+                icon = Icons.Default.Cloud,
+                title = stringResource(R.string.sub_title),
+                onClick = onNavigateToSubscription
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProfileMenuItem(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp)
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = themedTextPrimary()
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = themedTextSecondary().copy(alpha = 0.5f),
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 
@@ -1115,7 +1198,7 @@ private fun FooterSection(
         Text(
             text = "© 2026 OMaster",
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.5f)
+            color = themedTextSecondary().copy(alpha = 0.6f)
         )
 
         Row(
@@ -1125,7 +1208,7 @@ private fun FooterSection(
             Text(
                 text = stringResource(R.string.user_agreement),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.6f),
+                color = themedTextSecondary().copy(alpha = 0.7f),
                 modifier = Modifier.clickable {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ocnquih40x3i.feishu.cn/docx/WHVldUhumozJAUx7ZFhcO9uznaf?from=from_copylink"))
                     context.startActivity(intent)
@@ -1136,13 +1219,13 @@ private fun FooterSection(
                 modifier = Modifier
                     .height(12.dp)
                     .width(1.dp),
-                color = Color.White.copy(alpha = 0.2f)
+                color = themedTextSecondary().copy(alpha = 0.2f)
             )
 
             Text(
                 text = stringResource(R.string.privacy_policy),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.6f),
+                color = themedTextSecondary().copy(alpha = 0.7f),
                 modifier = Modifier.clickable {
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ocnquih40x3i.feishu.cn/docx/NSgednMU0oeq9RxnGmcc9vRenvd?from=from_copylink"))
                     context.startActivity(intent)
@@ -1153,13 +1236,13 @@ private fun FooterSection(
                 modifier = Modifier
                     .height(12.dp)
                     .width(1.dp),
-                color = Color.White.copy(alpha = 0.2f)
+                color = themedTextSecondary().copy(alpha = 0.2f)
             )
 
             Text(
                 text = stringResource(R.string.open_source_license),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.6f),
+                color = themedTextSecondary().copy(alpha = 0.7f),
                 modifier = Modifier.clickable {
                     onNavigateToOpenSourceLicense()
                 }
@@ -1169,7 +1252,7 @@ private fun FooterSection(
         Text(
             text = "豫 ICP 备 2026011707 号 -1A",
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.35f),
+            color = themedTextSecondary().copy(alpha = 0.5f),
             modifier = Modifier.clickable {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://beian.miit.gov.cn"))
                 context.startActivity(intent)

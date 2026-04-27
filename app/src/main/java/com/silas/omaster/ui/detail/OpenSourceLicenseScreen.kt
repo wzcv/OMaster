@@ -40,6 +40,9 @@ import androidx.compose.ui.unit.dp
 import com.silas.omaster.R
 import com.silas.omaster.ui.components.OMasterTopAppBar
 import com.silas.omaster.ui.theme.DarkGray
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
 
 @Composable
 fun OpenSourceLicenseScreen(
@@ -101,7 +104,7 @@ private fun AppLicenseCard() {
                     text = stringResource(R.string.app_license_section),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
             }
 
@@ -115,7 +118,7 @@ private fun AppLicenseCard() {
             Text(
                 text = stringResource(R.string.app_license_desc),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
+                color = themedTextPrimary().copy(alpha = 0.8f),
                 lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.4
             )
 
@@ -153,7 +156,7 @@ private fun LicenseTermsSection() {
             text = stringResource(R.string.license_terms_title),
             style = MaterialTheme.typography.labelMedium,
             fontWeight = FontWeight.Medium,
-            color = Color.White.copy(alpha = 0.6f)
+            color = themedTextSecondary().copy(alpha = 0.7f)
         )
 
         LicenseTermItem(
@@ -200,12 +203,12 @@ private fun LicenseTermItem(
                 text = title,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = Color.White
+                color = themedTextPrimary()
             )
             Text(
                 text = desc,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.6f)
+                color = themedTextSecondary().copy(alpha = 0.7f)
             )
         }
     }
@@ -216,7 +219,7 @@ private fun OpenSourceLibrariesCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         )
     ) {
         Column(
@@ -237,14 +240,14 @@ private fun OpenSourceLibrariesCard() {
                     text = stringResource(R.string.libraries_section),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
             }
 
             Text(
                 text = stringResource(R.string.libraries_desc),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f)
+                color = themedTextPrimary().copy(alpha = 0.8f)
             )
 
             // 开源库列表
@@ -332,12 +335,12 @@ private fun LibraryItem(library: LibraryInfo) {
                 text = library.name,
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium,
-                color = Color.White
+                color = themedTextPrimary()
             )
             Text(
                 text = library.license,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.5f)
+                color = themedTextSecondary().copy(alpha = 0.6f)
             )
         }
         Icon(
@@ -360,7 +363,7 @@ private fun AcknowledgementsCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         )
     ) {
         Column(
@@ -381,14 +384,14 @@ private fun AcknowledgementsCard() {
                     text = stringResource(R.string.acknowledgements_section),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
             }
 
             Text(
                 text = stringResource(R.string.acknowledgements_desc),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
+                color = themedTextPrimary().copy(alpha = 0.8f),
                 lineHeight = MaterialTheme.typography.bodyMedium.lineHeight * 1.4
             )
 

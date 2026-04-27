@@ -80,6 +80,48 @@ class ConfigCenter private constructor(context: Context) {
     }
 
     // ═══════════════════════════════════════════════════════════
+    // 用户配置 - 深色模式
+    // ═══════════════════════════════════════════════════════════
+
+    private val _darkModeFlow = MutableStateFlow(loadDarkMode())
+    val darkModeFlow: StateFlow<com.silas.omaster.data.local.DarkMode> = _darkModeFlow.asStateFlow()
+
+    var darkMode: com.silas.omaster.data.local.DarkMode
+        get() = _darkModeFlow.value
+        set(value) {
+            _darkModeFlow.value = value
+            prefs.edit().putString(KEY_DARK_MODE, value.name).apply()
+        }
+
+    // 兼容旧版本的布尔值读取
+    val isDarkMode: Boolean
+        get() = when (_darkModeFlow.value) {
+            com.silas.omaster.data.local.DarkMode.SYSTEM -> {
+                // 根据系统当前主题判断
+                val uiMode = appContext.resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+                uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
+            }
+            com.silas.omaster.data.local.DarkMode.LIGHT -> false
+            com.silas.omaster.data.local.DarkMode.DARK -> true
+        }
+
+    private fun loadDarkMode(): com.silas.omaster.data.local.DarkMode {
+        // 尝试读取新版本的字符串配置
+        val modeName = prefs.getString(KEY_DARK_MODE, null)
+        if (modeName != null) {
+            return try {
+                com.silas.omaster.data.local.DarkMode.valueOf(modeName)
+            } catch (e: Exception) {
+                com.silas.omaster.data.local.DarkMode.SYSTEM
+            }
+        }
+        // 兼容旧版本的布尔值
+        val oldValue = prefs.getBoolean(KEY_DARK_MODE_OLD, true)
+        return if (oldValue) com.silas.omaster.data.local.DarkMode.DARK 
+               else com.silas.omaster.data.local.DarkMode.LIGHT
+    }
+
+    // ═══════════════════════════════════════════════════════════
     // 用户配置 - 语言
     // ═══════════════════════════════════════════════════════════
 
@@ -289,13 +331,15 @@ class ConfigCenter private constructor(context: Context) {
     }
 
     /**
-     * UI 配置组合（主题 + 语言）
+     * UI 配置组合（主题 + 语言 + 深色模式）
      */
     val uiConfigFlow: Flow<UiConfig> = combine(
         themeFlow,
-        languageFlow
-    ) { theme, language ->
-        UiConfig(theme, language)
+        languageFlow,
+        darkModeFlow
+    ) { theme, language, darkMode ->
+        UiConfig(theme, language, darkMode == com.silas.omaster.data.local.DarkMode.DARK ||
+                (darkMode == com.silas.omaster.data.local.DarkMode.SYSTEM && isDarkMode))
     }
 
     /**
@@ -329,6 +373,8 @@ class ConfigCenter private constructor(context: Context) {
 
         // UserConfig Keys
         private const val KEY_THEME_ID = "theme_id"
+        private const val KEY_DARK_MODE = "dark_mode_v2"
+        private const val KEY_DARK_MODE_OLD = "dark_mode"
         private const val KEY_APP_LANGUAGE = "app_language"
         private const val KEY_VIBRATION_ENABLED = "vibration_enabled"
         private const val KEY_FLOATING_WINDOW_OPACITY = "floating_window_opacity"

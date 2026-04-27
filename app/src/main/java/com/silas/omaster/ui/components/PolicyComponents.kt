@@ -15,6 +15,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.silas.omaster.ui.theme.DarkGray
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
 
 /**
  * 政策章节卡片组件
@@ -28,7 +31,7 @@ fun PolicySection(
     Card(
         modifier = modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         )
     ) {
         Column(
@@ -46,7 +49,7 @@ fun PolicySection(
             Text(
                 text = content,
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.9f)
+                color = themedTextPrimary().copy(alpha = 0.9f)
             )
         }
     }
@@ -65,12 +68,12 @@ fun PolicyItem(
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.7f)
+            color = themedTextSecondary().copy(alpha = 0.8f)
         )
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = Color.White
+            color = themedTextPrimary()
         )
     }
 }

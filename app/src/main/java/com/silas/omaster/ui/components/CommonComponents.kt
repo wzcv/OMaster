@@ -1,6 +1,12 @@
 package com.silas.omaster.ui.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -21,6 +27,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.CloudOff
+import androidx.compose.material.icons.filled.ExpandLess
+import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Groups
 import androidx.compose.material.icons.filled.Lightbulb
 import androidx.compose.material.icons.filled.Palette
@@ -65,6 +73,11 @@ import com.silas.omaster.util.ImageDownloadCallback
 import com.silas.omaster.ui.theme.AppDesign
 import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedBorderLight
 import java.io.File
 
 /**
@@ -86,7 +99,7 @@ fun OMasterTopAppBar(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
                 subtitle?.let {
                     Text(
@@ -103,15 +116,15 @@ fun OMasterTopAppBar(
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         contentDescription = stringResource(R.string.back),
-                        tint = Color.White
+                        tint = themedTextPrimary()
                     )
                 }
             } ?: Box {}
         },
         actions = actions,
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = PureBlack,
-            titleContentColor = Color.White
+            containerColor = themedBackground(),
+            titleContentColor = themedTextPrimary()
         ),
         modifier = modifier
     )
@@ -131,7 +144,7 @@ fun FeatureCard(
         modifier = modifier.fillMaxWidth(),
         shape = AppDesign.CardShape,
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         )
     ) {
         Row(
@@ -154,7 +167,7 @@ fun FeatureCard(
                     text = title,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
 
                 Spacer(modifier = Modifier.height(AppDesign.ItemSpacing / 2))
@@ -162,7 +175,7 @@ fun FeatureCard(
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = AppDesign.SecondaryAlpha)
+                    color = themedTextSecondary().copy(alpha = AppDesign.SecondaryAlpha)
                 )
             }
         }
@@ -221,14 +234,14 @@ fun ParameterItem(
         Text(
             text = label,
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = AppDesign.TertiaryAlpha)
+            color = themedTextSecondary().copy(alpha = AppDesign.TertiaryAlpha)
         )
         Spacer(modifier = Modifier.height(AppDesign.ItemSpacing / 2))
         Text(
             text = value,
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold,
-            color = Color.White
+            color = themedTextPrimary()
         )
     }
 }
@@ -245,7 +258,7 @@ fun OMasterCard(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         content = content
     )
@@ -284,13 +297,13 @@ fun ModeBadge(
             Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(16.dp))
-                    .background(DarkGray)
+                    .background(themedCardBackground())
                     .padding(horizontal = 12.dp, vertical = 6.dp)
             ) {
                 Text(
                     text = tag,
                     style = MaterialTheme.typography.labelMedium,
-                    color = Color.White,
+                    color = themedTextPrimary(),
                     fontWeight = FontWeight.Bold
                 )
             }
@@ -425,11 +438,11 @@ fun ParameterCard(
         modifier = modifier,
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         border = androidx.compose.foundation.BorderStroke(
             width = 0.5.dp,
-            color = Color.White.copy(alpha = 0.08f)
+            color = themedTextPrimary().copy(alpha = 0.08f)
         )
     ) {
         Column(
@@ -441,14 +454,14 @@ fun ParameterCard(
             Text(
                 text = label,
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = AppDesign.TertiaryAlpha)
+                color = themedTextSecondary().copy(alpha = AppDesign.TertiaryAlpha)
             )
             Spacer(modifier = Modifier.height(AppDesign.ItemSpacing / 2))
             Text(
                 text = value,
                 style = MaterialTheme.typography.titleMedium,
                 fontWeight = FontWeight.Bold,
-                color = Color.White
+                color = themedTextPrimary()
             )
         }
     }
@@ -470,19 +483,24 @@ fun ShootingTipsCard(
 }
 
 /**
- * 通用描述卡片组件
+ * 通用描述卡片组件（支持折叠）
  */
 @Composable
 fun DescriptionCard(
     title: String,
     content: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    collapsedByDefault: Boolean = true
 ) {
+    var isExpanded by remember { mutableStateOf(!collapsedByDefault) }
+
     Card(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .clickable { isExpanded = !isExpanded },
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray.copy(alpha = 0.8f)
+            containerColor = themedCardBackground().copy(alpha = 0.95f)
         )
     ) {
         Column(
@@ -490,37 +508,57 @@ fun DescriptionCard(
                 .fillMaxWidth()
                 .padding(16.dp)
         ) {
-            // 标题行
             Row(
-                verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.Lightbulb,
+                        contentDescription = null,
+                        tint = MaterialTheme.colorScheme.primary,
+                        modifier = Modifier.size(20.dp)
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = title,
+                        style = MaterialTheme.typography.titleSmall,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                }
+
                 Icon(
-                    imageVector = Icons.Filled.Lightbulb,
-                    contentDescription = null,
+                    imageVector = if (isExpanded) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                    contentDescription = if (isExpanded) "收起" else "展开",
                     tint = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.size(20.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(
-                    text = title,
-                    style = MaterialTheme.typography.titleSmall,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            AnimatedVisibility(
+                visible = isExpanded,
+                enter = fadeIn() + expandVertically(),
+                exit = fadeOut() + shrinkVertically()
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(12.dp))
 
-            // 内容
-            content.split("\n").forEach { line ->
-                if (line.isNotBlank()) {
-                    Text(
-                        text = line.trim(),
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = Color.White.copy(alpha = 0.9f),
-                        lineHeight = 22.sp
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
+                    content.split("\n").forEach { line ->
+                        if (line.isNotBlank()) {
+                            Text(
+                                text = line.trim(),
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = themedTextPrimary().copy(alpha = 0.9f),
+                                lineHeight = 22.sp
+                            )
+                            Spacer(modifier = Modifier.height(8.dp))
+                        }
+                    }
                 }
             }
         }

@@ -75,7 +75,8 @@ import com.silas.omaster.ui.components.OMasterTopAppBar
 import com.silas.omaster.ui.components.PresetCard
 import com.silas.omaster.ui.service.FloatingWindowController
 import com.silas.omaster.ui.theme.AppDesign
-import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedTextSecondary
 import com.silas.omaster.util.hapticClickable
 import com.silas.omaster.util.perform
 import kotlinx.coroutines.delay
@@ -165,7 +166,7 @@ fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(PureBlack)
+            .background(themedBackground())
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             OMasterTopAppBar(
@@ -252,7 +253,7 @@ fun HomeScreen(
                     onNavigateToCreate()
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
                 shape = AppDesign.ButtonShape,
                 elevation = androidx.compose.material3.FloatingActionButtonDefaults.elevation(
                     defaultElevation = 8.dp,
@@ -457,7 +458,7 @@ private fun PresetGrid(
                             Text(
                                 text = stringResource(R.string.feature_coming_soon),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.6f)
+                                color = themedTextSecondary()
                             )
                         }
                     }
@@ -562,8 +563,6 @@ private fun PresetCardItem(
                 this.scaleX = scale
                 this.scaleY = scale
                 this.translationY = translationY
-                // 启用硬件加速
-                this.shadowElevation = if (alpha > 0.9f) 4f else 0f
             }
     ) {
         PresetCard(
@@ -603,7 +602,7 @@ private fun EmptyState(tabIndex: Int) {
             Text(
                 text = message,
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White.copy(alpha = 0.6f),
+                color = themedTextSecondary(),
                 textAlign = TextAlign.Center
             )
             if (subMessage.isNotEmpty()) {

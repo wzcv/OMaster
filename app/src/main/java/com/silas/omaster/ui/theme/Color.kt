@@ -1,5 +1,7 @@
 package com.silas.omaster.ui.theme
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 /**
@@ -31,7 +33,7 @@ val NearBlack = Color(0xFF0A0A0A)
 val DarkGray = Color(0xFF2D2D2D)  // 从 #1A1A1A 调亮，阳光下更清晰
 val MediumGray = Color(0xFF333333)
 val LightGray = Color(0xFF999999)
-val OffWhite = Color(0xFFF5F5F5)
+val OffWhite = Color(0xFFEEEEEE)
 
 /**
  * 文字颜色优化 - 提升深色模式对比度
@@ -93,3 +95,61 @@ val GlassBorderHighlight = GlassColors.BorderHighlight
 
 @Deprecated("使用 GlassColors.Surface 代替", ReplaceWith("GlassColors.Surface"))
 val GlassSurface = GlassColors.Surface
+
+/**
+ * 主题感知颜色函数
+ * 根据当前主题返回对应的颜色值,用于替代硬编码颜色
+ */
+
+/**
+ * 获取主题感知的背景色
+ * 深色模式: PureBlack
+ * 浅色模式: OffWhite
+ */
+@Composable
+fun themedBackground(): Color =
+    if (MaterialTheme.colorScheme.background == PureBlack) PureBlack else OffWhite
+
+/**
+ * 获取主题感知的卡片背景色
+ * 深色模式: DarkGray
+ * 浅色模式: Color.White
+ */
+@Composable
+fun themedCardBackground(): Color =
+    if (MaterialTheme.colorScheme.surfaceVariant == DarkGray) DarkGray else Color.White
+
+/**
+ * 获取主题感知的主文字颜色
+ * 深色模式: PrimaryText (白色)
+ * 浅色模式: PureBlack (黑色)
+ */
+@Composable
+fun themedTextPrimary(): Color =
+    if (MaterialTheme.colorScheme.onBackground == OffWhite) PrimaryText else PureBlack
+
+/**
+ * 获取主题感知的次要文字颜色
+ * 深色模式: SecondaryText
+ * 浅色模式: MediumGray
+ */
+@Composable
+fun themedTextSecondary(): Color =
+    if (MaterialTheme.colorScheme.onSurfaceVariant == LightGray) SecondaryText else MediumGray
+
+/**
+ * 获取主题感知的边框颜色
+ * 深色模式: CardBorderLight
+ * 浅色模式: LightGray.copy(alpha = 0.3f)
+ */
+@Composable
+fun themedBorderLight(): Color =
+    if (MaterialTheme.colorScheme.outline == MediumGray) CardBorderLight else LightGray.copy(alpha = 0.3f)
+
+/**
+ * 主题感知的自定义颜色
+ * 根据当前主题返回对应的深色/浅色颜色值
+ */
+@Composable
+fun themedColor(darkColor: Color, lightColor: Color): Color =
+    if (MaterialTheme.colorScheme.background == PureBlack) darkColor else lightColor

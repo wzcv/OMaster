@@ -21,8 +21,9 @@ import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import com.silas.omaster.ui.theme.AppDesign
-import com.silas.omaster.ui.theme.DarkGray
-import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
 import com.silas.omaster.util.perform
 
 @Composable
@@ -37,7 +38,7 @@ fun HomeTabRow(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .background(PureBlack)
+            .background(themedBackground())
             .padding(horizontal = AppDesign.TabBarPadding, vertical = AppDesign.ItemSpacing),
         horizontalArrangement = Arrangement.spacedBy(AppDesign.ItemSpacing),
         verticalAlignment = Alignment.CenterVertically
@@ -47,11 +48,11 @@ fun HomeTabRow(
             val displayText = if (count > 0) "$title $count" else title
 
             val backgroundColor by animateColorAsState(
-                targetValue = if (isSelected) MaterialTheme.colorScheme.primary else DarkGray,
+                targetValue = if (isSelected) MaterialTheme.colorScheme.primary else themedCardBackground(),
                 label = "tabBackground"
             )
             val textColor by animateColorAsState(
-                targetValue = if (isSelected) Color.White else Color.White.copy(alpha = AppDesign.TertiaryAlpha),
+                targetValue = if (isSelected) Color.White else themedTextPrimary().copy(alpha = AppDesign.TertiaryAlpha),
                 label = "tabText"
             )
 

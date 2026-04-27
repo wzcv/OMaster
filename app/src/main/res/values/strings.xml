@@ -19,9 +19,9 @@
 
     <!-- 底部导航 -->
     <string name="nav_home">主页</string>
-    <string name="nav_subscription">订阅</string>
-    <string name="nav_settings">设置</string>
+    <string name="nav_discover">发现</string>
     <string name="nav_about">关于</string>
+    <string name="nav_settings">设置</string>
 
     <!-- 订阅 -->
     <string name="sub_title">订阅管理</string>
@@ -48,6 +48,14 @@
     <string name="default_start_tab">默认启动页面</string>
     <string name="settings_theme_title">主题颜色</string>
     <string name="settings_theme_dialog_title">选择主题颜色</string>
+    <string name="settings_dark_mode">深色模式</string>
+    <string name="settings_dark_mode_desc">切换深色或浅色主题</string>
+    <string name="dark_mode_system">跟随系统</string>
+    <string name="dark_mode_system_desc">根据系统设置自动切换</string>
+    <string name="dark_mode_light">浅色模式</string>
+    <string name="dark_mode_light_desc">始终使用浅色主题</string>
+    <string name="dark_mode_dark">深色模式</string>
+    <string name="dark_mode_dark_desc">始终使用深色主题</string>
     <string name="floating_window_opacity">悬浮窗透明度</string>
     <string name="analytics_enabled">使用友盟统计</string>
     <string name="analytics_restart_hint">开启后帮助我们了解应用使用情况，优化产品体验。收集的数据仅用于统计分析，不包含个人隐私信息。重启应用后生效</string>
@@ -144,7 +152,7 @@
     <string name="empty_no_favorites">暂无收藏预设</string>
     <string name="empty_no_custom">暂无自定义预设</string>
     <string name="empty_no_data">暂无数据</string>
-    <string name="empty_hint_add_presets">请在 assets/presets.json 中添加数据</string>
+    <string name="empty_hint_add_presets">请在"我的"页面添加订阅或创建新预设</string>
     <string name="empty_hint_favorite">点击心形图标收藏预设</string>
     <string name="empty_hint_create">点击右下角按钮创建预设</string>
     <string name="load_more_hint">持续更新 · 敬请期待</string>
@@ -377,7 +385,7 @@
     <string name="material_provider">素材提供</string>
 
     <!-- 页脚 -->
-    <string name="footer_local"></string>
+    <string name="footer_local">纯本地操作，数据存储在本地</string>
     <string name="user_agreement">用户协议</string>
     <string name="privacy_policy">隐私政策</string>
     <string name="open_source_license">开源许可</string>
@@ -500,4 +508,216 @@
     <string name="floating_window_mode_dialog_title">选择悬浮窗模式</string>
     <string name="floating_window_realme_tip">提示：Realme 预设将自动使用标准悬浮窗（新版悬浮窗图标不适配 Realme 相机 UI）</string>
 
+    <!-- 发现页 -->
+    <string name="discover_title">发现</string>
+    <string name="discover_subtitle">探索更多摄影玩法</string>
+
+    <!-- Color Walk 功能卡片 -->
+    <string name="colorwalk_card_title">Color Walk</string>
+    <string name="colorwalk_card_desc">每日色彩挑战，用色彩发现城市之美</string>
+    <string name="colorwalk_card_button">开始探索</string>
+
+    <!-- Color Walk 引导页 -->
+    <string name="colorwalk_guide_title">什么是 Color Walk？</string>
+    <string name="colorwalk_guide_desc">带着色卡去街头漫步，寻找匹配的色彩，用镜头记录城市之美</string>
+    <string name="colorwalk_guide_step1_title">抽取色卡</string>
+    <string name="colorwalk_guide_step1_desc">每日 3 次机会，获得随机色彩任务</string>
+    <string name="colorwalk_guide_step2_title">街头寻找</string>
+    <string name="colorwalk_guide_step2_desc">带着色卡出门，在城市中寻找匹配的颜色</string>
+    <string name="colorwalk_guide_step3_title">拍摄记录</string>
+    <string name="colorwalk_guide_step3_desc">拍下找到的色彩，完成今日挑战</string>
+    <string name="colorwalk_guide_start">开始探索</string>
+    <string name="colorwalk_guide_skip">跳过</string>
+
+    <!-- Color Walk 主页面 -->
+    <string name="colorwalk_title">Color Walk</string>
+    <string name="colorwalk_subtitle">每日色卡挑战，用色彩发现城市之美</string>
+    <string name="colorwalk_empty_title">发现今日色彩灵感</string>
+    <string name="colorwalk_empty_subtitle">点击下方按钮，抽取你的专属色卡</string>
+    <string name="colorwalk_draw_button">抽取今日色卡</string>
+    <string name="colorwalk_draw_hint">每日 3 次机会，0:00 刷新</string>
+    <string name="colorwalk_drawn_today">今日已抽取</string>
+    <string name="colorwalk_draw_count">第 %d 次抽取</string>
+    <string name="colorwalk_redraw_remaining">重新抽取 (%d)</string>
+    <string name="colorwalk_no_more_draws">今日机会已用完</string>
+    <string name="colorwalk_redraw">重新抽取</string>
+    <string name="colorwalk_clear">清除色卡</string>
+    <string name="colorwalk_history">历史记录</string>
+    <string name="colorwalk_no_history">暂无历史记录</string>
+    <string name="colorwalk_clear_history">清空历史</string>
+    <string name="colorwalk_clear_history_confirm">确定要清空所有历史记录吗？此操作不可撤销。</string>
+    <string name="colorwalk_confirm_clear">清空</string>
+    <string name="colorwalk_cancel">取消</string>
+    <string name="colorwalk_theme_primary">主色调</string>
+    <string name="colorwalk_theme_accent">辅助色</string>
+    <string name="colorwalk_shooting_tips">拍摄建议</string>
+
+    <!-- Color Walk 主题名称 -->
+    <string name="colorwalk_theme_urban_warm">城市暖调</string>
+    <string name="colorwalk_theme_seaside_fresh">海滨清新</string>
+    <string name="colorwalk_theme_forest_green">森林绿意</string>
+    <string name="colorwalk_theme_industrial_cool">工业冷调</string>
+    <string name="colorwalk_theme_sunset_glow">落日余晖</string>
+    <string name="colorwalk_theme_neon_night">霓虹夜色</string>
+    <string name="colorwalk_theme_vintage_film">复古胶片</string>
+    <string name="colorwalk_theme_minimalist_bw">极简黑白</string>
+    <string name="colorwalk_theme_spring_blossom">春日繁花</string>
+    <string name="colorwalk_theme_coffee_time">咖啡时光</string>
+    <string name="colorwalk_theme_ocean_deep">深海蓝调</string>
+    <string name="colorwalk_theme_autumn_leaves">秋叶物语</string>
+
+    <!-- Color Walk 主题描述 -->
+    <string name="colorwalk_desc_urban_warm">寻找红砖建筑、木质门窗、暖色灯光，捕捉城市的温暖质感</string>
+    <string name="colorwalk_desc_seaside_fresh">海边、天空、沙滩，用清新蓝白色调记录海滨的宁静与开阔</string>
+    <string name="colorwalk_desc_forest_green">公园、树木、草地，在绿色中寻找自然的生机与宁静</string>
+    <string name="colorwalk_desc_industrial_cool">钢结构、工厂、桥梁，用冷色调展现工业美学的力量感</string>
+    <string name="colorwalk_desc_sunset_glow">黄昏、天际线，捕捉落日余晖下城市的浪漫与温柔</string>
+    <string name="colorwalk_desc_neon_night">夜市、霓虹灯牌，在夜色中寻找城市最炫目的色彩</string>
+    <string name="colorwalk_desc_vintage_film">老街、旧物、复古场景，用胶片色调记录时光的痕迹</string>
+    <string name="colorwalk_desc_minimalist_bw">建筑线条、光影对比，用极简黑白展现纯粹的形式美</string>
+    <string name="colorwalk_desc_spring_blossom">花海、公园、春日街景，用粉嫩色调记录春天的浪漫</string>
+    <string name="colorwalk_desc_coffee_time">咖啡馆、书店、文艺小店，用暖棕色调记录悠闲时光</string>
+    <string name="colorwalk_desc_ocean_deep">深海、水族馆、蓝色建筑，用深蓝调探索神秘的海洋世界</string>
+    <string name="colorwalk_desc_autumn_leaves">落叶、秋林、金色街道，用暖色调捕捉秋天的诗意</string>
+
+    <!-- Color Walk 拍摄要点 -->
+    <string name="colorwalk_tips_urban_warm">【寻找场景】红砖墙、老建筑、木质门框、暖色路灯【构图技巧】利用光影对比增强层次感，暖色调适合逆光拍摄【最佳时间】下午 3-5 点，阳光斜射时</string>
+    <string name="colorwalk_tips_seaside_fresh">【寻找场景】海边栈道、蓝天白云、沙滩、白色建筑【构图技巧】大面积留白营造开阔感，水平线构图最佳【最佳时间】晴天上午，天空最蓝时</string>
+    <string name="colorwalk_tips_forest_green">【寻找场景】公园树林、草地、藤蔓、苔藓【构图技巧】利用前景树叶增加层次，寻找阳光穿透树叶的光斑【最佳时间】清晨或傍晚，光线柔和时</string>
+    <string name="colorwalk_tips_industrial_cool">【寻找场景】钢铁桥梁、工厂外墙、管道、混凝土建筑【构图技巧】强调几何线条，低角度拍摄增强力量感【最佳时间】阴天，光线均匀时</string>
+    <string name="colorwalk_tips_sunset_glow">【寻找场景】城市天际线、高楼剪影、水面倒影【构图技巧】逆光拍摄剪影效果，利用水面反射增强色彩【最佳时间】日落后 20 分钟蓝调时刻</string>
+    <string name="colorwalk_tips_neon_night">【寻找场景】商业街霓虹灯、夜市招牌、车流光轨【构图技巧】适当欠曝保留霓虹细节，利用光晕营造氛围【最佳时间】夜晚 8-10 点，霓虹灯全亮时</string>
+    <string name="colorwalk_tips_vintage_film">【寻找场景】老街巷、旧书店、复古咖啡馆、老物件【构图技巧】寻找有年代感的元素，适当留白营造故事感【最佳时间】下午柔和光线，或室内暖光</string>
+    <string name="colorwalk_tips_minimalist_bw">【寻找场景】现代建筑、几何线条、光影对比强烈的场景【构图技巧】简化构图，强调形状和纹理，注意留白【最佳时间】晴天，光影对比最强烈时</string>
+    <string name="colorwalk_tips_spring_blossom">【寻找场景】樱花道、花海、公园、春日街景【构图技巧】利用前景花朵虚化营造梦幻感，浅景突出主体【最佳时间】清晨或傍晚，光线柔和时</string>
+    <string name="colorwalk_tips_coffee_time">【寻找场景】咖啡馆内部、书架、咖啡杯、文艺小店【构图技巧】利用窗户侧光，暖色调适合拍摄静物和人物【最佳时间】下午 2-4 点，室内光线最佳</string>
+    <string name="colorwalk_tips_ocean_deep">【寻找场景】海洋馆、蓝色外墙、深水池、雨天场景【构图技巧】利用水面反射和折射，深色背景突出主体【最佳时间】阴天或室内，光线较暗时</string>
+    <string name="colorwalk_tips_autumn_leaves">【寻找场景】落叶大道、枫树林、秋日公园、金色田野【构图技巧】利用落叶做前景，逆光拍摄树叶透明感【最佳时间】晴天下午，阳光穿透树叶时</string>
+
+    <!-- 颜色名称 -->
+    <string name="color_brick_red">砖红</string>
+    <string name="color_dark_brown">深棕</string>
+    <string name="color_bisque">米白</string>
+    <string name="color_dark_gray">深灰</string>
+    <string name="color_sky_blue">天蓝</string>
+    <string name="color_powder_blue">浅蓝</string>
+    <string name="color_white">纯白</string>
+    <string name="color_wheat">麦色</string>
+    <string name="color_forest_green">森林绿</string>
+    <string name="color_light_green">浅绿</string>
+    <string name="color_saddle_brown">鞍棕</string>
+    <string name="color_beige">米色</string>
+    <string name="color_slate_gray">石板灰</string>
+    <string name="color_steel_blue">钢蓝</string>
+    <string name="color_dark_slate_gray">深岩灰</string>
+    <string name="color_silver">银色</string>
+    <string name="color_coral">珊瑚</string>
+    <string name="color_light_pink">浅粉</string>
+    <string name="color_medium_purple">中紫</string>
+    <string name="color_midnight_blue">午夜蓝</string>
+    <string name="color_deep_pink">深粉</string>
+    <string name="color_cyan">青色</string>
+    <string name="color_gold">金色</string>
+    <string name="color_navy">藏青</string>
+    <string name="color_tan">棕褐</string>
+    <string name="color_sienna">赭石</string>
+    <string name="color_khaki">卡其</string>
+    <string name="color_dark_olive_green">深橄榄绿</string>
+    <string name="color_black">黑色</string>
+    <string name="color_gray">灰色</string>
+    <string name="color_light_gray">浅灰</string>
+    <string name="color_cherry_blossom">樱花粉</string>
+    <string name="color_hot_pink">艳粉</string>
+    <string name="color_pale_green">淡绿</string>
+    <string name="color_lemon_chiffon">柠檬绸</string>
+    <string name="color_coffee">咖啡</string>
+    <string name="color_chocolate">巧克力</string>
+    <string name="color_cornsilk">玉米丝</string>
+    <string name="color_ocean_blue">海洋蓝</string>
+    <string name="color_dark_blue">深蓝</string>
+    <string name="color_turquoise">绿松石</string>
+    <string name="color_honeydew">蜜露</string>
+    <string name="color_orange_red">橙红</string>
+    <string name="color_goldenrod">金菊</string>
+    <string name="color_dark_red">深红</string>
+
+    <string name="colorwalk_guide_next">下一步</string>
+    <string name="colorwalk_hide_today_card">隐藏今日色卡</string>
+    <string name="colorwalk_history_preview_title">色卡回顾</string>
+    <string name="colorwalk_close_preview">关闭</string>
+    <string name="colorwalk_today_challenge">今日挑战</string>
+    <string name="colorwalk_best_scenes">适合场景</string>
+    <string name="colorwalk_scene_architecture">建筑</string>
+    <string name="colorwalk_scene_street">街头</string>
+    <string name="colorwalk_scene_light">暖光</string>
+    <string name="colorwalk_scene_seaside">海滨</string>
+    <string name="colorwalk_scene_sky">天空</string>
+    <string name="colorwalk_scene_minimal">极简</string>
+    <string name="colorwalk_scene_park">公园</string>
+    <string name="colorwalk_scene_plants">植物</string>
+    <string name="colorwalk_scene_nature">自然</string>
+    <string name="colorwalk_scene_industrial">工业</string>
+    <string name="colorwalk_scene_geometry">几何</string>
+    <string name="colorwalk_scene_bridge">桥梁</string>
+    <string name="colorwalk_scene_sunset">落日</string>
+    <string name="colorwalk_scene_skyline">天际线</string>
+    <string name="colorwalk_scene_reflection">倒影</string>
+    <string name="colorwalk_scene_night">夜色</string>
+    <string name="colorwalk_scene_neon">霓虹</string>
+    <string name="colorwalk_scene_city">城市</string>
+    <string name="colorwalk_scene_old_street">老街</string>
+    <string name="colorwalk_scene_cafe">咖啡馆</string>
+    <string name="colorwalk_scene_story">故事感</string>
+    <string name="colorwalk_scene_black_white">黑白</string>
+    <string name="colorwalk_scene_shadow">光影</string>
+    <string name="colorwalk_scene_flower">花景</string>
+    <string name="colorwalk_scene_soft_light">柔光</string>
+    <string name="colorwalk_scene_still_life">静物</string>
+    <string name="colorwalk_scene_indoor">室内</string>
+    <string name="colorwalk_scene_water">水面</string>
+    <string name="colorwalk_scene_blue_hour">蓝调时刻</string>
+    <string name="colorwalk_scene_autumn">秋景</string>
+    <string name="colorwalk_scene_backlight">逆光</string>
+    <string name="colorwalk_challenge_urban_warm">在同一画面里，找到 2 种暖色建材和 1 处暖光。</string>
+    <string name="colorwalk_challenge_seaside_fresh">让天空或海面占据画面一半以上，并保留 1 个亮色点缀。</string>
+    <string name="colorwalk_challenge_forest_green">用前景树叶构图，拍出有层次的安静绿色主体。</string>
+    <string name="colorwalk_challenge_industrial_cool">用低机位拍一张强线条、冷色金属感的画面。</string>
+    <string name="colorwalk_challenge_sunset_glow">捕捉天际线与天空之间的暖冷过渡和色调变化。</string>
+    <string name="colorwalk_challenge_neon_night">找到一处霓虹场景，主色鲜明，再留一个反差色点缀。</string>
+    <string name="colorwalk_challenge_vintage_film">拍下一个看起来有“旧时故事”的角落或物件。</string>
+    <string name="colorwalk_challenge_minimalist_bw">把画面简化到线条、形状和单一视觉主体。</string>
+    <string name="colorwalk_challenge_spring_blossom">用柔和光线和花系颜色，拍一张轻盈浪漫的画面。</string>
+    <string name="colorwalk_challenge_coffee_time">用咖啡色、纸张纹理或窗边光线，搭一张温暖静物。</string>
+    <string name="colorwalk_challenge_ocean_deep">寻找有层次的蓝色，并加入一个反射面来加深氛围。</string>
+    <string name="colorwalk_challenge_autumn_leaves">用落叶或金色树叶做前景，让秋天的季节感更具体。</string>
+    <string name="discover_more_coming">更多玩法开发中...</string>
+    <string name="discover_stay_tuned">敬请期待</string>
+    <string name="discover_checkin_title">摄影习惯档案</string>
+    <string name="discover_checkin_subtitle">记录你的拍摄节奏与灵感轨迹</string>
+    <string name="discover_checkin_subtitle_active">已连续记录 %1$d 天</string>
+    <string name="checkin_sheet_title">摄影习惯档案</string>
+    <string name="checkin_current_streak">当前连续</string>
+    <string name="checkin_longest_streak">历史最长</string>
+    <string name="checkin_month_total">本月记录</string>
+    <string name="checkin_days_unit">%1$d 天</string>
+    <string name="checkin_calendar_previous_month">上一个月</string>
+    <string name="checkin_calendar_next_month">下一个月</string>
+    <string name="checkin_no_record">这一天还没有留下记录。</string>
+    <string name="checkin_activity_draw">抽取色卡</string>
+    <string name="checkin_activity_draw_default">今日色彩灵感</string>
+    <string name="checkin_activity_challenge">完成挑战</string>
+    <string name="checkin_activity_challenge_desc">今天的拍摄任务已标记完成。</string>
+    <string name="checkin_activity_favorite">收藏灵感</string>
+    <string name="checkin_activity_favorite_desc">今天收藏了一张色卡或相关灵感。</string>
+    <string name="checkin_activity_visit">完成打卡</string>
+    <string name="checkin_activity_visit_desc">你今天来过发现页，并留下了一次记录。</string>
+    <string name="checkin_weekday_sun">日</string>
+    <string name="checkin_weekday_mon">一</string>
+    <string name="checkin_weekday_tue">二</string>
+    <string name="checkin_weekday_wed">三</string>
+    <string name="checkin_weekday_thu">四</string>
+    <string name="checkin_weekday_fri">五</string>
+    <string name="checkin_weekday_sat">六</string>
+    <string name="checkin_mark_complete">标记完成</string>
+    <string name="checkin_completed">已完成</string>
 </resources>

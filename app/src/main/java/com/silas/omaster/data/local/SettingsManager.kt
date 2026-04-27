@@ -24,6 +24,15 @@ enum class FloatingWindowMode {
 }
 
 /**
+ * 深色模式枚举
+ */
+enum class DarkMode {
+    SYSTEM,     // 跟随系统
+    LIGHT,      // 浅色模式
+    DARK        // 深色模式
+}
+
+/**
  * 应用语言枚举
  */
 enum class AppLanguage {
