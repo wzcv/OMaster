@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.silas.omaster"
-        minSdk = 23
+        minSdk = 33  // Android 13
         targetSdk = 36
         // 版本号规范：
         // versionCode: 内部版本号，每次发布必须递增
@@ -21,7 +21,7 @@ android {
         // 正式版: 1.0, 1.0.1, 1.1.0, 2.0.0
         // 测试版: 1.0.0-beta1, 1.0.0-beta2
         versionCode = 11
-        versionName = "1.4.0-root"
+        versionName = "1.4.1-root"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -104,17 +104,9 @@ dependencies {
     implementation(libs.gson)
 
     // Room 数据库已移除，使用 SharedPreferences 替代
-
-    // Xposed API（compileOnly，不打包进 APK，由框架提供）
     compileOnly(libs.xposed.api)
-
-    // Root 权限管理（libsu by topjohnwu）
     implementation(libs.libsu.core)
-
-    // MMKV 读写（腾讯高性能 KV 存储）
     implementation(libs.mmkv)
-
-    // Material3 额外依赖
     implementation(libs.androidx.material3)
 
     // 测试依赖（已使用 catalog）

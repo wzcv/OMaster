@@ -19,12 +19,12 @@
 
     <!-- Bottom Navigation -->
     <string name="nav_home">Home</string>
-    <string name="nav_subscription">Subscribe</string>
-    <string name="nav_settings">Settings</string>
+    <string name="nav_discover">Discover</string>
     <string name="nav_about">About</string>
+    <string name="nav_settings">Settings</string>
 
     <!-- Subscription -->
-    <string name="sub_title">Subscribe</string>
+    <string name="sub_title">Subscription Management</string>
     <string name="sub_add">Add Subscription</string>
     <string name="sub_url_label">Link (JSON URL)</string>
     <string name="sub_name_label">Name (Optional)</string>
@@ -48,9 +48,11 @@
     <string name="default_start_tab">Default Start Tab</string>
     <string name="settings_theme_title">Theme Color</string>
     <string name="settings_theme_dialog_title">Select Theme Color</string>
+    <string name="settings_dark_mode">Dark Mode</string>
+    <string name="settings_dark_mode_desc">Switch between dark and light theme</string>
     <string name="floating_window_opacity">Floating Window Opacity</string>
     <string name="analytics_enabled">Enable Analytics</string>
-    <string name="analytics_restart_hint">Restart app to apply</string>
+    <string name="analytics_restart_hint">Help us understand app usage and improve product experience. Collected data is used for statistical analysis only and does not contain personal privacy information. Restart app to apply</string>
     <string name="clear_cache">Clear Image Cache</string>
     <string name="clear_cache_desc">Free up storage space, images will be re-downloaded next time</string>
     <string name="cache_cleared">Cache cleared</string>
@@ -144,7 +146,7 @@
     <string name="empty_no_favorites">No favorite presets</string>
     <string name="empty_no_custom">No custom presets</string>
     <string name="empty_no_data">No data available</string>
-    <string name="empty_hint_add_presets">Please add data to assets/presets.json</string>
+    <string name="empty_hint_add_presets">Add subscriptions in "About" or create new presets</string>
     <string name="empty_hint_favorite">Tap the heart icon to favorite presets</string>
     <string name="empty_hint_create">Tap the bottom right button to create a preset</string>
     <string name="load_more_hint">More coming soon · Stay tuned</string>
@@ -189,6 +191,7 @@
     <string name="param_contrast_shadow">Contrast (Shadow)</string>
     <string name="param_clarity">Clarity</string>
     <string name="param_grain">Grain Intensity</string>
+    <string name="param_grain_size">Grain Size</string>
 
     <!-- Color Grading Parameters -->
     <string name="section_color_grading">Color Grading</string>
@@ -197,7 +200,9 @@
     <string name="param_tone_curve">Tone Curve</string>
     <string name="param_saturation">Saturation</string>
     <string name="param_warm_cool">Warm/Cool</string>
+    <string name="param_brightness">Brightness</string>
     <string name="param_cyan_magenta">Cyan/Magenta</string>
+    <string name="param_hue">Hue</string>
     <string name="param_sharpness">Sharpness</string>
     <string name="param_vignette">Vignette</string>
 
@@ -314,29 +319,29 @@
     <string name="preset_retro_nostalgia">Retro Nostalgia</string>
 
     <!-- Shooting Tips -->
-    <string name="tips_fuji_film">[Environment] Daylight outdoor or well-lit indoor\n[Scenes] Street, portrait, landscape, architecture\n[Tips] Classic film aesthetic with rich, vintage colors. Look for scenes with light-shadow contrast to enhance depth</string>
-    <string name="tips_film_feel">[Environment] Natural or soft artificial light\n[Scenes] Portraits, still life, cafés, artistic scenes\n[Tips] Soft light creates dreamy atmosphere. Perfect for emotional photos. Keep the subject in sharp focus</string>
-    <string name="tips_fairy_tale">[Environment] Morning, dusk or overcast diffused light\n[Scenes] Children, gardens, parks, romantic scenes\n[Tips] Darker tones create mystery. Dreamy soft light for fairy tale vibes. Seek colorful scenes</string>
-    <string name="tips_high_contrast_bw">[Environment] Strong light-shadow contrast, direct sunlight or spotlights\n[Scenes] Architecture, documentary, street, artistic portraits\n[Tips] Use contrast to highlight subject contours. Perfect for geometric lines and rich textures. Keep composition clean</string>
-    <string name="tips_ricoh_green">[Environment] Natural outdoor light, forests, meadows, plant-rich scenes\n[Scenes] Plants, forest walks, spring outdoors, fresh portraits\n[Tips] Bright tones highlight freshness. Greens appear natural and transparent. Perfect for plants and nature</string>
-    <string name="tips_ricoh_blue">[Environment] Sunny weather or blue sky background\n[Scenes] Seaside, urban architecture, sky, cool-toned scenes\n[Tips] Cool tones enhance blue performance. Perfect for sky, water and urban architecture. Creates transparent, calm atmosphere</string>
-    <string name="tips_blue_hour">[Environment] 20 minutes before sunrise or after sunset\n[Scenes] City night views, bright lights, water reflections\n[Tips] Strong warm-cool contrast. Perfect for city lights and night scenes. Seek water surfaces for reflection effects</string>
-    <string name="tips_dreamy_blackmist">[Environment] Backlit or side-lit scenes\n[Scenes] Portraits, emotional photography, artistic scenes, soft beauty\n[Tips] Black mist filter creates dreamy atmosphere. Perfect for beautiful portraits. Use backlight for halo effects</string>
-    <string name="tips_fuji_nc">[Environment] Daylight outdoor or ample natural light\n[Scenes] Japanese-style portraits, street, daily records, travel\n[Tips] Simulates Fuji NC film. Bright tones, soft natural colors. Perfect for daily records and Japanese aesthetics</string>
-    <string name="tips_humanities">[Environment] Natural or soft artificial light\n[Scenes] Street documentary, humanistic photography, life records, storytelling\n[Tips] Pro mode with fixed parameters. ISO 50 ensures pure image quality. Slight underexposure preserves details. Perfect for capturing real life moments</string>
-    <string name="tips_fresh_humanities">[Environment] Bright outdoor or indoor natural light\n[Scenes] Fresh Japanese portraits, campus, travel, daily life\n[Tips] Bright tones, higher saturation. Perfect for fresh, bright portraits and scenes. Seek well-lit scenes</string>
-    <string name="tips_snowy_night">[Environment] Snowy, overcast or low color temperature scenes\n[Scenes] Snow scenes, winter streets, warm indoor, festive atmosphere\n[Tips] Warm tones balance snow\'s coolness. Creates cozy atmosphere. Perfect for winter scenes and warm light environments</string>
-    <string name="tips_delicious">[Environment] Restaurants, kitchens, food photography scenes\n[Scenes] Food photography, beverages, baking, fine cuisine\n[Tips] Darker tones highlight food texture. Moderate saturation keeps food\'s true colors. Perfect for fine food and beverages</string>
-    <string name="tips_mobile_leica">[Environment] Daylight outdoor or ample light\n[Scenes] Street, architecture, landscape, daily records\n[Tips] Simulates Leica\'s German style. Deep tones, restrained colors. Perfect for photography enthusiasts seeking Leica aesthetics</string>
-    <string name="tips_dreamy_fuji">[Environment] Daylight outdoor or soft light\n[Scenes] Portraits, landscapes, Japanese scenes, artistic photography\n[Tips] Pro mode auto exposure. Slight overexposure creates dreamy feel. Vintage tones with dreamy soft light. Perfect for beautiful portraits and landscapes</string>
-    <string name="tips_hasselblad_rich">[Environment] Well-lit outdoor or indoor\n[Scenes] Landscapes, architecture, portraits, artistic photography\n[Tips] Simulates Hasselblad Natural Color Solution. Rich but true-to-life colors. Perfect for high-quality color performance</string>
-    <string name="tips_holiday_fresh">[Environment] Sunny weather or bright vacation scenes\n[Scenes] Seaside, vacation, travel, summer outdoors\n[Tips] Bright and transparent tones. Lower saturation creates freshness. Perfect for vacation and travel scenes. Capture joyful moments</string>
-    <string name="tips_dreamy_bw">[Environment] Soft light or overcast\n[Scenes] Emotional portraits, artistic photography, still life, architecture\n[Tips] Retains slight color information. Dreamy soft light creates artistic feel. Perfect for expressive black and white photography</string>
-    <string name="tips_delicious_dream">[Environment] Restaurants, cafés, cozy indoor\n[Scenes] Food, desserts, beverages, delicate items\n[Tips] Dreamy soft light creates warm atmosphere. Darker tones highlight texture. Perfect for fine food and cozy scenes</string>
-    <string name="tips_blue_clear">[Environment] Daylight outdoor or indoor, seaside, sky, water surface\n[Scenes] Landscapes, architecture, portraits, still life\n[Tips] Blue clarity style with cool tones creates fresh and transparent feel. Slight underexposure preserves details. Dreamy soft light adds atmosphere. Perfect for fresh landscapes and portraits</string>
-    <string name="tips_sunny_vintage">[Environment] Sunny outdoor, well-lit scenes\n[Scenes] Street, portraits, landscapes, vintage scenes\n[Tips] Sunny vintage style with 5000K color temp for natural colors. Negative tone creates vintage feel. Slight underexposure preserves highlight details. Warm soft light adds retro atmosphere. Perfect for sunny outdoor portraits and landscapes</string>
-    <string name="tips_neon_lights">[Environment] Night city, neon signs, bustling streets\n[Scenes] Night views, street scenes, portraits, urban landscapes\n[Tips] Neon lights style with rich filter enhancing color saturation. Gentle soft light creates dreamy feel. Slight underexposure preserves neon details. Perfect for night city neon scenes</string>
-    <string name="tips_retro_nostalgia">[Environment] Old districts, vintage scenes, nostalgic indoor settings\n[Scenes] Old objects, street scenes, portraits, storytelling scenes\n[Tips] Retro nostalgia style with 65% vintage filter for nostalgic feel. Low tone adds retro atmosphere. Reduced saturation simulates old photo texture. Perfect for nostalgic themed photos</string>
+    <string name="tips_fuji_film">[Environment] Daylight outdoor or well-lit indoor&#10;[Scenes] Street, portrait, landscape, architecture&#10;[Tips] Classic film aesthetic with rich, vintage colors. Look for scenes with light-shadow contrast to enhance depth</string>
+    <string name="tips_film_feel">[Environment] Natural or soft artificial light&#10;[Scenes] Portraits, still life, cafés, artistic scenes&#10;[Tips] Soft light creates dreamy atmosphere. Perfect for emotional photos. Keep the subject in sharp focus</string>
+    <string name="tips_fairy_tale">[Environment] Morning, dusk or overcast diffused light&#10;[Scenes] Children, gardens, parks, romantic scenes&#10;[Tips] Darker tones create mystery. Dreamy soft light for fairy tale vibes. Seek colorful scenes</string>
+    <string name="tips_high_contrast_bw">[Environment] Strong light-shadow contrast, direct sunlight or spotlights&#10;[Scenes] Architecture, documentary, street, artistic portraits&#10;[Tips] Use contrast to highlight subject contours. Perfect for geometric lines and rich textures. Keep composition clean</string>
+    <string name="tips_ricoh_green">[Environment] Natural outdoor light, forests, meadows, plant-rich scenes&#10;[Scenes] Plants, forest walks, spring outdoors, fresh portraits&#10;[Tips] Bright tones highlight freshness. Greens appear natural and transparent. Perfect for plants and nature</string>
+    <string name="tips_ricoh_blue">[Environment] Sunny weather or blue sky background&#10;[Scenes] Seaside, urban architecture, sky, cool-toned scenes&#10;[Tips] Cool tones enhance blue performance. Perfect for sky, water and urban architecture. Creates transparent, calm atmosphere</string>
+    <string name="tips_blue_hour">[Environment] 20 minutes before sunrise or after sunset&#10;[Scenes] City night views, bright lights, water reflections&#10;[Tips] Strong warm-cool contrast. Perfect for city lights and night scenes. Seek water surfaces for reflection effects</string>
+    <string name="tips_dreamy_blackmist">[Environment] Backlit or side-lit scenes&#10;[Scenes] Portraits, emotional photography, artistic scenes, soft beauty&#10;[Tips] Black mist filter creates dreamy atmosphere. Perfect for beautiful portraits. Use backlight for halo effects</string>
+    <string name="tips_fuji_nc">[Environment] Daylight outdoor or ample natural light&#10;[Scenes] Japanese-style portraits, street, daily records, travel&#10;[Tips] Simulates Fuji NC film. Bright tones, soft natural colors. Perfect for daily records and Japanese aesthetics</string>
+    <string name="tips_humanities">[Environment] Natural or soft artificial light&#10;[Scenes] Street documentary, humanistic photography, life records, storytelling&#10;[Tips] Pro mode with fixed parameters. ISO 50 ensures pure image quality. Slight underexposure preserves details. Perfect for capturing real life moments</string>
+    <string name="tips_fresh_humanities">[Environment] Bright outdoor or indoor natural light&#10;[Scenes] Fresh Japanese portraits, campus, travel, daily life&#10;[Tips] Bright tones, higher saturation. Perfect for fresh, bright portraits and scenes. Seek well-lit scenes</string>
+    <string name="tips_snowy_night">[Environment] Snowy, overcast or low color temperature scenes&#10;[Scenes] Snow scenes, winter streets, warm indoor, festive atmosphere&#10;[Tips] Warm tones balance snow\'s coolness. Creates cozy atmosphere. Perfect for winter scenes and warm light environments</string>
+    <string name="tips_delicious">[Environment] Restaurants, kitchens, food photography scenes&#10;[Scenes] Food photography, beverages, baking, fine cuisine&#10;[Tips] Darker tones highlight food texture. Moderate saturation keeps food\'s true colors. Perfect for fine food and beverages</string>
+    <string name="tips_mobile_leica">[Environment] Daylight outdoor or ample light&#10;[Scenes] Street, architecture, landscape, daily records&#10;[Tips] Simulates Leica\'s German style. Deep tones, restrained colors. Perfect for photography enthusiasts seeking Leica aesthetics</string>
+    <string name="tips_dreamy_fuji">[Environment] Daylight outdoor or soft light&#10;[Scenes] Portraits, landscapes, Japanese scenes, artistic photography&#10;[Tips] Pro mode auto exposure. Slight overexposure creates dreamy feel. Vintage tones with dreamy soft light. Perfect for beautiful portraits and landscapes</string>
+    <string name="tips_hasselblad_rich">[Environment] Well-lit outdoor or indoor&#10;[Scenes] Landscapes, architecture, portraits, artistic photography&#10;[Tips] Simulates Hasselblad Natural Color Solution. Rich but true-to-life colors. Perfect for high-quality color performance</string>
+    <string name="tips_holiday_fresh">[Environment] Sunny weather or bright vacation scenes&#10;[Scenes] Seaside, vacation, travel, summer outdoors&#10;[Tips] Bright and transparent tones. Lower saturation creates freshness. Perfect for vacation and travel scenes. Capture joyful moments</string>
+    <string name="tips_dreamy_bw">[Environment] Soft light or overcast&#10;[Scenes] Emotional portraits, artistic photography, still life, architecture&#10;[Tips] Retains slight color information. Dreamy soft light creates artistic feel. Perfect for expressive black and white photography</string>
+    <string name="tips_delicious_dream">[Environment] Restaurants, cafés, cozy indoor&#10;[Scenes] Food, desserts, beverages, delicate items&#10;[Tips] Dreamy soft light creates warm atmosphere. Darker tones highlight texture. Perfect for fine food and cozy scenes</string>
+    <string name="tips_blue_clear">[Environment] Daylight outdoor or indoor, seaside, sky, water surface&#10;[Scenes] Landscapes, architecture, portraits, still life&#10;[Tips] Blue clarity style with cool tones creates fresh and transparent feel. Slight underexposure preserves details. Dreamy soft light adds atmosphere. Perfect for fresh landscapes and portraits</string>
+    <string name="tips_sunny_vintage">[Environment] Sunny outdoor, well-lit scenes&#10;[Scenes] Street, portraits, landscapes, vintage scenes&#10;[Tips] Sunny vintage style with 5000K color temp for natural colors. Negative tone creates vintage feel. Slight underexposure preserves highlight details. Warm soft light adds retro atmosphere. Perfect for sunny outdoor portraits and landscapes</string>
+    <string name="tips_neon_lights">[Environment] Night city, neon signs, bustling streets&#10;[Scenes] Night views, street scenes, portraits, urban landscapes&#10;[Tips] Neon lights style with rich filter enhancing color saturation. Gentle soft light creates dreamy feel. Slight underexposure preserves neon details. Perfect for night city neon scenes</string>
+    <string name="tips_retro_nostalgia">[Environment] Old districts, vintage scenes, nostalgic indoor settings&#10;[Scenes] Old objects, street scenes, portraits, storytelling scenes&#10;[Tips] Retro nostalgia style with 65% vintage filter for nostalgic feel. Low tone adds retro atmosphere. Reduced saturation simulates old photo texture. Perfect for nostalgic themed photos</string>
 
     <!-- About Page -->
     <string name="about_title">About</string>
@@ -358,8 +363,14 @@
 
     <!-- Feature Intro -->
     <string name="feature_title">Features</string>
-    <string name="feature_desc_1">OMaster is a color grading parameter management tool designed for OPPO/OnePlus/Realme mobile photography enthusiasts.</string>
-    <string name="feature_desc_2">You can view, favorite, and reproduce Master Mode photography color grading parameters, including exposure, contrast, saturation, color temperature, and more.</string>
+    <string name="feature_custom_title">Personalization</string>
+    <string name="feature_custom_desc">Rich preset parameters for various scenarios</string>
+    <string name="feature_cloud_title">Cloud Subscription</string>
+    <string name="feature_cloud_desc">Subscribe to cloud preset library with manual updates</string>
+    <string name="feature_update_title">Continuous Updates</string>
+    <string name="feature_update_desc">Community-created presets with regular content updates</string>
+    <string name="feature_safe_title">Safe &amp; Reliable</string>
+    <string name="feature_safe_desc">Local storage first, protecting user privacy</string>
 
     <!-- Credits -->
     <string name="credits_title">Credits</string>
@@ -369,18 +380,20 @@
 
     <!-- Footer -->
     <string name="footer_local">Pure local operation, data stored locally</string>
-    <string name="privacy_policy">User Agreement &amp; Privacy Policy</string>
+    <string name="user_agreement">User Agreement</string>
+    <string name="privacy_policy">Privacy Policy</string>
+    <string name="open_source_license">Open Source License</string>
 
     <!-- Privacy Policy Page -->
     <string name="privacy_title">User Agreement &amp; Privacy Policy</string>
     <string name="welcome_title">Welcome to OMaster</string>
     <string name="welcome_desc">OMaster is a color grading parameter management tool designed for OPPO/OnePlus/Realme mobile photography enthusiasts. Here, you can view, favorite, and reproduce Master Mode photography color grading parameters.</string>
     <string name="features_title">Features</string>
-    <string name="features_list">• View Master Mode color grading parameters\n• Support multiple preset styles\n• Pure local operation, data stored locally\n• No internet required</string>
+    <string name="features_list">• View Master Mode color grading parameters&#10;• Support multiple preset styles&#10;• Pure local operation, data stored locally&#10;• No internet required</string>
     <string name="data_collection_title">Data Collection</string>
     <string name="data_collection_desc">To improve app quality, we collect anonymous feature usage and crash diagnostics for stability and feature optimization. The app also fetches preset data from:\n\n• cdn.jsdelivr.net (preset config)\n• cdn.fky.ltd (preset images)</string>
     <string name="local_storage_title">Local Data Storage</string>
-    <string name="local_storage_desc">The app stores the following data locally:\n\n• Subscription config (URL, version, etc.)\n• Preset image cache\n• User preferences (theme, language, etc.)\n• Favorite presets list\n\nAll data is stored on your device, we do not upload your personal information.</string>
+    <string name="local_storage_desc">The app stores the following data locally:&#10;&#10;• Subscription config (URL, version, etc.)&#10;• Preset image cache&#10;• User preferences (theme, language, etc.)&#10;• Favorite presets list&#10;&#10;All data is stored on your device, we do not upload your personal information.</string>
     <string name="permission_title">Permissions</string>
     <string name="permission_desc">Floating window feature requires SYSTEM_ALERT_WINDOW permission to display shooting parameters over other apps. This permission is only used to display preset parameters, and will not access your screen content or collect any data.</string>
     <string name="sdk_info_title">Analytics Module Info</string>
@@ -401,7 +414,7 @@
     <string name="guide_step_2">2. Turn on the switch</string>
     <string name="guide_step_3">3. Return to OMaster</string>
     <string name="guide_fail_title">If you encounter permission activation failure:</string>
-    <string name="guide_fail_step_1">Go to "Settings -> App Management"</string>
+    <string name="guide_fail_step_1">Go to "Settings -&gt; App Management"</string>
     <string name="guide_fail_step_2">Find OMaster app</string>
     <string name="guide_fail_step_3">Tap the ⋮ menu in the top right</string>
     <string name="guide_fail_step_4">Select "Remove all permission restrictions"</string>
@@ -409,9 +422,28 @@
     <string name="guide_btn_open">Open Permission</string>
     <string name="guide_later">Maybe Later</string>
     <string name="contact_title">Contact Us</string>
-    <string name="contact_info">If you have any questions about this privacy policy, please contact:\nDeveloper: Silas\nEmail: iboy66lee@qq.com</string>
+    <string name="contact_info">If you have any questions about this privacy policy, please contact:&#10;Developer: Silas&#10;Email: iboy66lee@qq.com</string>
     <string name="last_updated">Last Updated: %1$s</string>
     <string name="no_release_notes">No release notes available</string>
+
+    <!-- Open Source License Page -->
+    <string name="open_source_license_title">Open Source License</string>
+    <string name="app_license_section">App License Agreement</string>
+    <string name="app_license_name">CC BY-NC-SA 4.0</string>
+    <string name="app_license_desc">This app is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0). You are free to share and adapt this work, but you must follow these conditions:</string>
+    <string name="license_terms_title">Key Terms</string>
+    <string name="term_attribution">Attribution</string>
+    <string name="term_attribution_desc">You must give appropriate credit, provide a link to the license</string>
+    <string name="term_non_commercial">NonCommercial</string>
+    <string name="term_non_commercial_desc">You may not use the material for commercial purposes</string>
+    <string name="term_share_alike">ShareAlike</string>
+    <string name="term_share_alike_desc">If you remix, transform, or build upon the material, you must distribute your contributions under the same license as the original</string>
+    <string name="view_full_license">View Full License</string>
+    <string name="libraries_section">Open Source Libraries</string>
+    <string name="libraries_desc">This app uses the following open source libraries. We thank all open source contributors:</string>
+    <string name="acknowledgements_section">Acknowledgements</string>
+    <string name="acknowledgements_desc">Thanks to all developers who contribute to the open source community. It is your selfless dedication that makes this project possible.</string>
+    <string name="acknowledgements_thanks">Salute to all open source projects!</string>
 
     <!-- Welcome Dialog -->
     <string name="welcome_dialog_title">Welcome to OMaster</string>
@@ -468,6 +500,221 @@
     <string name="floating_window_mode_standard_desc">Card layout with complete information</string>
     <string name="floating_window_mode_compact_desc">Compact parameter bar, native style</string>
     <string name="floating_window_mode_dialog_title">Select Floating Window Mode</string>
+    <string name="floating_window_realme_tip">Note: Realme presets will automatically use standard floating window (compact mode icons are not compatible with Realme camera UI)</string>
+
+    <!-- Discover Page -->
+    <string name="discover_title">Discover</string>
+    <string name="discover_subtitle">Explore more photography features</string>
+
+    <!-- Color Walk Feature Card -->
+    <string name="colorwalk_card_title">Color Walk</string>
+    <string name="colorwalk_card_desc">Daily color challenge, discover the city through colors</string>
+    <string name="colorwalk_card_button">Start Exploring</string>
+
+    <!-- Color Walk Guide -->
+    <string name="colorwalk_guide_title">What is Color Walk?</string>
+    <string name="colorwalk_guide_desc">Take a color card, wander the streets, find matching colors, and capture the city\'s beauty</string>
+    <string name="colorwalk_guide_step1_title">Draw a Card</string>
+    <string name="colorwalk_guide_step1_desc">3 chances daily, get a random color mission</string>
+    <string name="colorwalk_guide_step2_title">Street Hunt</string>
+    <string name="colorwalk_guide_step2_desc">Go out with your card, find matching colors in the city</string>
+    <string name="colorwalk_guide_step3_title">Capture &amp; Record</string>
+    <string name="colorwalk_guide_step3_desc">Photograph the colors, complete today\'s challenge</string>
+    <string name="colorwalk_guide_start">Start Exploring</string>
+    <string name="colorwalk_guide_next">Next</string>
+    <string name="colorwalk_guide_skip">Skip</string>
+
+    <!-- Color Walk Main Page -->
+    <string name="colorwalk_title">Color Walk</string>
+    <string name="colorwalk_subtitle">Daily color card challenge, discover the city through colors</string>
+    <string name="colorwalk_empty_title">Discover Today\'s Color Inspiration</string>
+    <string name="colorwalk_empty_subtitle">Tap the button below to draw your exclusive color card</string>
+    <string name="colorwalk_draw_button">Draw Today\'s Card</string>
+    <string name="colorwalk_draw_hint">3 draws per day, resets at 0:00</string>
+    <string name="colorwalk_drawn_today">Drawn Today</string>
+    <string name="colorwalk_draw_count">Draw #%d</string>
+    <string name="colorwalk_redraw_remaining">Redraw (%d)</string>
+    <string name="colorwalk_no_more_draws">No more draws today</string>
+    <string name="colorwalk_redraw">Redraw</string>
+    <string name="colorwalk_clear">Clear Card</string>
+    <string name="colorwalk_hide_today_card">Hide Today\'s Card</string>
+    <string name="colorwalk_history">History</string>
+    <string name="colorwalk_no_history">No history yet</string>
+    <string name="colorwalk_history_preview_title">Color Card Review</string>
+    <string name="colorwalk_close_preview">Close</string>
+    <string name="colorwalk_clear_history">Clear History</string>
+    <string name="colorwalk_clear_history_confirm">Are you sure you want to clear all history? This action cannot be undone.</string>
+    <string name="colorwalk_confirm_clear">Clear</string>
+    <string name="colorwalk_cancel">Cancel</string>
+    <string name="colorwalk_today_challenge">Today\'s Challenge</string>
+    <string name="colorwalk_best_scenes">Best Scenes</string>
+    <string name="colorwalk_theme_primary">Primary</string>
+    <string name="colorwalk_theme_accent">Accent</string>
+    <string name="colorwalk_shooting_tips">Shooting Tips</string>
+    <string name="colorwalk_scene_architecture">Architecture</string>
+    <string name="colorwalk_scene_street">Street</string>
+    <string name="colorwalk_scene_light">Warm Light</string>
+    <string name="colorwalk_scene_seaside">Seaside</string>
+    <string name="colorwalk_scene_sky">Sky</string>
+    <string name="colorwalk_scene_minimal">Minimal</string>
+    <string name="colorwalk_scene_park">Park</string>
+    <string name="colorwalk_scene_plants">Plants</string>
+    <string name="colorwalk_scene_nature">Nature</string>
+    <string name="colorwalk_scene_industrial">Industrial</string>
+    <string name="colorwalk_scene_geometry">Geometry</string>
+    <string name="colorwalk_scene_bridge">Bridge</string>
+    <string name="colorwalk_scene_sunset">Sunset</string>
+    <string name="colorwalk_scene_skyline">Skyline</string>
+    <string name="colorwalk_scene_reflection">Reflection</string>
+    <string name="colorwalk_scene_night">Night</string>
+    <string name="colorwalk_scene_neon">Neon</string>
+    <string name="colorwalk_scene_city">City</string>
+    <string name="colorwalk_scene_old_street">Old Street</string>
+    <string name="colorwalk_scene_cafe">Cafe</string>
+    <string name="colorwalk_scene_story">Storytelling</string>
+    <string name="colorwalk_scene_black_white">Black &amp; White</string>
+    <string name="colorwalk_scene_shadow">Shadow</string>
+    <string name="colorwalk_scene_flower">Flowers</string>
+    <string name="colorwalk_scene_soft_light">Soft Light</string>
+    <string name="colorwalk_scene_still_life">Still Life</string>
+    <string name="colorwalk_scene_indoor">Indoor</string>
+    <string name="colorwalk_scene_water">Water</string>
+    <string name="colorwalk_scene_blue_hour">Blue Hour</string>
+    <string name="colorwalk_scene_autumn">Autumn</string>
+    <string name="colorwalk_scene_backlight">Backlight</string>
+
+    <!-- Color Walk Themes -->
+    <string name="colorwalk_theme_urban_warm">Urban Warmth</string>
+    <string name="colorwalk_theme_seaside_fresh">Seaside Fresh</string>
+    <string name="colorwalk_theme_forest_green">Forest Green</string>
+    <string name="colorwalk_theme_industrial_cool">Industrial Cool</string>
+    <string name="colorwalk_theme_sunset_glow">Sunset Glow</string>
+    <string name="colorwalk_theme_neon_night">Neon Night</string>
+    <string name="colorwalk_theme_vintage_film">Vintage Film</string>
+    <string name="colorwalk_theme_minimalist_bw">Minimalist B&amp;W</string>
+    <string name="colorwalk_theme_spring_blossom">Spring Blossom</string>
+    <string name="colorwalk_theme_coffee_time">Coffee Time</string>
+    <string name="colorwalk_theme_ocean_deep">Ocean Deep</string>
+    <string name="colorwalk_theme_autumn_leaves">Autumn Leaves</string>
+
+    <!-- Color Walk Descriptions -->
+    <string name="colorwalk_desc_urban_warm">Find red brick buildings, wooden doors, warm street lights, capture the city\'s warm texture</string>
+    <string name="colorwalk_desc_seaside_fresh">Seaside, sky, beach, record the tranquility and openness of the coast with fresh blue and white tones</string>
+    <string name="colorwalk_desc_forest_green">Parks, trees, grass, find vitality and tranquility in nature\'s green</string>
+    <string name="colorwalk_desc_industrial_cool">Steel structures, factories, bridges, show the power of industrial aesthetics with cool tones</string>
+    <string name="colorwalk_desc_sunset_glow">Dusk, skyline, capture the romance and gentleness of the city under sunset glow</string>
+    <string name="colorwalk_desc_neon_night">Night markets, neon signs, find the city\'s most dazzling colors in the night</string>
+    <string name="colorwalk_desc_vintage_film">Old streets, vintage items, retro scenes, record traces of time with film tones</string>
+    <string name="colorwalk_desc_minimalist_bw">Architectural lines, light and shadow contrast, show pure formal beauty with minimalist black and white</string>
+    <string name="colorwalk_desc_spring_blossom">Flower paths, parks, spring scenes, record spring romance with pink tones</string>
+    <string name="colorwalk_desc_coffee_time">Cafes, bookstores, artsy shops, record leisure time with warm brown tones</string>
+    <string name="colorwalk_desc_ocean_deep">Deep sea, aquariums, blue buildings, explore the mysterious ocean world with deep blue tones</string>
+    <string name="colorwalk_desc_autumn_leaves">Fallen leaves, autumn forests, golden streets, capture autumn poetry with warm tones</string>
+
+    <!-- Color Walk Tips -->
+    <string name="colorwalk_tips_urban_warm">[Find] Red brick walls, old buildings, wooden frames, warm street lights [Tips] Use light-shadow contrast for depth, warm tones work well with backlight [Best Time] 3-5 PM, when sunlight is angled</string>
+    <string name="colorwalk_tips_seaside_fresh">[Find] Seaside boardwalks, blue sky, beaches, white buildings [Tips] Large white space for openness, horizontal composition [Best Time] Sunny morning, when sky is bluest</string>
+    <string name="colorwalk_tips_forest_green">[Find] Park woods, grass, vines, moss [Tips] Use foreground leaves for depth, find light spots through canopy [Best Time] Early morning or dusk, soft light</string>
+    <string name="colorwalk_tips_industrial_cool">[Find] Steel bridges, factory walls, pipes, concrete buildings [Tips] Emphasize geometric lines, low angle for power [Best Time] Overcast, even light</string>
+    <string name="colorwalk_tips_sunset_glow">[Find] City skyline, building silhouettes, water reflections [Tips] Backlight for silhouettes, use water reflections [Best Time] 20 min after sunset, blue hour</string>
+    <string name="colorwalk_tips_neon_night">[Find] Neon signs, night market stalls, light trails [Tips] Slight underexposure for neon details, use halos [Best Time] 8-10 PM, all neon lights on</string>
+    <string name="colorwalk_tips_vintage_film">[Find] Old streets, bookstores, retro cafes, vintage items [Tips] Find aged elements, leave white space for story [Best Time] Afternoon soft light, or indoor warm light</string>
+    <string name="colorwalk_tips_minimalist_bw">[Find] Modern architecture, geometric lines, strong light-shadow scenes [Tips] Simplify composition, emphasize shapes and textures [Best Time] Sunny, strongest light-shadow contrast</string>
+    <string name="colorwalk_tips_spring_blossom">[Find] Cherry blossom paths, flower fields, parks [Tips] Use blurred foreground flowers for dreamy feel [Best Time] Early morning or dusk, soft light</string>
+    <string name="colorwalk_tips_coffee_time">[Find] Cafe interiors, bookshelves, coffee cups, artsy shops [Tips] Use window side light, warm tones for still life [Best Time] 2-4 PM, best indoor light</string>
+    <string name="colorwalk_tips_ocean_deep">[Find] Aquariums, blue walls, deep pools, rainy scenes [Tips] Use water reflections, dark backgrounds [Best Time] Overcast or indoor, dimmer light</string>
+    <string name="colorwalk_tips_autumn_leaves">[Find] Leaf-covered paths, maple trees, autumn parks [Tips] Use fallen leaves as foreground, backlight for transparency [Best Time] Sunny afternoon, light through leaves</string>
+    <string name="colorwalk_challenge_urban_warm">Find two warm building materials and one warm light source in the same frame.</string>
+    <string name="colorwalk_challenge_seaside_fresh">Make the sky or sea occupy more than half of the frame and keep one bright accent.</string>
+    <string name="colorwalk_challenge_forest_green">Use foreground leaves to frame a quiet green subject with layered depth.</string>
+    <string name="colorwalk_challenge_industrial_cool">Shoot a low-angle composition using strong lines and one cool metallic color block.</string>
+    <string name="colorwalk_challenge_sunset_glow">Capture a warm-to-cool transition between the skyline and the sky.</string>
+    <string name="colorwalk_challenge_neon_night">Find a neon scene with one dominant color and one small contrasting highlight.</string>
+    <string name="colorwalk_challenge_vintage_film">Photograph an object or corner that feels like it has a story from another decade.</string>
+    <string name="colorwalk_challenge_minimalist_bw">Reduce the frame to bold shapes, clean lines, and only one visual subject.</string>
+    <string name="colorwalk_challenge_spring_blossom">Use soft light and floral tones to create one airy, romantic composition.</string>
+    <string name="colorwalk_challenge_coffee_time">Build a cozy still life with coffee tones, paper texture, or warm window light.</string>
+    <string name="colorwalk_challenge_ocean_deep">Look for layered blues and add a reflective surface to deepen the atmosphere.</string>
+    <string name="colorwalk_challenge_autumn_leaves">Use fallen leaves or golden foliage as foreground to make the season feel tangible.</string>
+
+    <!-- Color Names -->
+    <string name="color_brick_red">Brick Red</string>
+    <string name="color_dark_brown">Dark Brown</string>
+    <string name="color_bisque">Bisque</string>
+    <string name="color_dark_gray">Dark Gray</string>
+    <string name="color_sky_blue">Sky Blue</string>
+    <string name="color_powder_blue">Powder Blue</string>
+    <string name="color_white">White</string>
+    <string name="color_wheat">Wheat</string>
+    <string name="color_forest_green">Forest Green</string>
+    <string name="color_light_green">Light Green</string>
+    <string name="color_saddle_brown">Saddle Brown</string>
+    <string name="color_beige">Beige</string>
+    <string name="color_slate_gray">Slate Gray</string>
+    <string name="color_steel_blue">Steel Blue</string>
+    <string name="color_dark_slate_gray">Dark Slate Gray</string>
+    <string name="color_silver">Silver</string>
+    <string name="color_coral">Coral</string>
+    <string name="color_light_pink">Light Pink</string>
+    <string name="color_medium_purple">Medium Purple</string>
+    <string name="color_midnight_blue">Midnight Blue</string>
+    <string name="color_deep_pink">Deep Pink</string>
+    <string name="color_cyan">Cyan</string>
+    <string name="color_gold">Gold</string>
+    <string name="color_navy">Navy</string>
+    <string name="color_tan">Tan</string>
+    <string name="color_sienna">Sienna</string>
+    <string name="color_khaki">Khaki</string>
+    <string name="color_dark_olive_green">Dark Olive Green</string>
+    <string name="color_black">Black</string>
+    <string name="color_gray">Gray</string>
+    <string name="color_light_gray">Light Gray</string>
+    <string name="color_cherry_blossom">Cherry Blossom</string>
+    <string name="color_hot_pink">Hot Pink</string>
+    <string name="color_pale_green">Pale Green</string>
+    <string name="color_lemon_chiffon">Lemon Chiffon</string>
+    <string name="color_coffee">Coffee</string>
+    <string name="color_chocolate">Chocolate</string>
+    <string name="color_cornsilk">Cornsilk</string>
+    <string name="color_ocean_blue">Ocean Blue</string>
+    <string name="color_dark_blue">Dark Blue</string>
+    <string name="color_turquoise">Turquoise</string>
+    <string name="color_honeydew">Honeydew</string>
+    <string name="color_orange_red">Orange Red</string>
+    <string name="color_goldenrod">Goldenrod</string>
+    <string name="color_dark_red">Dark Red</string>
+
+    <!-- Discover / Check-in -->
+    <string name="discover_more_coming">More features are on the way...</string>
+    <string name="discover_stay_tuned">Stay tuned</string>
+    <string name="discover_checkin_title">Photo Habit Log</string>
+    <string name="discover_checkin_subtitle">Keep a record of your shooting rhythm</string>
+    <string name="discover_checkin_subtitle_active">Active for %1$d days in a row</string>
+    <string name="checkin_sheet_title">Photo Habit Log</string>
+    <string name="checkin_current_streak">Current Streak</string>
+    <string name="checkin_longest_streak">Best Streak</string>
+    <string name="checkin_month_total">This Month</string>
+    <string name="checkin_days_unit">%1$d days</string>
+    <string name="checkin_calendar_previous_month">Previous month</string>
+    <string name="checkin_calendar_next_month">Next month</string>
+    <string name="checkin_no_record">No activity recorded for this day yet.</string>
+    <string name="checkin_activity_draw">Drew a color card</string>
+    <string name="checkin_activity_draw_default">Today’s color inspiration</string>
+    <string name="checkin_activity_challenge">Completed the challenge</string>
+    <string name="checkin_activity_challenge_desc">Today’s shooting task was marked complete.</string>
+    <string name="checkin_activity_favorite">Saved inspiration</string>
+    <string name="checkin_activity_favorite_desc">A color card or related inspiration was saved today.</string>
+    <string name="checkin_activity_visit">Checked in</string>
+    <string name="checkin_activity_visit_desc">You opened Discover and left a trace for today.</string>
+    <string name="checkin_weekday_sun">S</string>
+    <string name="checkin_weekday_mon">M</string>
+    <string name="checkin_weekday_tue">T</string>
+    <string name="checkin_weekday_wed">W</string>
+    <string name="checkin_weekday_thu">T</string>
+    <string name="checkin_weekday_fri">F</string>
+    <string name="checkin_weekday_sat">S</string>
+    <string name="checkin_mark_complete">Mark complete</string>
+    <string name="checkin_completed">Completed</string>
 
     <!-- Xposed Tool -->
     <string name="xposed_tool_entry">Xposed Tool</string>

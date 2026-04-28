@@ -28,6 +28,9 @@ import com.silas.omaster.ui.components.OMasterTopAppBar
 import com.silas.omaster.ui.components.PolicyItem
 import com.silas.omaster.ui.components.PolicySection
 import com.silas.omaster.ui.theme.DarkGray
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
 
 @Composable
 fun PrivacyPolicyScreen(
@@ -76,7 +79,7 @@ fun PrivacyPolicyScreen(
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
-                    containerColor = DarkGray
+                    containerColor = themedCardBackground()
                 )
             ) {
                 Column(
@@ -133,7 +136,7 @@ fun PrivacyPolicyScreen(
             Text(
                 text = stringResource(R.string.last_updated, "2026-02-09"),
                 style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.4f),
+                color = themedTextSecondary().copy(alpha = 0.6f),
                 textAlign = TextAlign.Center,
                 modifier = Modifier.fillMaxWidth()
             )

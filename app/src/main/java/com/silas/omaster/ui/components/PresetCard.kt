@@ -45,8 +45,12 @@ import com.silas.omaster.R
 import com.silas.omaster.model.MasterPreset
 import com.silas.omaster.ui.theme.CardBorderHighlight
 import com.silas.omaster.ui.theme.CardBorderLight
-import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.GlassColors
+import com.silas.omaster.ui.theme.OffWhite
+import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextSecondary
+import com.silas.omaster.ui.theme.themedBorderLight
 import com.silas.omaster.util.PresetI18n
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
@@ -76,35 +80,26 @@ fun PresetCard(
                 indication = null,
                 onClick = onClick
             ),
-        shape = RoundedCornerShape(16.dp),
+        shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
-        ),
-        elevation = CardDefaults.cardElevation(
-            defaultElevation = if (isPressed) 10.dp else 5.dp
+            containerColor = Color.Transparent
         )
     ) {
         Box {
-            // Glass 效果层
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .border(
-                        width = if (isPressed) 1.5.dp else 1.dp,
-                        color = if (isPressed)
-                            GlassColors.BorderHighlight
-                        else
-                            GlassColors.BorderOuter,
-                        shape = RoundedCornerShape(16.dp)
-                    )
-            )
-
             // 图片区域
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(imageHeight.dp)
-                    .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
+                    .border(
+                        width = if (isPressed) 1.5.dp else 1.dp,
+                        color = if (isPressed)
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                        else
+                            themedBorderLight(),
+                        shape = RoundedCornerShape(12.dp)
+                    )
+                    .clip(RoundedCornerShape(12.dp))
             ) {
                 PresetImage(
                     preset = preset,
@@ -137,9 +132,9 @@ fun PresetCard(
                             else
                                 stringResource(R.string.preset_favorite),
                             tint = if (preset.isFavorite)
-                                MaterialTheme.colorScheme.primary
-                            else
-                                Color.White.copy(alpha = 0.95f),
+                                    MaterialTheme.colorScheme.primary
+                                else
+                                    OffWhite,
                             modifier = Modifier.size(18.dp)
                         )
                     }
@@ -185,7 +180,7 @@ fun PresetCard(
                             )
                             .border(
                                 width = 0.5.dp,
-                                color = Color.White.copy(alpha = 0.3f),
+                                color = themedBorderLight(),
                                 shape = RoundedCornerShape(6.dp)
                             )
                             .padding(horizontal = 10.dp, vertical = 5.dp)
@@ -193,7 +188,7 @@ fun PresetCard(
                         Text(
                             text = stringResource(R.string.preset_new),
                             fontSize = 10.sp,
-                            color = Color.White,
+                            color = OffWhite,
                             fontWeight = FontWeight.Bold,
                             letterSpacing = 0.5.sp
                         )
@@ -206,12 +201,13 @@ fun PresetCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .align(Alignment.BottomCenter)
+                    .clip(RoundedCornerShape(bottomStart = 12.dp, bottomEnd = 12.dp))
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 Color.Transparent,
-                                GlassColors.Base.copy(alpha = 0.7f),
-                                GlassColors.Base.copy(alpha = 0.95f)
+                                Color.Black.copy(alpha = 0.5f),
+                                Color.Black.copy(alpha = 0.75f)
                             ),
                             startY = 0f,
                             endY = Float.POSITIVE_INFINITY
@@ -222,7 +218,7 @@ fun PresetCard(
                 Text(
                     text = PresetI18n.getLocalizedPresetName(preset.name),
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.95f),
+                    color = OffWhite,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -241,12 +237,12 @@ fun PresetCardPlaceholder(
             .height(250.dp)
             .border(
                 width = 1.dp,
-                color = CardBorderLight,
+                color = themedBorderLight(),
                 shape = RoundedCornerShape(12.dp)
             ),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         )
     ) {
         Box(
@@ -256,7 +252,7 @@ fun PresetCardPlaceholder(
             Text(
                 text = stringResource(R.string.empty_no_data),
                 style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.5f)
+                color = themedTextSecondary()
             )
         }
     }

@@ -20,7 +20,7 @@
   <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.zh">
     <img src="https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-orange.svg?style=flat-square" alt="License"/>
   </a>
-  <img src="https://img.shields.io/badge/Platform-Android%206+-brightgreen.svg?style=flat-square" alt="Platform"/>
+  <img src="https://img.shields.io/badge/Platform-Android%2013+-brightgreen.svg?style=flat-square" alt="Platform"/>
   <img src="https://img.shields.io/badge/Tech-Jetpack%20Compose-4285F4.svg?style=flat-square" alt="Tech"/>
   <img src="https://img.shields.io/github/actions/workflow/status/iCurrer/OMaster/beta-release.yml" alt="Build"/>
 </p>
@@ -92,7 +92,7 @@ Go to the [Releases page](https://github.com/iCurrer/OMaster/releases) to downlo
 - LanzouCloud: [https://wwbwy.lanzouu.com/b016klqmib](https://wwbwy.lanzouu.com/b016klqmib)
 
 ### System Requirements
-- Android 6 (API 23) and above
+- Android 13 (API 33) and above
 - Your phone system allows floating windows to be displayed on top of the camera application
 
 ---

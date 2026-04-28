@@ -32,16 +32,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.CloudDownload
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Update
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.OpenInNew
+import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Shield
 import androidx.compose.material.icons.filled.Warning
-import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.automirrored.filled.OpenInNew
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -66,6 +72,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -77,9 +84,15 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import com.silas.omaster.R
 import com.silas.omaster.ui.components.OMasterTopAppBar
+import com.silas.omaster.ui.theme.AppDesign
 import com.silas.omaster.ui.theme.CardBorderLight
 import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.NearBlack
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
+import com.silas.omaster.ui.theme.themedBorderLight
 import com.silas.omaster.util.UpdateChecker
 import com.silas.omaster.util.VersionInfo
 import kotlinx.coroutines.delay
@@ -102,11 +115,12 @@ import androidx.compose.ui.platform.LocalHapticFeedback
 import com.silas.omaster.util.perform
 
 @Composable
-fun AboutScreen(
-    onBack: () -> Unit,
+fun ProfileScreen(
     onNavigateToSettings: () -> Unit,
+    onNavigateToSubscription: () -> Unit,
     onScrollStateChanged: (Boolean) -> Unit,
     onNavigateToPrivacyPolicy: () -> Unit = {},
+    onNavigateToOpenSourceLicense: () -> Unit = {},
     currentVersionCode: Int = VersionInfo.VERSION_CODE,
     currentVersionName: String = VersionInfo.VERSION_NAME
 ) {
@@ -214,14 +228,14 @@ fun AboutScreen(
         modifier = Modifier.fillMaxSize()
     ) {
         OMasterTopAppBar(
-            title = stringResource(R.string.about_title),
+            title = stringResource(R.string.nav_about),
             modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars),
             actions = {
                 IconButton(onClick = onNavigateToSettings) {
                     Icon(
                         imageVector = Icons.Default.Settings,
                         contentDescription = stringResource(R.string.nav_settings),
-                        tint = Color.White
+                        tint = themedTextPrimary()
                     )
                 }
             }
@@ -231,12 +245,19 @@ fun AboutScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(scrollState)
-                .padding(24.dp),
+                .padding(AppDesign.ScreenPadding),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             AppTitleSection(currentVersionName)
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
+
+            // 功能入口列表
+            ProfileMenuList(
+                onNavigateToSubscription = onNavigateToSubscription
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
 
             UpdateCard(
                 currentVersionName = currentVersionName,
@@ -296,7 +317,7 @@ fun AboutScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            FeatureCard()
+            FeatureList()
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -306,9 +327,16 @@ fun AboutScreen(
 
             ProjectCard(context)
 
+            Spacer(modifier = Modifier.height(16.dp))
+
+            QQGroupCard(context)
+
             Spacer(modifier = Modifier.height(24.dp))
 
-            FooterSection(context, onNavigateToPrivacyPolicy)
+            FooterSection(context, onNavigateToPrivacyPolicy, onNavigateToOpenSourceLicense)
+
+            // 底部额外留白，避免内容太靠下
+            Spacer(modifier = Modifier.height(48.dp))
         }
     }
 }
@@ -316,41 +344,52 @@ fun AboutScreen(
 @Composable
 private fun AppTitleSection(currentVersionName: String) {
     Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 32.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        // 应用名称（O 使用主题色）
         Text(
             text = buildAnnotatedString {
                 withStyle(style = SpanStyle(color = MaterialTheme.colorScheme.primary)) {
                     append("O")
                 }
-                withStyle(style = SpanStyle(color = Color.White)) {
+                withStyle(style = SpanStyle(color = themedTextPrimary())) {
                     append("Master")
                 }
             },
-            style = MaterialTheme.typography.headlineMedium,
+            style = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
+        // 副标题
         Text(
             text = stringResource(R.string.app_slogan),
             style = MaterialTheme.typography.bodyLarge,
-            color = Color.White.copy(alpha = 0.7f)
+            color = themedTextSecondary().copy(alpha = 0.8f)
         )
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
+        // 版本号标签
         Box(
             modifier = Modifier
-                .background(
-                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
-                    shape = RoundedCornerShape(12.dp)
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                    shape = RoundedCornerShape(20.dp)
                 )
-                .padding(horizontal = 12.dp, vertical = 4.dp)
+                .background(
+                    color = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                    shape = RoundedCornerShape(20.dp)
+                )
+                .padding(horizontal = 16.dp, vertical = 6.dp)
         ) {
             Text(
-                text = "v$currentVersionName",
+                text = "Version $currentVersionName",
                 style = MaterialTheme.typography.labelMedium,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Medium
@@ -380,11 +419,11 @@ private fun UpdateCard(
             .fillMaxWidth()
             .border(
                 width = if (hasUpdate) 1.5.dp else 1.dp,
-                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else CardBorderLight,
+                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.5f) else themedBorderLight(),
                 shape = RoundedCornerShape(16.dp)
             ),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -406,7 +445,7 @@ private fun UpdateCard(
                         modifier = Modifier
                             .size(36.dp)
                             .background(
-                                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else Color.White.copy(alpha = 0.05f),
+                                color = if (hasUpdate) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else themedTextPrimary().copy(alpha = 0.05f),
                                 shape = RoundedCornerShape(10.dp)
                             ),
                         contentAlignment = Alignment.Center
@@ -414,7 +453,7 @@ private fun UpdateCard(
                         Icon(
                             imageVector = Icons.Default.Download,
                             contentDescription = null,
-                            tint = if (hasUpdate) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.6f),
+                            tint = if (hasUpdate) MaterialTheme.colorScheme.primary else themedTextSecondary().copy(alpha = 0.6f),
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -423,7 +462,7 @@ private fun UpdateCard(
                             text = "v$currentVersionName",
                             style = MaterialTheme.typography.titleMedium,
                             fontWeight = FontWeight.Bold,
-                            color = Color.White
+                            color = themedTextPrimary()
                         )
                         if (lastCheckTime != null && !isChecking) {
                             val diff = System.currentTimeMillis() - lastCheckTime
@@ -436,7 +475,7 @@ private fun UpdateCard(
                             Text(
                                 text = stringResource(R.string.last_check, timeText),
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.White.copy(alpha = 0.4f)
+                                color = themedTextSecondary().copy(alpha = 0.6f)
                             )
                         }
                     }
@@ -472,7 +511,7 @@ private fun UpdateCard(
                             Text(
                                 text = stringResource(R.string.checking),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.7f)
+                                color = themedTextSecondary().copy(alpha = 0.8f)
                             )
                         }
                     }
@@ -560,7 +599,7 @@ private fun UpdateCard(
                                     Text(
                                         text = updateInfo.releaseNotes,
                                         style = MaterialTheme.typography.bodySmall,
-                                        color = Color.White.copy(alpha = 0.8f),
+                                        color = themedTextPrimary().copy(alpha = 0.8f),
                                         lineHeight = MaterialTheme.typography.bodySmall.lineHeight * 1.2
                                     )
                                 }
@@ -579,7 +618,7 @@ private fun UpdateCard(
                                 Text(
                                     text = stringResource(R.string.version_is_latest),
                                     style = MaterialTheme.typography.bodyMedium,
-                                    color = Color.White.copy(alpha = 0.7f)
+                                    color = themedTextSecondary().copy(alpha = 0.8f)
                                 )
                             }
                         }
@@ -612,13 +651,13 @@ private fun UpdateCard(
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = null,
-                                tint = Color.White.copy(alpha = 0.5f),
+                                tint = themedTextSecondary().copy(alpha = 0.5f),
                                 modifier = Modifier.size(18.dp)
                             )
                             Text(
                                 text = stringResource(R.string.version_check),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.5f)
+                                color = themedTextSecondary().copy(alpha = 0.5f)
                             )
                         }
                     }
@@ -629,56 +668,108 @@ private fun UpdateCard(
 }
 
 @Composable
-private fun FeatureCard() {
+private fun FeatureList() {
+    val features = listOf(
+        FeatureItem(
+            icon = Icons.Default.Palette,
+            title = stringResource(R.string.feature_custom_title),
+            description = stringResource(R.string.feature_custom_desc)
+        ),
+        FeatureItem(
+            icon = Icons.Default.Cloud,
+            title = stringResource(R.string.feature_cloud_title),
+            description = stringResource(R.string.feature_cloud_desc)
+        ),
+        FeatureItem(
+            icon = Icons.Default.Update,
+            title = stringResource(R.string.feature_update_title),
+            description = stringResource(R.string.feature_update_desc)
+        )
+    )
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = CardBorderLight,
-                shape = RoundedCornerShape(16.dp)
+                color = themedBorderLight(),
+                shape = AppDesign.CardShape
             ),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
-        shape = RoundedCornerShape(16.dp)
+        shape = AppDesign.CardShape
     ) {
         Column(
-            modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(AppDesign.ContentPadding),
+            verticalArrangement = Arrangement.spacedBy(AppDesign.ItemSpacing)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(AppDesign.ItemSpacing)
             ) {
                 Icon(
                     imageVector = Icons.Default.Info,
                     contentDescription = null,
                     tint = MaterialTheme.colorScheme.primary,
-                    modifier = Modifier.size(20.dp)
+                    modifier = Modifier.size(AppDesign.IconButtonSize - 16.dp)
                 )
                 Text(
                     text = stringResource(R.string.feature_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
             }
+
+            features.forEach { feature ->
+                FeatureListItem(feature)
+            }
+        }
+    }
+}
+
+@Composable
+private fun FeatureListItem(feature: FeatureItem) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = AppDesign.ItemSpacing / 2),
+        horizontalArrangement = Arrangement.spacedBy(AppDesign.ItemSpacing)
+    ) {
+        Icon(
+            imageVector = feature.icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
             Text(
-                text = stringResource(R.string.feature_desc_1),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
-                textAlign = TextAlign.Start
+                text = feature.title,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Medium,
+                color = themedTextPrimary()
             )
             Text(
-                text = stringResource(R.string.feature_desc_2),
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color.White.copy(alpha = 0.8f),
+                text = feature.description,
+                style = MaterialTheme.typography.bodySmall,
+                color = themedTextSecondary().copy(alpha = AppDesign.SecondaryAlpha),
                 textAlign = TextAlign.Start
             )
         }
     }
 }
+
+private data class FeatureItem(
+    val icon: ImageVector,
+    val title: String,
+    val description: String
+)
 
 private data class Contributor(
     val name: String,
@@ -694,7 +785,9 @@ private fun CreditsCard(context: android.content.Context) {
         Contributor("@ONESTEP™", "https://xhslink.com/m/4LZ8zRdNCSv"),
         Contributor("@盒子叔", "https://xhslink.com/m/4mje9mimNXJ"),
         Contributor("@Aurora", "https://xhslink.com/m/2Ebow4iyVOE"),
-        Contributor("@屋顶橙子味", "https://v.douyin.com/YkVXPX9kZgY/")
+        Contributor("@屋顶橙子味", "https://v.douyin.com/YkVXPX9kZgY/"),
+        Contributor("@尼克lin", "https://xhslink.com/m/AjhYASTkUwq"),
+        Contributor("@波子Booz", "https://xhslink.com/m/9leyjjz68Et")
     )
 
     Card(
@@ -706,14 +799,15 @@ private fun CreditsCard(context: android.content.Context) {
                 shape = RoundedCornerShape(16.dp)
             ),
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(
             modifier = Modifier.padding(20.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            // 标题
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -728,95 +822,52 @@ private fun CreditsCard(context: android.content.Context) {
                     text = stringResource(R.string.credits_title),
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = themedTextPrimary()
                 )
             }
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null,
-                    tint = Color.White.copy(alpha = 0.6f),
-                    modifier = Modifier.size(16.dp)
-                )
-                Text(
-                    text = stringResource(R.string.developer) + "：",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.White.copy(alpha = 0.6f)
-                )
-            }
-
-            // 开发者标签
-            val developers = listOf(
-                "Silas" to "https://xhslink.com/m/2gh56F1blnO",
-                "Luminary" to "https://github.com/fengyec2",
-                "Charloitte" to "https://github.com/wzcv"
-            )
-            @OptIn(ExperimentalLayoutApi::class)
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(start = 24.dp)
-            ) {
-                developers.forEach { (name, url) ->
-                    DeveloperChip(name = name, url = url, context = context)
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // QQ群号
-            Box(
-                modifier = Modifier
-                    .padding(start = 24.dp)
-                    .clip(RoundedCornerShape(16.dp))
-                    .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f))
-                    .border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
-                        shape = RoundedCornerShape(16.dp)
-                    )
-                    .padding(horizontal = 12.dp, vertical = 6.dp)
+            // 开发者区域
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    text = "软件共创QQ群: 1083543279",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.primary
+                    text = stringResource(R.string.developer),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = themedTextSecondary().copy(alpha = 0.6f)
                 )
-            }
 
-            Spacer(modifier = Modifier.height(8.dp))
+                val developers = listOf(
+                    "Silas" to "https://xhslink.com/m/2gh56F1blnO",
+                    "Luminary" to "https://github.com/fengyec2",
+                    "Charloitte" to "https://github.com/wzcv"
+                )
 
-            Text(
-                text = stringResource(R.string.material_provider),
-                style = MaterialTheme.typography.bodySmall,
-                color = Color.White.copy(alpha = 0.5f)
-            )
-
-            Row(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    contributors.take(3).forEach { contributor ->
-                        ContributorItem(
-                            name = contributor.name,
-                            url = contributor.url,
-                            context = context
-                        )
+                    developers.forEach { (name, url) ->
+                        DeveloperChip(name = name, url = url, context = context)
                     }
                 }
-                Column(
-                    modifier = Modifier.weight(1f),
+            }
+
+            // 素材提供区域
+            Column(
+                verticalArrangement = Arrangement.spacedBy(10.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.material_provider),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = themedTextSecondary().copy(alpha = 0.6f)
+                )
+
+                // 贡献者标签云
+                FlowRow(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    contributors.drop(3).forEach { contributor ->
-                        ContributorItem(
+                    contributors.forEach { contributor ->
+                        ContributorChip(
                             name = contributor.name,
                             url = contributor.url,
                             context = context
@@ -828,35 +879,32 @@ private fun CreditsCard(context: android.content.Context) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun ContributorItem(
+private fun ContributorChip(
     name: String,
     url: String,
     context: android.content.Context
 ) {
-    Row(
+    Box(
         modifier = Modifier
+            .clip(RoundedCornerShape(12.dp))
+            .background(themedTextPrimary().copy(alpha = 0.08f))
+            .border(
+                width = 1.dp,
+                color = themedTextPrimary().copy(alpha = 0.15f),
+                shape = RoundedCornerShape(12.dp)
+            )
             .clickable {
                 val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 context.startActivity(intent)
             }
-            .padding(vertical = 4.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 10.dp, vertical = 5.dp)
     ) {
-        Box(
-            modifier = Modifier
-                .size(6.dp)
-                .background(
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.6f),
-                    RoundedCornerShape(50)
-                )
-        )
-        Spacer(modifier = Modifier.width(8.dp))
         Text(
             text = name,
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.primary,
-            textDecoration = TextDecoration.Underline
+            style = MaterialTheme.typography.bodySmall,
+            color = themedTextPrimary().copy(alpha = 0.8f)
         )
     }
 }
@@ -879,7 +927,7 @@ private fun DeveloperChip(name: String, url: String, context: android.content.Co
             .padding(horizontal = 12.dp, vertical = 6.dp)
     ) {
         Text(
-            text = "@$name",
+            text = name,
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Medium
@@ -894,7 +942,7 @@ private fun ProjectCard(context: android.content.Context) {
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = CardBorderLight,
+                color = themedBorderLight(),
                 shape = RoundedCornerShape(16.dp)
             )
             .clickable {
@@ -902,7 +950,7 @@ private fun ProjectCard(context: android.content.Context) {
                 context.startActivity(intent)
             },
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray
+            containerColor = themedCardBackground()
         ),
         shape = RoundedCornerShape(16.dp)
     ) {
@@ -938,13 +986,13 @@ private fun ProjectCard(context: android.content.Context) {
                         text = "项目地址",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = Color.White
+                        color = themedTextPrimary()
                     )
                     Spacer(modifier = Modifier.height(2.dp))
                     Text(
                         text = "GitHub - iCurrer/OMaster",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.5f)
+                        color = themedTextSecondary().copy(alpha = 0.6f)
                     )
                 }
             }
@@ -959,27 +1007,256 @@ private fun ProjectCard(context: android.content.Context) {
 }
 
 @Composable
+private fun QQGroupCard(context: android.content.Context) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = CardBorderLight,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .clickable {
+                // 群号
+                val groupId = "1083543279"
+                
+                // 尝试使用URL Scheme打开QQ群
+                val schemes = listOf(
+                    // 方式1：使用腾讯官方API（推荐）
+                    "mqqapi://card/show_pslcard?src_type=internal&version=1&uin=$groupId&card_type=group&source=qrcode",
+                    // 方式2：使用QQ群加群链接（兼容旧版）
+                    "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fc%2Fcgi-bin%2Fqm%2Fqr%3Fk%3D$groupId",
+                    // 方式3：使用简化版scheme
+                    "mqq://card/show_pslcard?src_type=internal&version=1&uin=$groupId&card_type=group"
+                )
+
+                var opened = false
+                for (scheme in schemes) {
+                    if (!opened) {
+                        try {
+                            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(scheme))
+                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            // 检查是否有应用可以处理这个intent
+                            if (intent.resolveActivity(context.packageManager) != null) {
+                                context.startActivity(intent)
+                                opened = true
+                                break
+                            }
+                        } catch (e: Exception) {
+                            // 尝试下一个方式
+                        }
+                    }
+                }
+
+                // 如果所有scheme都失败，使用网页版链接（浏览器会提示打开QQ）
+                if (!opened) {
+                    try {
+                        val webIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://qm.qq.com/cgi-bin/qm/qr?k=$groupId&jump_from=webapi"))
+                        webIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                        context.startActivity(webIntent)
+                    } catch (e: Exception) {
+                        // 如果浏览器也打不开，提示用户
+                        android.widget.Toast.makeText(context, "无法打开QQ群，请检查是否安装QQ", android.widget.Toast.LENGTH_SHORT).show()
+                    }
+                }
+            },
+        colors = CardDefaults.cardColors(
+            containerColor = themedCardBackground()
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .background(
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.15f),
+                            shape = RoundedCornerShape(10.dp)
+                        ),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "QQ",
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Column {
+                    Text(
+                        text = "加入QQ群",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = FontWeight.Bold,
+                        color = themedTextPrimary()
+                    )
+                    Spacer(modifier = Modifier.height(2.dp))
+                    Text(
+                        text = "群号: 1083543279",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = themedTextSecondary().copy(alpha = 0.6f)
+                    )
+                }
+            }
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.OpenInNew,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f),
+                modifier = Modifier.size(20.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProfileMenuList(
+    onNavigateToSubscription: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(
+                width = 1.dp,
+                color = themedBorderLight(),
+                shape = RoundedCornerShape(16.dp)
+            ),
+        colors = CardDefaults.cardColors(
+            containerColor = themedCardBackground()
+        ),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(vertical = 8.dp)
+        ) {
+            // 订阅管理
+            ProfileMenuItem(
+                icon = Icons.Default.Cloud,
+                title = stringResource(R.string.sub_title),
+                onClick = onNavigateToSubscription
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProfileMenuItem(
+    icon: ImageVector,
+    title: String,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onClick() }
+            .padding(horizontal = 16.dp, vertical = 14.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.primary,
+                modifier = Modifier.size(22.dp)
+            )
+            Text(
+                text = title,
+                style = MaterialTheme.typography.bodyLarge,
+                color = themedTextPrimary()
+            )
+        }
+        Icon(
+            imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
+            contentDescription = null,
+            tint = themedTextSecondary().copy(alpha = 0.5f),
+            modifier = Modifier.size(20.dp)
+        )
+    }
+}
+
+@Composable
 private fun FooterSection(
     context: android.content.Context,
-    onNavigateToPrivacyPolicy: () -> Unit
+    onNavigateToPrivacyPolicy: () -> Unit,
+    onNavigateToOpenSourceLicense: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
             text = "© 2026 OMaster",
             style = MaterialTheme.typography.bodySmall,
-            color = Color.White.copy(alpha = 0.4f)
+            color = themedTextSecondary().copy(alpha = 0.6f)
         )
 
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = stringResource(R.string.user_agreement),
+                style = MaterialTheme.typography.bodySmall,
+                color = themedTextSecondary().copy(alpha = 0.7f),
+                modifier = Modifier.clickable {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ocnquih40x3i.feishu.cn/docx/WHVldUhumozJAUx7ZFhcO9uznaf?from=from_copylink"))
+                    context.startActivity(intent)
+                }
+            )
+
+            androidx.compose.material3.Divider(
+                modifier = Modifier
+                    .height(12.dp)
+                    .width(1.dp),
+                color = themedTextSecondary().copy(alpha = 0.2f)
+            )
+
+            Text(
+                text = stringResource(R.string.privacy_policy),
+                style = MaterialTheme.typography.bodySmall,
+                color = themedTextSecondary().copy(alpha = 0.7f),
+                modifier = Modifier.clickable {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://ocnquih40x3i.feishu.cn/docx/NSgednMU0oeq9RxnGmcc9vRenvd?from=from_copylink"))
+                    context.startActivity(intent)
+                }
+            )
+
+            androidx.compose.material3.Divider(
+                modifier = Modifier
+                    .height(12.dp)
+                    .width(1.dp),
+                color = themedTextSecondary().copy(alpha = 0.2f)
+            )
+
+            Text(
+                text = stringResource(R.string.open_source_license),
+                style = MaterialTheme.typography.bodySmall,
+                color = themedTextSecondary().copy(alpha = 0.7f),
+                modifier = Modifier.clickable {
+                    onNavigateToOpenSourceLicense()
+                }
+            )
+        }
+
         Text(
-            text = stringResource(R.string.privacy_policy),
+            text = "豫 ICP 备 2026011707 号 -1A",
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-            textDecoration = TextDecoration.Underline,
+            color = themedTextSecondary().copy(alpha = 0.5f),
             modifier = Modifier.clickable {
-                onNavigateToPrivacyPolicy()
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://beian.miit.gov.cn"))
+                context.startActivity(intent)
             }
         )
     }

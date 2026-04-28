@@ -27,10 +27,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.material.icons.filled.RssFeed
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -57,9 +56,13 @@ import com.silas.omaster.util.perform
 import com.silas.omaster.ui.theme.GlassColors
 import com.silas.omaster.ui.components.glass.GlassEffectConfig
 import com.silas.omaster.ui.components.glass.GlassButton
-
-private val NavBarBackground = Color(0xFF1A1A1A)
-private val NavBarBorder = Color(0xFF2A2A2A)
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
+import com.silas.omaster.ui.theme.themedBorderLight
+import com.silas.omaster.ui.theme.themedColor
+import com.silas.omaster.ui.theme.OffWhite
+import com.silas.omaster.ui.theme.PureBlack
 
 data class NavItem(
     val route: String,
@@ -77,7 +80,7 @@ fun PillNavBar(
 ) {
     val navItems = listOf(
         NavItem("home", stringResource(R.string.nav_home), Icons.Default.Home),
-        NavItem("subscription", stringResource(R.string.nav_subscription), Icons.Default.RssFeed),
+        NavItem("discover", stringResource(R.string.nav_discover), Icons.Default.Explore),
         NavItem("about", stringResource(R.string.nav_about), Icons.Default.Info)
     )
 
@@ -93,20 +96,23 @@ fun PillNavBar(
         ),
         modifier = modifier
     ) {
+        // 判断当前主题
+        val isDarkTheme = MaterialTheme.colorScheme.background == PureBlack
+        
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 32.dp),
             contentAlignment = Alignment.Center
         ) {
-            // 外层阴影效果
+            // 外层阴影效果 - 根据主题调整阴影颜色
             Box(
                 modifier = Modifier
                     .shadow(
                         elevation = 20.dp,
                         shape = RoundedCornerShape(32.dp),
-                        ambientColor = Color.Black.copy(alpha = 0.5f),
-                        spotColor = Color.Black.copy(alpha = 0.8f)
+                        ambientColor = if (isDarkTheme) Color.Black.copy(alpha = 0.5f) else Color.Black.copy(alpha = 0.15f),
+                        spotColor = if (isDarkTheme) Color.Black.copy(alpha = 0.8f) else Color.Black.copy(alpha = 0.2f)
                     )
             ) {
                 // 磨砂玻璃背景层
@@ -117,15 +123,22 @@ fun PillNavBar(
                         .clip(RoundedCornerShape(32.dp))
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    NavBarBackground.copy(alpha = 0.85f),
-                                    NavBarBackground.copy(alpha = 0.75f)
-                                )
+                                colors = if (isDarkTheme) {
+                                    listOf(
+                                        Color(0xFF1A1A1A).copy(alpha = 0.85f),
+                                        Color(0xFF1A1A1A).copy(alpha = 0.75f)
+                                    )
+                                } else {
+                                    listOf(
+                                        themedCardBackground().copy(alpha = 0.95f),
+                                        themedCardBackground().copy(alpha = 0.9f)
+                                    )
+                                }
                             )
                         )
                 )
 
-                // 顶部高光线条
+                // 顶部高光线条 - 暗色模式保持原有白色高光，浅色模式使用深色高光
                 Box(
                     modifier = Modifier
                         .width(260.dp)
@@ -133,16 +146,24 @@ fun PillNavBar(
                         .clip(RoundedCornerShape(32.dp))
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.White.copy(alpha = 0.22f),
-                                    Color.White.copy(alpha = 0.08f),
-                                    Color.Transparent
-                                )
+                                colors = if (isDarkTheme) {
+                                    listOf(
+                                        Color.White.copy(alpha = 0.22f),
+                                        Color.White.copy(alpha = 0.08f),
+                                        Color.Transparent
+                                    )
+                                } else {
+                                    listOf(
+                                        Color.Black.copy(alpha = 0.08f),
+                                        Color.Black.copy(alpha = 0.03f),
+                                        Color.Transparent
+                                    )
+                                }
                             )
                         )
                 )
 
-                // 边框
+                // 边框 - 暗色模式保持深色边框，浅色模式使用浅色边框
                 Box(
                     modifier = Modifier
                         .width(260.dp)
@@ -150,10 +171,17 @@ fun PillNavBar(
                         .clip(RoundedCornerShape(32.dp))
                         .background(
                             brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    NavBarBorder.copy(alpha = 0.5f),
-                                    NavBarBorder.copy(alpha = 0.2f)
-                                )
+                                colors = if (isDarkTheme) {
+                                    listOf(
+                                        Color(0xFF2A2A2A).copy(alpha = 0.5f),
+                                        Color(0xFF2A2A2A).copy(alpha = 0.2f)
+                                    )
+                                } else {
+                                    listOf(
+                                        themedBorderLight().copy(alpha = 0.5f),
+                                        themedBorderLight().copy(alpha = 0.2f)
+                                    )
+                                }
                             )
                         )
                         .padding(1.dp)
@@ -166,10 +194,17 @@ fun PillNavBar(
                             .clip(RoundedCornerShape(31.dp))
                             .background(
                                 brush = Brush.verticalGradient(
-                                    colors = listOf(
-                                        NavBarBackground.copy(alpha = 0.9f),
-                                        NavBarBackground.copy(alpha = 0.8f)
-                                    )
+                                    colors = if (isDarkTheme) {
+                                        listOf(
+                                            Color(0xFF1A1A1A).copy(alpha = 0.9f),
+                                            Color(0xFF1A1A1A).copy(alpha = 0.8f)
+                                        )
+                                    } else {
+                                        listOf(
+                                            themedCardBackground().copy(alpha = 0.98f),
+                                            themedCardBackground().copy(alpha = 0.95f)
+                                        )
+                                    }
                                 )
                             )
                     )
@@ -257,7 +292,7 @@ private fun NavItemButton(
 
     val contentColor = when {
         selected -> MaterialTheme.colorScheme.primary
-        else -> Color.White  // 非选中状态改为纯白
+        else -> themedTextPrimary()
     }
 
     val iconScale by animateFloatAsState(

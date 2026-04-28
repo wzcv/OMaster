@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -40,8 +41,11 @@ import com.silas.omaster.ui.create.PresetSelectionScreen
 import com.silas.omaster.ui.create.UniversalCreatePresetScreen
 import com.silas.omaster.ui.create.UniversalCreatePresetViewModel
 import com.silas.omaster.ui.create.UniversalCreatePresetViewModelFactory
-import com.silas.omaster.ui.detail.AboutScreen
+import com.silas.omaster.ui.discover.DiscoverScreen
+import com.silas.omaster.ui.discover.ColorWalkScreen
+import com.silas.omaster.ui.detail.ProfileScreen
 import com.silas.omaster.ui.detail.DetailScreen
+import com.silas.omaster.ui.detail.OpenSourceLicenseScreen
 import com.silas.omaster.ui.detail.PrivacyPolicyScreen
 import com.silas.omaster.ui.home.HomeScreen
 import com.silas.omaster.ui.service.FloatingWindowController
@@ -83,7 +87,16 @@ sealed class Screen {
     data object Settings : Screen()
 
     @Serializable
+    data object Profile : Screen()
+
+    @Serializable
     data object About : Screen()
+
+    @Serializable
+    data object Discover : Screen()
+
+    @Serializable
+    data object ColorWalk : Screen()
 
     @Serializable
     data object Subscription : Screen()
@@ -93,6 +106,7 @@ sealed class Screen {
 
     @Serializable
     data object XposedTool : Screen()
+    data object OpenSourceLicense : Screen()
 }
 
 class MainActivity : ComponentActivity() {
@@ -117,8 +131,22 @@ class MainActivity : ComponentActivity() {
             CompositionLocalProvider(LocalActivity provides this) {
                 val config = remember { ConfigCenter.getInstance(applicationContext) }
                 val currentTheme by config.themeFlow.collectAsState()
+                val darkMode by config.darkModeFlow.collectAsState()
+                
+                // 根据深色模式设置计算实际主题
+                val isDarkTheme = when (darkMode) {
+                    com.silas.omaster.data.local.DarkMode.SYSTEM -> {
+                        val uiMode = resources.configuration.uiMode and android.content.res.Configuration.UI_MODE_NIGHT_MASK
+                        uiMode == android.content.res.Configuration.UI_MODE_NIGHT_YES
+                    }
+                    com.silas.omaster.data.local.DarkMode.LIGHT -> false
+                    com.silas.omaster.data.local.DarkMode.DARK -> true
+                }
 
-                OMasterTheme(brandTheme = currentTheme) {
+                OMasterTheme(
+                    darkTheme = isDarkTheme,
+                    brandTheme = currentTheme
+                ) {
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
@@ -163,27 +191,39 @@ fun WelcomeFlow(
     onDisagree: () -> Unit
 ) {
     var showPrivacyPolicy by remember { mutableStateOf(false) }
+    var showOpenSourceLicense by remember { mutableStateOf(false) }
 
     // 处理系统返回键
-    androidx.activity.compose.BackHandler(enabled = showPrivacyPolicy) {
+    androidx.activity.compose.BackHandler(enabled = showPrivacyPolicy || showOpenSourceLicense) {
         showPrivacyPolicy = false
+        showOpenSourceLicense = false
     }
 
     Box(modifier = Modifier.fillMaxSize()) {
-        if (showPrivacyPolicy) {
-            PrivacyPolicyScreen(
-                onBack = {
-                    showPrivacyPolicy = false
-                }
-            )
-        } else {
-            WelcomeDialog(
-                onAgree = onAgree,
-                onDisagree = onDisagree,
-                onViewPrivacyPolicy = {
-                    showPrivacyPolicy = true
-                }
-            )
+        when {
+            showPrivacyPolicy -> {
+                PrivacyPolicyScreen(
+                    onBack = {
+                        showPrivacyPolicy = false
+                    }
+                )
+            }
+            showOpenSourceLicense -> {
+                OpenSourceLicenseScreen(
+                    onBack = {
+                        showOpenSourceLicense = false
+                    }
+                )
+            }
+            else -> {
+                WelcomeDialog(
+                    onAgree = onAgree,
+                    onDisagree = onDisagree,
+                    onViewPrivacyPolicy = {
+                        showPrivacyPolicy = true
+                    }
+                )
+            }
         }
     }
 }
@@ -246,8 +286,8 @@ fun MainApp(
     }
 
     val showBottomNav = currentRoute?.contains("Home") == true || 
-                        currentRoute?.contains("About") == true || 
-                        currentRoute?.contains("Subscription") == true
+                        currentRoute?.contains("Discover") == true || 
+                        currentRoute?.contains("About") == true
 
     var isHomeScrollingUp by remember { mutableStateOf(true) }
     
@@ -258,7 +298,7 @@ fun MainApp(
     val usePremiumGlass by config.premiumGlassFlow.collectAsState()
 
     // 底部导航栏页面顺序，用于决定切换动画方向
-    val mainRouteList = remember { listOf("Home", "Subscription", "About") }
+    val mainRouteList = remember { listOf("Home", "Discover", "About") }
     fun getNavIndex(route: String?): Int {
         return mainRouteList.indexOfFirst { route?.contains(it) == true }
     }
@@ -472,12 +512,12 @@ fun MainApp(
             }
 
             composable<Screen.About> {
-                AboutScreen(
-                    onBack = {
-                        navController.popBackStack()
-                    },
+                com.silas.omaster.ui.detail.ProfileScreen(
                     onNavigateToSettings = {
                         navController.navigate(Screen.Settings)
+                    },
+                    onNavigateToSubscription = {
+                        navController.navigate(Screen.Subscription)
                     },
                     onScrollStateChanged = { isScrollingUp ->
                         isHomeScrollingUp = isScrollingUp
@@ -485,8 +525,30 @@ fun MainApp(
                     onNavigateToPrivacyPolicy = {
                         navController.navigate(Screen.PrivacyPolicy)
                     },
+                    onNavigateToOpenSourceLicense = {
+                        navController.navigate(Screen.OpenSourceLicense)
+                    },
                     currentVersionCode = VersionInfo.VERSION_CODE,
                     currentVersionName = VersionInfo.VERSION_NAME
+                )
+            }
+
+            composable<Screen.Discover> {
+                DiscoverScreen(
+                    onNavigateToColorWalk = {
+                        navController.navigate(Screen.ColorWalk)
+                    },
+                    onScrollStateChanged = { isScrollingUp ->
+                        isHomeScrollingUp = isScrollingUp
+                    }
+                )
+            }
+
+            composable<Screen.ColorWalk> {
+                ColorWalkScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
                 )
             }
 
@@ -508,6 +570,14 @@ fun MainApp(
                     }
                 )
             }
+
+            composable<Screen.OpenSourceLicense> {
+                OpenSourceLicenseScreen(
+                    onBack = {
+                        navController.popBackStack()
+                    }
+                )
+            }
         }
 
         if (showBottomNav) {
@@ -515,7 +585,7 @@ fun MainApp(
                 visible = isHomeScrollingUp,
                 currentRoute = when {
                     currentRoute?.contains("Home") == true -> "home"
-                    currentRoute?.contains("Subscription") == true -> "subscription"
+                    currentRoute?.contains("Discover") == true -> "discover"
                     currentRoute?.contains("About") == true -> "about"
                     else -> "home"
                 },
@@ -526,9 +596,9 @@ fun MainApp(
                                 navController.popBackStack(Screen.Home, false)
                             }
                         }
-                        "subscription" -> {
-                            if (currentRoute?.contains("Subscription") != true) {
-                                navController.navigate(Screen.Subscription) {
+                        "discover" -> {
+                            if (currentRoute?.contains("Discover") != true) {
+                                navController.navigate(Screen.Discover) {
                                     popUpTo(Screen.Home) {
                                         saveState = true
                                     }

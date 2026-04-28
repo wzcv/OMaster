@@ -1,60 +1,67 @@
 package com.silas.omaster.ui.home
 
-import androidx.compose.animation.core.Animatable
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.material.ExperimentalMaterialApi
-// pullrefresh experimental annotation not available in this compose version
 import androidx.compose.foundation.background
+import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
 import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
 import androidx.compose.foundation.lazy.staggeredgrid.itemsIndexed
 import androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ScrollableTabRow
-import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRowDefaults
-import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.ui.res.stringResource
 import com.silas.omaster.R
 import com.silas.omaster.data.config.ConfigCenter
 import com.silas.omaster.data.repository.PresetRepository
@@ -63,25 +70,17 @@ import com.silas.omaster.ui.animation.AnimationSpecs
 import com.silas.omaster.ui.animation.ListItemFadeInSpec
 import com.silas.omaster.ui.animation.ListItemPlacementSpec
 import com.silas.omaster.ui.animation.calculateStaggerDelay
+import com.silas.omaster.ui.components.HomeTabRow
+import com.silas.omaster.ui.components.OMasterTopAppBar
 import com.silas.omaster.ui.components.PresetCard
 import com.silas.omaster.ui.service.FloatingWindowController
-import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.ui.theme.AppDesign
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedTextSecondary
 import com.silas.omaster.util.hapticClickable
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import com.silas.omaster.util.perform
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.TextButton
-import androidx.compose.material.pullrefresh.PullRefreshIndicator
-import androidx.compose.material.pullrefresh.pullRefresh
-import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridItemSpan
-import androidx.compose.foundation.layout.width
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.unit.sp
-import android.widget.Toast
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -118,13 +117,6 @@ fun HomeScreen(
     val defaultStartTab by config.defaultStartTabFlow.collectAsState()
 
     val pagerState = rememberPagerState(initialPage = defaultStartTab, pageCount = { 3 })
-    
-    // 初始化时同步默认 Tab
-    LaunchedEffect(Unit) {
-        if (selectedTab != defaultStartTab) {
-            viewModel.selectTab(defaultStartTab)
-        }
-    }
 
     // 全局悬浮窗控制器
     val floatingWindowController = remember { FloatingWindowController.getInstance(context) }
@@ -161,89 +153,44 @@ fun HomeScreen(
         }
     }
 
+    // 当从其他页面返回主页时，直接跳转到默认启动页，无动画
+    LaunchedEffect(Unit) {
+        if (selectedTab != defaultStartTab) {
+            // 先同步 ViewModel 状态
+            viewModel.selectTab(defaultStartTab)
+            // 直接跳转，无动画
+            pagerState.scrollToPage(defaultStartTab)
+        }
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(PureBlack)
+            .background(themedBackground())
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            // 紧凑的标题栏
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .windowInsetsPadding(WindowInsets.statusBars)
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.White
-                )
-            }
+            OMasterTopAppBar(
+                title = stringResource(R.string.app_name),
+                modifier = Modifier.windowInsetsPadding(WindowInsets.statusBars)
+            )
 
-            // Tab 切换栏 - 带动画指示器
-            ScrollableTabRow(
-                selectedTabIndex = selectedTab,
-                containerColor = PureBlack,
-                contentColor = MaterialTheme.colorScheme.primary,
-                edgePadding = 16.dp,
-                modifier = Modifier.height(44.dp),
-                indicator = { tabPositions ->
-                    // 自定义指示器动画
-                    TabRowDefaults.SecondaryIndicator(
-                        modifier = Modifier
-                            .tabIndicatorOffset(tabPositions[selectedTab])
-                            .height(3.dp),
-                        color = MaterialTheme.colorScheme.primary
-                    )
+            HomeTabRow(
+                selectedTab = selectedTab,
+                onTabSelected = { index ->
+                    scope.launch {
+                        pagerState.scrollToPage(index)
+                    }
+                    viewModel.selectTab(index)
                 },
-                divider = {} // 移除默认分割线
-            ) {
-                val tabs = listOf(
+                tabs = listOf(
                     stringResource(R.string.tab_all) to allPresets.size,
                     stringResource(R.string.tab_favorites) to favorites.size,
                     stringResource(R.string.tab_my) to customPresets.size
                 )
-                
-                tabs.forEachIndexed { index, (title, count) ->
-                    val isSelected = selectedTab == index
-                    Tab(
-                        selected = isSelected,
-                        onClick = {
-                            haptic.perform(HapticFeedbackType.ToggleOn)
-                            scope.launch {
-                                pagerState.scrollToPage(index)
-                            }
-                            viewModel.selectTab(index)
-                        },
-                        text = {
-                            // 修复：计数使用小号字体放在右上角，避免Tab宽度不均
-                            Row(
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.spacedBy(2.dp)
-                            ) {
-                                Text(
-                                    text = title,
-                                    color = if (isSelected) MaterialTheme.colorScheme.primary else Color.White.copy(alpha = 0.6f),
-                                    fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Normal
-                                )
-                                // 计数徽章
-                                if (count > 0) {
-                                    Text(
-                                        text = count.toString(),
-                                        fontSize = 10.sp,
-                                        color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.8f) else Color.White.copy(alpha = 0.4f),
-                                        modifier = Modifier.padding(top = 2.dp)
-                                    )
-                                }
-                            }
-                        }
-                    )
-                }
-            }
+            )
 
-            // 可滑动的页面内容
+            Spacer(modifier = Modifier.height(AppDesign.ItemSpacing))
+
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier.fillMaxSize()
@@ -306,22 +253,23 @@ fun HomeScreen(
                     onNavigateToCreate()
                 },
                 containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White,
-                shape = androidx.compose.foundation.shape.RoundedCornerShape(20.dp),
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                shape = AppDesign.ButtonShape,
                 elevation = androidx.compose.material3.FloatingActionButtonDefaults.elevation(
                     defaultElevation = 8.dp,
                     pressedElevation = 12.dp
                 ),
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
-                    .padding(end = 24.dp, bottom = 100.dp)
-                    .size(64.dp)
+                    .padding(end = AppDesign.ScreenPadding, bottom = 100.dp)
+                    .size(AppDesign.FABSize + 8.dp)
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = stringResource(R.string.create_preset),
-                modifier = Modifier.size(32.dp)
-            )
+                    modifier = Modifier.size(AppDesign.FABSize / 2 + 4.dp)
+                )
+            }
         }
     }
 
@@ -361,7 +309,6 @@ fun HomeScreen(
                 }
             }
         )
-    }
     }
 }
 
@@ -410,16 +357,29 @@ private fun PresetGrid(
 
     // 修复：使用 snapshotFlow 安全地检测滚动方向
     // 避免在 derivedStateOf 中修改外部状态
-    var isScrollingUp by remember { mutableStateOf(false) }
+    var isScrollingUp by remember { mutableStateOf(true) }
     var previousIndex by remember { mutableIntStateOf(0) }
     var previousScrollOffset by remember { mutableIntStateOf(0) }
     var hasHapticAtTop by remember { mutableStateOf(false) }
     var hasHapticAtBottom by remember { mutableStateOf(false) }
+    // 标记是否是首次收集，避免初始化时的错误判断
+    var isInitialCollection by remember { mutableStateOf(true) }
 
     LaunchedEffect(listState) {
         snapshotFlow {
             listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
         }.collect { (currentIndex, currentOffset) ->
+            // 首次收集时，仅记录状态，不触发回调
+            if (isInitialCollection) {
+                isInitialCollection = false
+                previousIndex = currentIndex
+                previousScrollOffset = currentOffset
+                // 页面重建时默认显示导航栏（无论是否在顶部）
+                isScrollingUp = true
+                onScrollStateChanged(true)
+                return@collect
+            }
+
             val isUp = currentIndex < previousIndex ||
                        (currentIndex == previousIndex && currentOffset <= previousScrollOffset)
             isScrollingUp = isUp
@@ -498,7 +458,7 @@ private fun PresetGrid(
                             Text(
                                 text = stringResource(R.string.feature_coming_soon),
                                 style = MaterialTheme.typography.bodyMedium,
-                                color = Color.White.copy(alpha = 0.6f)
+                                color = themedTextSecondary()
                             )
                         }
                     }
@@ -603,8 +563,6 @@ private fun PresetCardItem(
                 this.scaleX = scale
                 this.scaleY = scale
                 this.translationY = translationY
-                // 启用硬件加速
-                this.shadowElevation = if (alpha > 0.9f) 4f else 0f
             }
     ) {
         PresetCard(
@@ -644,7 +602,7 @@ private fun EmptyState(tabIndex: Int) {
             Text(
                 text = message,
                 style = MaterialTheme.typography.titleMedium,
-                color = Color.White.copy(alpha = 0.6f),
+                color = themedTextSecondary(),
                 textAlign = TextAlign.Center
             )
             if (subMessage.isNotEmpty()) {

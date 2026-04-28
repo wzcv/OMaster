@@ -33,6 +33,7 @@ import androidx.compose.material.icons.filled.PrivacyTip
 import androidx.compose.material.icons.filled.Update
 import androidx.compose.material.icons.filled.Vibration
 import androidx.compose.material.icons.filled.AutoAwesome
+import androidx.compose.material.icons.filled.DarkMode
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -69,12 +70,16 @@ import androidx.compose.ui.unit.dp
 import com.silas.omaster.R
 import com.silas.omaster.data.config.ConfigCenter
 import com.silas.omaster.data.local.AppLanguage
+import com.silas.omaster.data.local.DarkMode
 import com.silas.omaster.data.local.FloatingWindowMode
 import com.silas.omaster.data.local.UpdateChannel
 import com.silas.omaster.ui.components.OMasterTopAppBar
+import com.silas.omaster.ui.theme.AppDesign
 import com.silas.omaster.ui.theme.BrandTheme
-import com.silas.omaster.ui.theme.DarkGray
-import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
 import com.silas.omaster.util.HapticSettings
 import com.silas.omaster.util.ImageCacheManager
 import com.silas.omaster.util.LogExporter
@@ -93,7 +98,9 @@ fun SettingsScreen(
     val config = remember { ConfigCenter.getInstance(context) }
     var vibrationEnabled by remember { mutableStateOf(config.isVibrationEnabled) }
     val currentTheme by config.themeFlow.collectAsState()
+    val darkMode by config.darkModeFlow.collectAsState()
     var showThemeDialog by remember { mutableStateOf(false) }
+    var showDarkModeDialog by remember { mutableStateOf(false) }
     var showTabDialog by remember { mutableStateOf(false) }
     var floatingWindowOpacity by remember { mutableStateOf(config.floatingWindowOpacity) }
     var defaultStartTab by remember { mutableStateOf(config.defaultStartTab) }
@@ -162,6 +169,18 @@ fun SettingsScreen(
         )
     }
 
+    if (showDarkModeDialog) {
+        DarkModeSelectionDialog(
+            currentMode = darkMode,
+            onModeSelected = { mode ->
+                haptic.perform(HapticFeedbackType.Confirm)
+                config.darkMode = mode
+                showDarkModeDialog = false
+            },
+            onDismiss = { showDarkModeDialog = false }
+        )
+    }
+
     if (showLanguageDialog) {
         LanguageSelectionDialog(
             currentLanguage = appLanguage,
@@ -190,11 +209,37 @@ fun SettingsScreen(
     }
 
     val scrollState = rememberScrollState()
+    var hasHapticAtTop by remember { mutableStateOf(false) }
+    var hasHapticAtBottom by remember { mutableStateOf(false) }
+
+    // 监听滚动状态，实现顶部和底部震感
+    androidx.compose.runtime.LaunchedEffect(scrollState.value) {
+        val currentValue = scrollState.value
+        val maxValue = scrollState.maxValue
+
+        if (maxValue > 0) {
+            if (currentValue <= 0 && !hasHapticAtTop) {
+                // 滚动到顶部
+                haptic.perform(HapticFeedbackType.TextHandleMove)
+                hasHapticAtTop = true
+                hasHapticAtBottom = false
+            } else if (currentValue >= maxValue && !hasHapticAtBottom) {
+                // 滚动到底部
+                haptic.perform(HapticFeedbackType.TextHandleMove)
+                hasHapticAtBottom = true
+                hasHapticAtTop = false
+            } else if (currentValue > 0 && currentValue < maxValue) {
+                // 在中间位置，重置状态
+                hasHapticAtTop = false
+                hasHapticAtBottom = false
+            }
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(PureBlack)
+            .background(themedBackground())
     ) {
         OMasterTopAppBar(
             title = stringResource(R.string.settings_title),
@@ -225,7 +270,7 @@ fun SettingsScreen(
                 }
             )
 
-            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+            HorizontalDivider(color = themedTextSecondary().copy(alpha = 0.1f))
 
             // Default Start Tab Setting
             SettingsClickableItem(
@@ -235,7 +280,7 @@ fun SettingsScreen(
                 onClick = { showTabDialog = true }
             )
 
-            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+            HorizontalDivider(color = themedTextSecondary().copy(alpha = 0.1f))
 
             // Language Setting
             SettingsClickableItem(
@@ -282,7 +327,21 @@ fun SettingsScreen(
                 onClick = { showThemeDialog = true }
             )
 
-            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+            HorizontalDivider(color = themedTextSecondary().copy(alpha = 0.1f))
+
+            // 深色模式选择
+            SettingsClickableItem(
+                icon = Icons.Default.DarkMode,
+                title = stringResource(R.string.settings_dark_mode),
+                subtitle = when (darkMode) {
+                    DarkMode.SYSTEM -> stringResource(R.string.dark_mode_system)
+                    DarkMode.LIGHT -> stringResource(R.string.dark_mode_light)
+                    DarkMode.DARK -> stringResource(R.string.dark_mode_dark)
+                },
+                onClick = { showDarkModeDialog = true }
+            )
+
+            HorizontalDivider(color = themedTextSecondary().copy(alpha = 0.1f))
 
             // 高级 Glass 质感开关
             SettingsSwitchItem(
@@ -315,13 +374,23 @@ fun SettingsScreen(
                 onClick = { showFloatingModeDialog = true }
             )
 
-            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+            // Realme 预设提示
+            Text(
+                text = stringResource(R.string.floating_window_realme_tip),
+                style = MaterialTheme.typography.bodySmall,
+                color = themedTextSecondary(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = AppDesign.ContentPadding, vertical = 8.dp)
+            )
+
+            HorizontalDivider(color = themedTextSecondary().copy(alpha = 0.1f))
 
             // Floating Window Opacity Setting
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp)
+                    .padding(horizontal = AppDesign.ContentPadding, vertical = AppDesign.ItemSpacing + 4.dp)
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -331,7 +400,7 @@ fun SettingsScreen(
                     Text(
                         text = stringResource(R.string.floating_window_opacity),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White
+                        color = themedTextPrimary()
                     )
                     Text(
                         text = "$floatingWindowOpacity%",
@@ -370,7 +439,7 @@ fun SettingsScreen(
                     Text(
                         text = "30%",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
+                        color = themedTextSecondary()
                     )
                     Text(
                         text = stringResource(R.string.recommended) + "56%",
@@ -380,7 +449,7 @@ fun SettingsScreen(
                     Text(
                         text = "70%",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray
+                        color = themedTextSecondary()
                     )
                 }
             }
@@ -443,7 +512,7 @@ fun SettingsScreen(
                 onClick = { showClearCacheDialog = true }
             )
 
-            HorizontalDivider(color = Color.White.copy(alpha = 0.1f))
+            HorizontalDivider(color = themedTextSecondary().copy(alpha = 0.1f))
 
             // Export Logs
             SettingsClickableItem(
@@ -493,8 +562,8 @@ fun SettingsScreen(
                         Text(stringResource(R.string.cancel))
                     }
                 },
-                containerColor = DarkGray,
-                textContentColor = Color.White
+                containerColor = themedCardBackground(),
+                textContentColor = themedTextPrimary()
             )
         }
 
@@ -524,8 +593,8 @@ fun SettingsScreen(
                         Text(stringResource(R.string.cancel))
                     }
                 },
-                containerColor = DarkGray,
-                textContentColor = Color.White
+                containerColor = themedCardBackground(),
+                textContentColor = themedTextPrimary()
             )
         }
 
@@ -541,10 +610,10 @@ private fun SettingsSectionCard(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
-        shape = RoundedCornerShape(16.dp),
+            .padding(horizontal = AppDesign.ContentPadding),
+        shape = AppDesign.CardShape,
         colors = CardDefaults.cardColors(
-            containerColor = DarkGray.copy(alpha = 0.5f)
+            containerColor = themedCardBackground().copy(alpha = 0.5f)
         ),
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
     ) {
@@ -558,7 +627,7 @@ private fun SettingsSectionTitle(title: String) {
         text = title,
         style = MaterialTheme.typography.labelLarge,
         color = MaterialTheme.colorScheme.primary,
-        modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
+        modifier = Modifier.padding(start = AppDesign.ContentPadding, top = AppDesign.ContentPadding, bottom = AppDesign.ItemSpacing)
     )
 }
 
@@ -575,7 +644,7 @@ private fun SettingsSwitchItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                color = themedTextPrimary()
             )
         },
         supportingContent = subtitle?.let {
@@ -583,7 +652,7 @@ private fun SettingsSwitchItem(
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
+                    color = themedTextSecondary()
                 )
             }
         },
@@ -601,7 +670,9 @@ private fun SettingsSwitchItem(
                 onCheckedChange = onCheckedChange,
                 colors = SwitchDefaults.colors(
                     checkedThumbColor = MaterialTheme.colorScheme.primary,
-                    checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                    checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                    uncheckedThumbColor = themedTextSecondary(),
+                    uncheckedTrackColor = themedCardBackground()
                 )
             )
         },
@@ -625,7 +696,7 @@ private fun SettingsClickableItem(
             Text(
                 text = title,
                 style = MaterialTheme.typography.bodyLarge,
-                color = Color.White
+                color = themedTextPrimary()
             )
         },
         supportingContent = subtitle?.let {
@@ -633,7 +704,7 @@ private fun SettingsClickableItem(
                 Text(
                     text = it,
                     style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray,
+                    color = themedTextSecondary(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis
                 )
@@ -651,7 +722,7 @@ private fun SettingsClickableItem(
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = null,
-                tint = Color.Gray
+                tint = themedTextSecondary()
             )
         },
         modifier = Modifier.clickable(onClick = onClick),
@@ -697,7 +768,7 @@ fun ThemeSelectionDialog(
                             onClick = { onThemeSelected(theme) },
                             colors = RadioButtonDefaults.colors(
                                 selectedColor = theme.primaryColor,
-                                unselectedColor = Color.Gray
+                                unselectedColor = themedTextSecondary()
                             )
                         )
                         Spacer(modifier = Modifier.width(8.dp))
@@ -732,8 +803,8 @@ fun ThemeSelectionDialog(
                 Text(stringResource(R.string.cancel))
             }
         },
-        containerColor = DarkGray,
-        textContentColor = Color.White
+        containerColor = themedCardBackground(),
+        textContentColor = themedTextPrimary()
     )
 }
 
@@ -770,14 +841,14 @@ fun TabSelectionDialog(
                             onClick = { onTabSelected(index) },
                             colors = RadioButtonDefaults.colors(
                                 selectedColor = MaterialTheme.colorScheme.primary,
-                                unselectedColor = Color.Gray
+                                unselectedColor = themedTextSecondary()
                             )
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         Text(
                             text = name,
                             style = MaterialTheme.typography.bodyLarge,
-                            color = Color.White
+                            color = themedTextPrimary()
                         )
                     }
                 }
@@ -788,8 +859,8 @@ fun TabSelectionDialog(
                 Text(stringResource(R.string.cancel))
             }
         },
-        containerColor = DarkGray,
-        textContentColor = Color.White
+        containerColor = themedCardBackground(),
+        textContentColor = themedTextPrimary()
     )
 }
 
@@ -821,7 +892,7 @@ fun UpdateChannelDialog(
                             onClick = { onChannelSelected(channel) },
                             colors = RadioButtonDefaults.colors(
                                 selectedColor = MaterialTheme.colorScheme.primary,
-                                unselectedColor = Color.Gray
+                                unselectedColor = themedTextSecondary()
                             )
                         )
                         Spacer(modifier = Modifier.width(16.dp))
@@ -832,7 +903,7 @@ fun UpdateChannelDialog(
                                     UpdateChannel.GITHUB -> context.getString(R.string.update_channel_github)
                                 },
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White
+                                color = themedTextPrimary()
                             )
                             Text(
                                 text = when (channel) {
@@ -840,7 +911,7 @@ fun UpdateChannelDialog(
                                     UpdateChannel.GITHUB -> context.getString(R.string.channel_github_desc)
                                 },
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = themedTextSecondary()
                             )
                         }
                     }
@@ -852,8 +923,8 @@ fun UpdateChannelDialog(
                 Text(stringResource(R.string.cancel))
             }
         },
-        containerColor = DarkGray,
-        textContentColor = Color.White
+        containerColor = themedCardBackground(),
+        textContentColor = themedTextPrimary()
     )
 }
 
@@ -885,7 +956,7 @@ fun LanguageSelectionDialog(
                             onClick = { onLanguageSelected(language) },
                             colors = RadioButtonDefaults.colors(
                                 selectedColor = MaterialTheme.colorScheme.primary,
-                                unselectedColor = Color.Gray
+                                unselectedColor = themedTextSecondary()
                             )
                         )
                         Spacer(modifier = Modifier.width(16.dp))
@@ -897,7 +968,7 @@ fun LanguageSelectionDialog(
                                     AppLanguage.ENGLISH -> context.getString(R.string.language_english)
                                 },
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White
+                                color = themedTextPrimary()
                             )
                             Text(
                                 text = when (language) {
@@ -906,7 +977,7 @@ fun LanguageSelectionDialog(
                                     AppLanguage.ENGLISH -> context.getString(R.string.language_english_desc)
                                 },
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = themedTextSecondary()
                             )
                         }
                     }
@@ -918,8 +989,74 @@ fun LanguageSelectionDialog(
                 Text(stringResource(R.string.cancel))
             }
         },
-        containerColor = DarkGray,
-        textContentColor = Color.White
+        containerColor = themedCardBackground(),
+        textContentColor = themedTextPrimary()
+    )
+}
+
+@Composable
+fun DarkModeSelectionDialog(
+    currentMode: DarkMode,
+    onModeSelected: (DarkMode) -> Unit,
+    onDismiss: () -> Unit
+) {
+    val context = LocalContext.current
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = stringResource(R.string.settings_dark_mode))
+        },
+        text = {
+            LazyColumn {
+                items(DarkMode.entries) { mode ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { onModeSelected(mode) }
+                            .padding(vertical = 12.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RadioButton(
+                            selected = (mode == currentMode),
+                            onClick = { onModeSelected(mode) },
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = MaterialTheme.colorScheme.primary,
+                                unselectedColor = themedTextSecondary()
+                            )
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        Column {
+                            Text(
+                                text = when (mode) {
+                                    DarkMode.SYSTEM -> context.getString(R.string.dark_mode_system)
+                                    DarkMode.LIGHT -> context.getString(R.string.dark_mode_light)
+                                    DarkMode.DARK -> context.getString(R.string.dark_mode_dark)
+                                },
+                                style = MaterialTheme.typography.bodyLarge,
+                                color = themedTextPrimary()
+                            )
+                            Text(
+                                text = when (mode) {
+                                    DarkMode.SYSTEM -> context.getString(R.string.dark_mode_system_desc)
+                                    DarkMode.LIGHT -> context.getString(R.string.dark_mode_light_desc)
+                                    DarkMode.DARK -> context.getString(R.string.dark_mode_dark_desc)
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                                color = themedTextSecondary()
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = onDismiss) {
+                Text(stringResource(R.string.cancel))
+            }
+        },
+        containerColor = themedCardBackground(),
+        textContentColor = themedTextPrimary()
     )
 }
 
@@ -955,7 +1092,7 @@ fun FloatingWindowModeDialog(
                             onClick = { onModeSelected(mode) },
                             colors = RadioButtonDefaults.colors(
                                 selectedColor = MaterialTheme.colorScheme.primary,
-                                unselectedColor = Color.Gray
+                                unselectedColor = themedTextSecondary()
                             )
                         )
                         Spacer(modifier = Modifier.width(16.dp))
@@ -963,12 +1100,12 @@ fun FloatingWindowModeDialog(
                             Text(
                                 text = name,
                                 style = MaterialTheme.typography.bodyLarge,
-                                color = Color.White
+                                color = themedTextPrimary()
                             )
                             Text(
                                 text = desc,
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = themedTextSecondary()
                             )
                         }
                     }
@@ -980,7 +1117,7 @@ fun FloatingWindowModeDialog(
                 Text(stringResource(R.string.cancel))
             }
         },
-        containerColor = DarkGray,
-        textContentColor = Color.White
+        containerColor = themedCardBackground(),
+        textContentColor = themedTextPrimary()
     )
 }

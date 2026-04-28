@@ -34,9 +34,15 @@ import com.silas.omaster.data.repository.PresetRepository
 import com.silas.omaster.model.Subscription
 import com.silas.omaster.network.PresetRemoteManager
 import com.silas.omaster.ui.components.OMasterTopAppBar
+import com.silas.omaster.ui.theme.AppDesign
 import com.silas.omaster.ui.theme.CardBorderLight
 import com.silas.omaster.ui.theme.DarkGray
 import com.silas.omaster.ui.theme.PureBlack
+import com.silas.omaster.ui.theme.themedBackground
+import com.silas.omaster.ui.theme.themedCardBackground
+import com.silas.omaster.ui.theme.themedTextPrimary
+import com.silas.omaster.ui.theme.themedTextSecondary
+import com.silas.omaster.ui.theme.themedBorderLight
 import com.silas.omaster.util.Logger
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
@@ -96,7 +102,7 @@ fun SubscriptionScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(PureBlack)
+            .background(themedBackground())
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             OMasterTopAppBar(
@@ -150,14 +156,14 @@ fun SubscriptionScreen(
                         if (refreshing) {
                             CircularProgressIndicator(
                                 modifier = Modifier.size(20.dp),
-                                color = Color.White,
+                                color = MaterialTheme.colorScheme.primary,
                                 strokeWidth = 2.dp
                             )
                         } else {
                             Icon(
                                 imageVector = Icons.Default.Refresh,
                                 contentDescription = "刷新订阅",
-                                tint = if (subscriptions.isNotEmpty()) Color.White else Color.White.copy(alpha = 0.3f)
+                                tint = if (subscriptions.isNotEmpty()) themedTextPrimary() else themedTextSecondary().copy(alpha = 0.5f)
                             )
                         }
                     }
@@ -167,13 +173,13 @@ fun SubscriptionScreen(
             Box(modifier = Modifier.fillMaxSize().pullRefresh(pullRefreshState)) {
                 if (subscriptions.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = stringResource(R.string.sub_empty), color = Color.Gray)
+                        Text(text = stringResource(R.string.sub_empty), color = themedTextSecondary())
                     }
                 } else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(),
-                        contentPadding = PaddingValues(16.dp),
-                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                        contentPadding = PaddingValues(AppDesign.ContentPadding),
+                        verticalArrangement = Arrangement.spacedBy(AppDesign.SectionSpacing)
                     ) {
                         items(subscriptions, key = { it.url }) { sub ->
                             SubscriptionItem(
@@ -203,14 +209,14 @@ fun SubscriptionScreen(
         FloatingActionButton(
             onClick = { showAddDialog = true },
             containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = Color.White,
-            shape = RoundedCornerShape(20.dp),
+            contentColor = MaterialTheme.colorScheme.onPrimary,
+            shape = AppDesign.ButtonShape,
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(end = 24.dp, bottom = 100.dp)
-                .size(64.dp)
+                .padding(end = AppDesign.ScreenPadding, bottom = 100.dp)
+                .size(AppDesign.FABSize + 8.dp)
         ) {
-            Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.sub_add), modifier = Modifier.size(32.dp))
+            Icon(imageVector = Icons.Default.Add, contentDescription = stringResource(R.string.sub_add), modifier = Modifier.size(AppDesign.FABSize / 2 + 4.dp))
         }
 
         if (showBottomSheet && selectedSubscription != null) {
@@ -320,10 +326,10 @@ fun SubscriptionItem(
             .clickable { onClick() }
             .border(
                 width = 1.dp,
-                color = if (sub.isEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f) else CardBorderLight,
+                color = if (sub.isEnabled) MaterialTheme.colorScheme.primary.copy(alpha = 0.3f) else themedBorderLight(),
                 shape = RoundedCornerShape(16.dp)
             ),
-        colors = CardDefaults.cardColors(containerColor = DarkGray),
+        colors = CardDefaults.cardColors(containerColor = themedCardBackground()),
         shape = RoundedCornerShape(16.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -337,21 +343,21 @@ fun SubscriptionItem(
                         text = if (sub.name.isNotEmpty()) sub.name else stringResource(R.string.sub_no_name),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = if (sub.isEnabled) Color.White else Color.Gray,
+                        color = if (sub.isEnabled) themedTextPrimary() else themedTextSecondary(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = "作者: ${sub.author} | Build: ${sub.build}",
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray,
+                        color = themedTextSecondary(),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
                     Text(
                         text = sub.url,
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.Gray.copy(alpha = 0.6f),
+                        color = themedTextSecondary().copy(alpha = 0.7f),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -362,7 +368,9 @@ fun SubscriptionItem(
                     onCheckedChange = { onToggle() },
                     colors = SwitchDefaults.colors(
                         checkedThumbColor = MaterialTheme.colorScheme.primary,
-                        checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+                        checkedTrackColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.4f),
+                        uncheckedThumbColor = themedTextSecondary(),
+                        uncheckedTrackColor = themedCardBackground()
                     )
                 )
             }
@@ -377,15 +385,15 @@ fun SubscriptionItem(
                 Text(
                     text = stringResource(R.string.sub_preset_count, sub.presetCount),
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.6f)
+                    color = themedTextSecondary().copy(alpha = 0.8f)
                 )
-                
+
                 if (sub.lastUpdateTime > 0) {
                     val sdf = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
                     Text(
                         text = stringResource(R.string.sub_last_update, sdf.format(Date(sub.lastUpdateTime))),
                         style = MaterialTheme.typography.bodySmall,
-                        color = Color.White.copy(alpha = 0.4f)
+                        color = themedTextSecondary().copy(alpha = 0.6f)
                     )
                 }
             }
@@ -407,10 +415,10 @@ fun SubscriptionDetailBottomSheet(
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState,
-        containerColor = DarkGray,
-        contentColor = Color.White,
-        scrimColor = Color.Black.copy(alpha = 0.5f),
-        dragHandle = { BottomSheetDefaults.DragHandle(color = Color.Gray) }
+        containerColor = themedCardBackground(),
+        contentColor = themedTextPrimary(),
+        scrimColor = PureBlack.copy(alpha = 0.5f),
+        dragHandle = { BottomSheetDefaults.DragHandle(color = themedTextSecondary()) }
     ) {
         Column(
             modifier = Modifier
@@ -428,7 +436,7 @@ fun SubscriptionDetailBottomSheet(
             // Info Card
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(containerColor = PureBlack.copy(alpha = 0.5f)),
+                colors = CardDefaults.cardColors(containerColor = themedBackground().copy(alpha = 0.5f)),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -503,11 +511,11 @@ fun SubscriptionDetailBottomSheet(
 @Composable
 fun DetailRow(label: String, value: String, isLink: Boolean = false) {
     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        Text(text = label, style = MaterialTheme.typography.labelSmall, color = Color.Gray)
+        Text(text = label, style = MaterialTheme.typography.labelSmall, color = themedTextSecondary())
         Text(
             text = value,
             style = MaterialTheme.typography.bodyMedium,
-            color = if (isLink) MaterialTheme.colorScheme.primary else Color.White,
+            color = if (isLink) MaterialTheme.colorScheme.primary else themedTextPrimary(),
             maxLines = if (isLink) 2 else 1,
             overflow = TextOverflow.Ellipsis
         )

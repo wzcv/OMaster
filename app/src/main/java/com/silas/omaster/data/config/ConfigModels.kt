@@ -18,7 +18,8 @@ data class FloatingWindowConfig(
  */
 data class UiConfig(
     val theme: BrandTheme = BrandTheme.Hasselblad,
-    val language: AppLanguage = AppLanguage.SYSTEM
+    val language: AppLanguage = AppLanguage.SYSTEM,
+    val darkMode: Boolean = true
 )
 
 /**

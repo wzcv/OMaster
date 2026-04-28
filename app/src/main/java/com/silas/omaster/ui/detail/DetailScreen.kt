@@ -178,10 +178,10 @@ fun DetailScreen(
                         }
                     ) {
                         Icon(
-                            imageVector = Icons.Filled.Edit,
-                            contentDescription = stringResource(R.string.edit),
-                            tint = Color.White
-                        )
+                        imageVector = Icons.Filled.Edit,
+                        contentDescription = stringResource(R.string.edit),
+                        tint = MaterialTheme.colorScheme.onSurface
+                    )
                     }
                 }
 
@@ -196,7 +196,7 @@ fun DetailScreen(
                         else
                             Icons.Outlined.FavoriteBorder,
                         contentDescription = if (isFavorite) stringResource(R.string.preset_favorited) else stringResource(R.string.preset_favorite),
-                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.White
+                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
                     )
                 }
             },
@@ -214,7 +214,7 @@ fun DetailScreen(
                     Text(
                         text = stringResource(R.string.detail_load_failed),
                         style = MaterialTheme.typography.bodyLarge,
-                        color = Color.White.copy(alpha = 0.6f)
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
                     )
                 }
             } else {
@@ -266,10 +266,14 @@ fun DetailScreen(
 
                         // 描述信息
                         it.description?.let { desc ->
-                            val title = PresetI18n.resolveStringComposable(desc.title)
-                            val isShootingTips = title == stringResource(R.string.shooting_tips) || 
-                                               desc.title == "Shooting Tips" || 
+                            val isShootingTips = desc.title == "Shooting Tips" || 
                                                desc.title == "@string/shooting_tips"
+                            
+                            val title = if (isShootingTips) {
+                                stringResource(R.string.shooting_tips)
+                            } else {
+                                PresetI18n.resolveStringComposable(desc.title)
+                            }
                             
                             val content = if (isShootingTips) {
                                 PresetI18n.getLocalizedShootingTips(it.name, desc.content)
@@ -280,7 +284,8 @@ fun DetailScreen(
                             DescriptionCard(
                                 title = title,
                                 content = content,
-                                modifier = Modifier.fillMaxWidth()
+                                modifier = Modifier.fillMaxWidth(),
+                                collapsedByDefault = isShootingTips
                             )
                             Spacer(modifier = Modifier.height(16.dp))
                         }

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,6 +25,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.silas.omaster.ui.theme.GlassColors
+import com.silas.omaster.ui.theme.PureBlack
 
 /**
  * 统一 Glass 按钮组件
@@ -73,6 +75,9 @@ fun GlassButton(
     val targetWidth = width ?: size
     val targetHeight = height ?: size
     
+    // 判断当前主题
+    val isDarkTheme = MaterialTheme.colorScheme.background == PureBlack
+    
     Box(
         modifier = modifier
             .width(targetWidth)
@@ -87,6 +92,9 @@ fun GlassButton(
     ) {
         val cornerShape = RoundedCornerShape(config.cornerRadius)
         
+        // 浅色模式下提高透明度，让白色玻璃效果更明显
+        val alphaMultiplier = if (isDarkTheme) 1f else 1.8f
+        
         if (isPremium) {
             // ========== 高级模式：6 层 Glass 效果 ==========
             
@@ -97,8 +105,8 @@ fun GlassButton(
                     .background(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                glowColor.copy(alpha = if (isActive) config.haloAlphaFavorite else config.haloAlphaNormal),
-                                glowColor.copy(alpha = if (isActive) config.haloAlphaFavoriteInner else config.haloAlphaNormalInner),
+                                glowColor.copy(alpha = if (isActive) config.haloAlphaFavorite else config.haloAlphaNormal * alphaMultiplier),
+                                glowColor.copy(alpha = if (isActive) config.haloAlphaFavoriteInner else config.haloAlphaNormalInner * alphaMultiplier),
                                 Color.Transparent
                             ),
                             center = Offset(0.5f, 0.5f),
@@ -108,7 +116,7 @@ fun GlassButton(
                     )
             )
             
-            // Layer 2: 玻璃主体层
+            // Layer 2: 玻璃主体层 - 统一使用白色作为基础
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -116,12 +124,12 @@ fun GlassButton(
                         color = if (isActive)
                             glowColor.copy(alpha = config.bodyAlphaFavorite)
                         else
-                            Color.White.copy(alpha = config.bodyAlphaNormal),
+                            Color.White.copy(alpha = config.bodyAlphaNormal * alphaMultiplier),
                         shape = cornerShape
                     )
             )
             
-            // Layer 3: 上下边缘发光层
+            // Layer 3: 上下边缘发光层 - 统一使用白色
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -131,17 +139,17 @@ fun GlassButton(
                         brush = Brush.verticalGradient(
                             colors = listOf(
                                 if (isActive) glowColor.copy(alpha = config.topGlowAlphaFavorite) 
-                                else Color.White.copy(alpha = config.topGlowAlphaNormal),
+                                else Color.White.copy(alpha = config.topGlowAlphaNormal * alphaMultiplier),
                                 Color.Transparent,
                                 if (isActive) glowColor.copy(alpha = config.bottomGlowAlphaFavorite) 
-                                else Color.White.copy(alpha = config.bottomGlowAlphaNormal)
+                                else Color.White.copy(alpha = config.bottomGlowAlphaNormal * alphaMultiplier)
                             )
                         ),
                         shape = cornerShape
                     )
             )
             
-            // Layer 4: 左右内阴影层
+            // Layer 4: 左右内阴影层 - 统一使用黑色内阴影
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -160,7 +168,7 @@ fun GlassButton(
                     )
             )
             
-            // Layer 5: 顶部高光层 - 贴合圆弧
+            // Layer 5: 顶部高光层 - 统一使用白色高光
             Box(
                 modifier = Modifier
                     .fillMaxSize()
@@ -168,8 +176,8 @@ fun GlassButton(
                     .background(
                         brush = Brush.verticalGradient(
                             colors = listOf(
-                                Color.White.copy(alpha = config.highlightAlpha),
-                                Color.White.copy(alpha = config.highlightMidAlpha),
+                                Color.White.copy(alpha = config.highlightAlpha * alphaMultiplier),
+                                Color.White.copy(alpha = config.highlightMidAlpha * alphaMultiplier),
                                 Color.Transparent
                             ),
                             startY = 0f,
@@ -192,7 +200,7 @@ fun GlassButton(
                         color = if (isActive)
                             glowColor.copy(alpha = 0.15f)
                         else
-                            Color.White.copy(alpha = 0.1f),
+                            Color.White.copy(alpha = 0.1f * alphaMultiplier),
                         shape = cornerShape
                     )
             )

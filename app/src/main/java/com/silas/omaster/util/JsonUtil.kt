@@ -161,27 +161,29 @@ object JsonUtil {
     }
 
     private fun processPresets(presets: List<MasterPreset>, sourceId: String): List<MasterPreset> {
-        return presets.mapIndexed { index, preset ->
-            // 对于官方内置预设，无论从 assets 还是远程加载，都保持一致的 ID
-            val effectiveSourceId = if (sourceId == "asset" || sourceId == SubscriptionConfig.DEFAULT_PRESET_URL) {
-                "official"
-            } else {
-                sourceId
-            }
-
-            if (preset.id == null) {
-                // 如果没有 ID，基于来源和索引生成
-                val newId = generatePresetId("${effectiveSourceId}_${preset.name}", index)
-                preset.copy(id = newId)
-            } else {
-                // 如果有 ID，为了避免不同订阅间的冲突，可以加个前缀（如果是远程订阅）
-                if (effectiveSourceId != "official") {
-                    preset.copy(id = "sub_${effectiveSourceId.hashCode().toString(16)}_${preset.id}")
+        return presets
+            .filter { !it.name.startsWith("_placeholder") }  // 过滤掉占位预设
+            .mapIndexed { index, preset ->
+                // 对于官方内置预设，无论从 assets 还是远程加载，都保持一致的 ID
+                val effectiveSourceId = if (sourceId == "asset" || sourceId == SubscriptionConfig.DEFAULT_PRESET_URL) {
+                    "official"
                 } else {
-                    preset
+                    sourceId
+                }
+
+                if (preset.id == null) {
+                    // 如果没有 ID，基于来源和索引生成
+                    val newId = generatePresetId("${effectiveSourceId}_${preset.name}", index)
+                    preset.copy(id = newId)
+                } else {
+                    // 如果有 ID，为了避免不同订阅间的冲突，可以加个前缀（如果是远程订阅）
+                    if (effectiveSourceId != "official") {
+                        preset.copy(id = "sub_${effectiveSourceId.hashCode().toString(16)}_${preset.id}")
+                    } else {
+                        preset
+                    }
                 }
             }
-        }
     }
 
     /**

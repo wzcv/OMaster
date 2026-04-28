@@ -54,6 +54,11 @@
 # 保留数据模型
 -keep class com.silas.omaster.model.** { *; }
 
+# 【关键】保留资源 ID 不被混淆，确保 getIdentifier() 正常工作
+# Realme 预设使用 @string/xxx 格式通过反射获取资源
+-keep class com.silas.omaster.R$string { *; }
+-keepclassmembers class com.silas.omaster.R$string { *; }
+
 # 优化移除未使用的代码
 -dontwarn java.lang.invoke.**
 -dontwarn sun.misc.**
