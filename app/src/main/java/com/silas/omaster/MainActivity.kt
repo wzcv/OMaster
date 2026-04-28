@@ -106,6 +106,8 @@ sealed class Screen {
 
     @Serializable
     data object XposedTool : Screen()
+
+    @Serializable
     data object OpenSourceLicense : Screen()
 }
 
