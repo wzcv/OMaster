@@ -48,7 +48,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -67,6 +66,20 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 private const val TAG = "OMaster-WriteDialog"
+
+private fun buildPreview(
+    preset: com.silas.omaster.model.MasterPreset,
+    entry: FilterMapManager.FilterEntry,
+    format: RootManager.MmkvKeyFormat
+): List<Pair<String, String>> {
+    return if (format == RootManager.MmkvKeyFormat.LEGACY) {
+        PresetToMmkvMapper.getParamsPreview(preset, entry.lutFile).toMutableList().also { list ->
+            list[0] = "目标滤镜" to "[${entry.index}] ${entry.name}"
+        }
+    } else {
+        PresetToMmkvMapper.getParamsPreview(preset, entry.lutFile)
+    }
+}
 
 /**
  * 写入状态枚举
@@ -99,12 +112,13 @@ fun WriteFilterDialog(
 
     // 环境状态
     var rootStatus by remember { mutableStateOf(RootManager.RootStatus.Unknown) }
+    var mmkvFormat by remember { mutableStateOf(RootManager.MmkvKeyFormat.UNKNOWN) }
     var filterEntries by remember { mutableStateOf<List<FilterMapManager.FilterEntry>>(emptyList()) }
     var isEnvReady by remember { mutableStateOf(false) }
     var isLoading by remember { mutableStateOf(true) }
 
-    // 选择状态
-    var selectedFilterIndex by remember { mutableStateOf<Int?>(null) }
+    // 选择状态（新版用 lutFile，旧版用 filterIndex）
+    var selectedEntry by remember { mutableStateOf<FilterMapManager.FilterEntry?>(null) }
     var paramsPreview by remember { mutableStateOf<List<Pair<String, String>>>(emptyList()) }
     var filterExpanded by remember { mutableStateOf(false) }
 
@@ -115,33 +129,32 @@ fun WriteFilterDialog(
     // 打开对话框时自动检测环境
     LaunchedEffect(Unit) {
         rootStatus = rootManager.checkRoot()
+        if (rootStatus == RootManager.RootStatus.Available) {
+            mmkvFormat = rootManager.detectMmkvKeyFormat()
+        }
         filterMapManager.loadFilterMap()
         filterEntries = filterMapManager.filterMap.value
         isEnvReady = rootStatus == RootManager.RootStatus.Available && filterEntries.isNotEmpty()
         isLoading = false
 
-        // 自动匹配预设中的滤镜名到索引（兼容 v1 顶层字段和 v2 sections）
         if (isEnvReady) {
             val filterStr = PresetToMmkvMapper.extractFilterString(preset)
             filterStr?.let { str ->
-                filterMapManager.getFilterIndexByName(str)?.let { idx ->
-                    selectedFilterIndex = idx
-                    paramsPreview = PresetToMmkvMapper.getParamsPreview(preset, idx)
+                filterMapManager.getFilterByName(str)?.let { entry ->
+                    selectedEntry = entry
+                    paramsPreview = buildPreview(preset, entry, mmkvFormat)
                 }
             }
         }
     }
 
-    // 选择滤镜槽位
-    fun onSelectFilter(index: Int) {
-        selectedFilterIndex = index
-        paramsPreview = PresetToMmkvMapper.getParamsPreview(preset, index)
+    fun onSelectFilter(entry: FilterMapManager.FilterEntry) {
+        selectedEntry = entry
+        paramsPreview = buildPreview(preset, entry, mmkvFormat)
     }
 
-    // 执行写入
     fun doWrite() {
-        val filterIndex = selectedFilterIndex ?: return
-        val targetFile = PresetToMmkvMapper.getTargetMmkvFile(filterIndex)
+        val entry = selectedEntry ?: return
         scope.launch {
             try {
                 errorMessage = null
@@ -158,18 +171,25 @@ fun WriteFilterDialog(
                 val backupDir = "${context.filesDir.absolutePath}/mmkv_backup"
                 rootManager.backupMmkv(backupDir)
 
+                // 根据格式选择 key 构建方式和目标文件
+                val writeParams = if (mmkvFormat == RootManager.MmkvKeyFormat.LEGACY) {
+                    PresetToMmkvMapper.mapPresetToMmkvParamsLegacy(preset, entry.index)
+                } else {
+                    // NEW 或 UNKNOWN 均用新版格式（安全兜底）
+                    PresetToMmkvMapper.mapPresetToMmkvParamsNew(preset, entry.lutFile)
+                }
+
                 writeStatus = WriteStatus.CopyingFiles
                 val tempDir = "${context.cacheDir.absolutePath}/mmkv_temp"
                 File(tempDir).deleteRecursively()
-                if (!rootManager.copyMmkvToTemp(tempDir, targetFile)) {
-                    errorMessage = "无法拷贝 MMKV 文件: $targetFile"
+                if (!rootManager.copyMmkvToTemp(tempDir, writeParams.targetFile)) {
+                    errorMessage = "无法拷贝 MMKV 文件: ${writeParams.targetFile}"
                     writeStatus = WriteStatus.Error
                     return@launch
                 }
 
                 writeStatus = WriteStatus.WritingParams
-                val writeParams = PresetToMmkvMapper.mapPresetToMmkvParams(preset, filterIndex)
-                Log.d(TAG, "写入参数: 目标文件=$targetFile, 参数数=${writeParams.params.size}, keys=${writeParams.params.keys}")
+                Log.d(TAG, "写入[$mmkvFormat]: file=${writeParams.targetFile}, lutFile=${entry.lutFile}, index=${entry.index}, params=${writeParams.params.keys}")
                 if (!mmkvWriter.writeParams(tempDir, writeParams.targetFile, writeParams.params)) {
                     errorMessage = "MMKV 参数写入失败"
                     writeStatus = WriteStatus.Error
@@ -177,7 +197,7 @@ fun WriteFilterDialog(
                 }
 
                 writeStatus = WriteStatus.RestoringFiles
-                if (!rootManager.writeMmkvBack(tempDir, targetFile)) {
+                if (!rootManager.writeMmkvBack(tempDir, writeParams.targetFile)) {
                     errorMessage = "无法写回相机目录"
                     writeStatus = WriteStatus.Error
                     return@launch
@@ -185,7 +205,7 @@ fun WriteFilterDialog(
 
                 rootManager.cleanupTempDir(tempDir)
                 writeStatus = WriteStatus.Success
-                Log.d(TAG, "参数写入完成: 预设[${preset.name}] → 滤镜索引[$filterIndex], 文件=$targetFile, 参数数=${writeParams.params.size}")
+                Log.d(TAG, "写入完成: 预设[${preset.name}] → lutFile=${entry.lutFile}, 参数数=${writeParams.params.size}")
             } catch (e: Exception) {
                 Log.e(TAG, "写入流程异常", e)
                 errorMessage = "写入失败: ${e.message}"
@@ -211,7 +231,7 @@ fun WriteFilterDialog(
         }
     }
 
-    val selectedFilter = filterEntries.find { it.index == selectedFilterIndex }
+    val selectedFilter = selectedEntry
 
     Dialog(onDismissRequest = { if (!writeStatus.isWriting) onDismiss() }) {
         Card(
@@ -271,6 +291,16 @@ fun WriteFilterDialog(
 
                 // === 环境状态 ===
                 CompactStatusRow(
+                    label = "格式",
+                    isOk = mmkvFormat != RootManager.MmkvKeyFormat.UNKNOWN,
+                    detail = when (mmkvFormat) {
+                        RootManager.MmkvKeyFormat.NEW -> "新版 (LUT文件名)"
+                        RootManager.MmkvKeyFormat.LEGACY -> "旧版 (整数索引)"
+                        RootManager.MmkvKeyFormat.UNKNOWN -> "未知(请先进入大师模式)"
+                    }
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                CompactStatusRow(
                     label = "Root",
                     isOk = rootStatus == RootManager.RootStatus.Available,
                     detail = when (rootStatus) {
@@ -319,7 +349,7 @@ fun WriteFilterDialog(
                     onExpandedChange = { filterExpanded = it }
                 ) {
                     OutlinedTextField(
-                        value = selectedFilter?.let { "[${it.index}] ${it.name}" } ?: "",
+                        value = selectedFilter?.let { "${it.name} (${it.lutFile})" } ?: "",
                         onValueChange = {},
                         readOnly = true,
                         placeholder = {
@@ -349,12 +379,6 @@ fun WriteFilterDialog(
                             DropdownMenuItem(
                                 text = {
                                     Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Text(
-                                            text = "${entry.index}",
-                                            color = MaterialTheme.colorScheme.primary,
-                                            fontFamily = FontFamily.Monospace,
-                                            modifier = Modifier.width(30.dp)
-                                        )
                                         Text(entry.name, color = Color.White)
                                         Spacer(modifier = Modifier.width(8.dp))
                                         Text(
@@ -367,7 +391,7 @@ fun WriteFilterDialog(
                                     }
                                 },
                                 onClick = {
-                                    onSelectFilter(entry.index)
+                                    onSelectFilter(entry)
                                     filterExpanded = false
                                 }
                             )
@@ -416,7 +440,7 @@ fun WriteFilterDialog(
                             else -> {} // 写入中不响应
                         }
                     },
-                    enabled = selectedFilterIndex != null && !writeStatus.isWriting,
+                    enabled = selectedEntry != null && !writeStatus.isWriting,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(44.dp),

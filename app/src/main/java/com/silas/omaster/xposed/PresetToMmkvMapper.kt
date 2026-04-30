@@ -11,22 +11,21 @@ import com.silas.omaster.model.PresetSection
  * 2. sections 列表 (v2 格式): PresetSection → PresetItem (label + value)
  *
  * 核心映射关系:
- * - filter → key_master_mode_effect_filter (索引) + key_master_mode_effect_filter_intensity (强度)
- * - saturation → key_master_mode_effect_saturation
- * - tone (影调) → key_master_mode_effect_contrast (OPPO 称"对比度")
- * - warmCool → key_master_mode_effect_cold_warm
- * - cyanMagenta → key_master_mode_effect_cyan_magenta
- * - sharpness → key_master_mode_effect_sharpness
- * - vignette → key_master_mode_effect_vignette
- * - softLight → key_master_mode_effect_soft_light
+ * - filter_intensity → key_master_mode_effect_filter_intensity_{lutFile}
+ * - saturation      → key_master_mode_effect_saturation_{lutFile}
+ * - tone (影调)     → key_master_mode_effect_contrast_{lutFile}
+ * - warmCool        → key_master_mode_effect_cold_warm_{lutFile}
+ * - cyanMagenta     → key_master_mode_effect_cyan_magenta_{lutFile}
+ * - sharpness       → key_master_mode_effect_sharpness_{lutFile}
+ * - vignette        → key_master_mode_effect_vignette_{lutFile}
+ * - softLight       → key_master_mode_effect_soft_light_{lutFile}
  *
- * MMKV Key 后缀规则:
- * - 索引 0: 无后缀 (如 key_master_mode_effect_saturation)
- * - 索引 N (N≥1): 追加 "_N" (如 key_master_mode_effect_saturation_9)
+ * 新版 MMKV Key 后缀规则:
+ * - 所有参数后缀为 LUT 文件名，如 "fuji_cc.bin"、"kodak.cube.rgb.bin"
+ * - 格式: key_master_mode_effect_{param}_{lutFile}
  *
  * MMKV 文件路由:
- * - 索引 0 → "com.oplus.camera_preferences_0"
- * - 索引 ≥1 → "mmkv"
+ * - 所有滤镜参数统一写入 "mmkv" 文件
  */
 object PresetToMmkvMapper {
 
@@ -64,7 +63,6 @@ object PresetToMmkvMapper {
         "Vignette" to "vignette",
     )
 
-    // MMKV 文件名常量
     const val MMKV_FILE_PREFERENCES_0 = "com.oplus.camera_preferences_0"
     const val MMKV_FILE_DEFAULT = "mmkv"
 
@@ -80,7 +78,7 @@ object PresetToMmkvMapper {
 
     /**
      * 参数写入结果
-     * @param targetFile 目标 MMKV 文件名
+     * @param targetFile 目标 MMKV 文件名（新版固定为 "mmkv"）
      * @param params 要写入的键值对 Map<String, Int>
      */
     data class MmkvWriteParams(
@@ -89,89 +87,88 @@ object PresetToMmkvMapper {
     )
 
     /**
-     * 构建带索引后缀的 MMKV key
+     * 新版写入：按 LUT 文件名寻址（相机 6.x 新格式）
+     * key 格式: key_master_mode_effect_{param}_{lutFile}
+     * 写入文件: mmkv（所有滤镜统一）
      */
-    private fun buildKey(param: String, filterIndex: Int): String {
-        return if (filterIndex == 0) {
-            "key_master_mode_effect_$param"
-        } else {
-            "key_master_mode_effect_${param}_$filterIndex"
+    fun mapPresetToMmkvParamsNew(
+        preset: MasterPreset,
+        lutFile: String
+    ): MmkvWriteParams {
+        val params = mutableMapOf<String, Int>()
+
+        preset.filter?.let { parseFilterString(it).intensity?.let { i -> params[buildKeyNew("filter_intensity", lutFile)] = i } }
+        preset.saturation?.let { params[buildKeyNew("saturation", lutFile)] = it }
+        preset.tone?.let { params[buildKeyNew("contrast", lutFile)] = it }
+        preset.warmCool?.let { params[buildKeyNew("cold_warm", lutFile)] = it }
+        preset.cyanMagenta?.let { params[buildKeyNew("cyan_magenta", lutFile)] = it }
+        preset.sharpness?.let { params[buildKeyNew("sharpness", lutFile)] = it }
+        preset.vignette?.let { params[buildKeyNew("vignette", lutFile)] = mapVignetteValue(it) }
+        preset.softLight?.let { params[buildKeyNew("soft_light", lutFile)] = mapSoftLightValue(it) }
+
+        if (params.isEmpty() && !preset.sections.isNullOrEmpty()) {
+            extractFromSectionsNew(preset.sections, lutFile, params)
         }
+
+        return MmkvWriteParams(targetFile = MMKV_FILE_DEFAULT, params = params)
     }
 
     /**
-     * 确定目标 MMKV 文件
+     * 旧版写入：按整数索引寻址（相机 5.x 旧格式）
+     * key 格式: key_master_mode_effect_{param}（索引0）或 key_master_mode_effect_{param}_{index}（索引≥1）
+     * 写入文件: com.oplus.camera_preferences_0（索引0）或 mmkv（索引≥1）
      */
-    fun getTargetMmkvFile(filterIndex: Int): String {
-        return if (filterIndex == 0) MMKV_FILE_PREFERENCES_0 else MMKV_FILE_DEFAULT
-    }
-
-    /**
-     * 将 MasterPreset 的调色参数转换为 MMKV 键值对
-     *
-     * 优先使用顶层字段 (v1 格式)，不足时从 sections (v2 格式) 补充
-     *
-     * @param preset 源预设
-     * @param filterIndex 目标滤镜索引（从 FilterMapManager 查得）
-     * @return MmkvWriteParams 包含目标文件名和键值对
-     */
-    fun mapPresetToMmkvParams(
+    fun mapPresetToMmkvParamsLegacy(
         preset: MasterPreset,
         filterIndex: Int
     ): MmkvWriteParams {
         val params = mutableMapOf<String, Int>()
 
-        // 滤镜索引（写入当前选中的滤镜）
-        params[buildKey("filter", filterIndex)] = filterIndex
+        params[buildKeyLegacy("filter", filterIndex)] = filterIndex
+        preset.filter?.let { parseFilterString(it).intensity?.let { i -> params[buildKeyLegacy("filter_intensity", filterIndex)] = i } }
+        preset.saturation?.let { params[buildKeyLegacy("saturation", filterIndex)] = it }
+        preset.tone?.let { params[buildKeyLegacy("contrast", filterIndex)] = it }
+        preset.warmCool?.let { params[buildKeyLegacy("cold_warm", filterIndex)] = it }
+        preset.cyanMagenta?.let { params[buildKeyLegacy("cyan_magenta", filterIndex)] = it }
+        preset.sharpness?.let { params[buildKeyLegacy("sharpness", filterIndex)] = it }
+        preset.vignette?.let { params[buildKeyLegacy("vignette", filterIndex)] = mapVignetteValue(it) }
+        preset.softLight?.let { params[buildKeyLegacy("soft_light", filterIndex)] = mapSoftLightValue(it) }
 
-        // === Phase 1: 从顶层字段读取 (v1 格式) ===
-        preset.filter?.let { filterStr ->
-            val parsed = parseFilterString(filterStr)
-            parsed.intensity?.let {
-                params[buildKey("filter_intensity", filterIndex)] = it
-            }
-        }
-        preset.saturation?.let {
-            params[buildKey("saturation", filterIndex)] = it
-        }
-        preset.tone?.let {
-            params[buildKey("contrast", filterIndex)] = it
-        }
-        preset.warmCool?.let {
-            params[buildKey("cold_warm", filterIndex)] = it
-        }
-        preset.cyanMagenta?.let {
-            params[buildKey("cyan_magenta", filterIndex)] = it
-        }
-        preset.sharpness?.let {
-            params[buildKey("sharpness", filterIndex)] = it
-        }
-        preset.vignette?.let {
-            params[buildKey("vignette", filterIndex)] = mapVignetteValue(it)
-        }
-        preset.softLight?.let {
-            params[buildKey("soft_light", filterIndex)] = mapSoftLightValue(it)
-        }
-
-        // === Phase 2: 从 sections 补充 (v2 格式) ===
-        // 当顶层字段不足时（如 v2 预设仅有 sections），从 sections 提取
         if (params.size <= 1 && !preset.sections.isNullOrEmpty()) {
-            extractFromSections(preset.sections, filterIndex, params)
+            extractFromSectionsLegacy(preset.sections, filterIndex, params)
         }
 
-        return MmkvWriteParams(
-            targetFile = getTargetMmkvFile(filterIndex),
-            params = params
-        )
+        val targetFile = if (filterIndex == 0) MMKV_FILE_PREFERENCES_0 else MMKV_FILE_DEFAULT
+        return MmkvWriteParams(targetFile = targetFile, params = params)
     }
 
-    /**
-     * 从 sections 列表中提取调色参数到 MMKV 键值对
-     *
-     * 通过 label (支持 @string/ 引用、中文、英文) 匹配参数名，
-     * 解析 value 字符串为对应的 MMKV Int 值。
-     */
-    private fun extractFromSections(
+    private fun buildKeyNew(param: String, lutFile: String): String =
+        "key_master_mode_effect_${param}_${lutFile}"
+
+    private fun buildKeyLegacy(param: String, filterIndex: Int): String =
+        if (filterIndex == 0) "key_master_mode_effect_$param"
+        else "key_master_mode_effect_${param}_$filterIndex"
+
+    fun getTargetMmkvFile(): String = MMKV_FILE_DEFAULT
+
+    private fun extractFromSectionsNew(
+        sections: List<PresetSection>,
+        lutFile: String,
+        params: MutableMap<String, Int>
+    ) {
+        sections.flatMap { it.items }.forEach { item ->
+            val mmkvParam = LABEL_TO_MMKV_PARAM[item.label] ?: return@forEach
+            val value = item.value.trim()
+            when (mmkvParam) {
+                "filter" -> parseFilterString(value).intensity?.let { params[buildKeyNew("filter_intensity", lutFile)] = it }
+                "soft_light" -> params[buildKeyNew("soft_light", lutFile)] = mapSoftLightValue(value)
+                "vignette" -> params[buildKeyNew("vignette", lutFile)] = mapVignetteValue(value)
+                else -> value.removePrefix("+").toIntOrNull()?.let { params[buildKeyNew(mmkvParam, lutFile)] = it }
+            }
+        }
+    }
+
+    private fun extractFromSectionsLegacy(
         sections: List<PresetSection>,
         filterIndex: Int,
         params: MutableMap<String, Int>
@@ -179,28 +176,11 @@ object PresetToMmkvMapper {
         sections.flatMap { it.items }.forEach { item ->
             val mmkvParam = LABEL_TO_MMKV_PARAM[item.label] ?: return@forEach
             val value = item.value.trim()
-
             when (mmkvParam) {
-                "filter" -> {
-                    // 滤镜: "清新 94%" → filter index 已由用户选择，只解析强度
-                    val parsed = parseFilterString(value)
-                    parsed.intensity?.let {
-                        params[buildKey("filter_intensity", filterIndex)] = it
-                    }
-                }
-                "soft_light" -> {
-                    params[buildKey("soft_light", filterIndex)] = mapSoftLightValue(value)
-                }
-                "vignette" -> {
-                    params[buildKey("vignette", filterIndex)] = mapVignetteValue(value)
-                }
-                else -> {
-                    // 整数值: "+16", "-13", "0"
-                    val intValue = value.removePrefix("+").toIntOrNull()
-                    if (intValue != null) {
-                        params[buildKey(mmkvParam, filterIndex)] = intValue
-                    }
-                }
+                "filter" -> parseFilterString(value).intensity?.let { params[buildKeyLegacy("filter_intensity", filterIndex)] = it }
+                "soft_light" -> params[buildKeyLegacy("soft_light", filterIndex)] = mapSoftLightValue(value)
+                "vignette" -> params[buildKeyLegacy("vignette", filterIndex)] = mapVignetteValue(value)
+                else -> value.removePrefix("+").toIntOrNull()?.let { params[buildKeyLegacy(mmkvParam, filterIndex)] = it }
             }
         }
     }
@@ -271,24 +251,22 @@ object PresetToMmkvMapper {
     }
 
     /**
-     * 获取将被写入的参数预览（用于 UI 显示）
-     * 支持 v1 (顶层字段) 和 v2 (sections) 两种格式
-     * @return 参数名到值的列表
+     * 参数预览（新版，显示 lutFile 后缀）
      */
     fun getParamsPreview(
         preset: MasterPreset,
-        filterIndex: Int
+        lutFile: String
     ): List<Pair<String, String>> {
         val preview = mutableListOf<Pair<String, String>>()
+        preview.add("目标滤镜" to lutFile)
 
-        // 尝试从 sections 提取（v2 格式，信息更完整）
         if (!preset.sections.isNullOrEmpty()) {
             preset.sections.flatMap { it.items }.forEach { item ->
                 val mmkvParam = LABEL_TO_MMKV_PARAM[item.label] ?: return@forEach
                 when (mmkvParam) {
                     "filter" -> {
                         val parsed = parseFilterString(item.value)
-                        preview.add("滤镜" to "索引 $filterIndex (${parsed.name})")
+                        preview.add("滤镜名" to parsed.name)
                         parsed.intensity?.let { i -> preview.add("滤镜强度" to "$i%") }
                     }
                     "soft_light" -> preview.add("柔光" to item.value)
@@ -306,7 +284,7 @@ object PresetToMmkvMapper {
         // Fallback: 顶层字段 (v1 格式)
         preset.filter?.let {
             val parsed = parseFilterString(it)
-            preview.add("滤镜" to "索引 $filterIndex (${parsed.name})")
+            preview.add("滤镜名" to parsed.name)
             parsed.intensity?.let { i -> preview.add("滤镜强度" to "$i%") }
         }
         preset.saturation?.let { preview.add("饱和度" to "$it") }

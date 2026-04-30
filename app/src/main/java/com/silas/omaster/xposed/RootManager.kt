@@ -22,6 +22,12 @@ class RootManager private constructor() {
         Denied        // 用户拒绝授权
     }
 
+    enum class MmkvKeyFormat {
+        NEW,      // 新版: key 后缀为 LUT 文件名（如 fuji_cc.bin）
+        LEGACY,   // 旧版: key 后缀为整数索引（如 _9）
+        UNKNOWN   // 无法确定（相机从未进入大师模式）
+    }
+
     private val _rootStatus = MutableStateFlow(RootStatus.Unknown)
     val rootStatus: StateFlow<RootStatus> = _rootStatus.asStateFlow()
 
@@ -220,6 +226,53 @@ class RootManager private constructor() {
             "restorecon -R '$CAMERA_MMKV_DIR'"
         ).exec()
         result.isSuccess
+    }
+
+    /**
+     * 检测相机 MMKV 的 key 格式版本
+     *
+     * 检测特征：
+     * - 新版: mmkv 文件中存在 key_master_mode_effect_xxx_{name}.bin 格式
+     * - 旧版: mmkv 文件中存在 key_master_mode_effect_xxx_\d+{0x01|0x02} 格式，
+     *         或 com.oplus.camera_preferences_0 中存在无后缀的 effect key
+     *
+     * @return MmkvKeyFormat.NEW / LEGACY / UNKNOWN
+     */
+    suspend fun detectMmkvKeyFormat(): MmkvKeyFormat = withContext(Dispatchers.IO) {
+        // 读 mmkv 文件前 16KB 足够检测特征
+        val mmkvHead = Shell.cmd(
+            "dd if='$CAMERA_MMKV_DIR/mmkv' bs=1 count=16384 2>/dev/null | cat"
+        ).exec()
+
+        if (mmkvHead.isSuccess && mmkvHead.out.isNotEmpty()) {
+            val raw = mmkvHead.out.joinToString("\n")
+            // 新版特征: key 后缀含 .bin / .cube.rgb.bin
+            if (raw.contains(".bin") && raw.contains("key_master_mode_effect")) {
+                return@withContext MmkvKeyFormat.NEW
+            }
+        }
+
+        val newCheck = Shell.cmd(
+            "grep -ac 'key_master_mode_effect.*\\.bin' '$CAMERA_MMKV_DIR/mmkv' 2>/dev/null || echo 0"
+        ).exec()
+        val newCount = newCheck.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
+        if (newCount > 0) return@withContext MmkvKeyFormat.NEW
+
+        val legacyCheck = Shell.cmd(
+            "grep -ac 'key_master_mode_effect.*_[0-9]' '$CAMERA_MMKV_DIR/mmkv' " +
+            "'$CAMERA_MMKV_DIR/com.oplus.camera_preferences_0' 2>/dev/null || echo 0"
+        ).exec()
+        val legacyCount = legacyCheck.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
+        if (legacyCount > 0) return@withContext MmkvKeyFormat.LEGACY
+
+        // 兜底: preferences_0 存在无后缀 effect key 也是旧版
+        val p0Check = Shell.cmd(
+            "grep -ac 'key_master_mode_effect_saturation' '$CAMERA_MMKV_DIR/com.oplus.camera_preferences_0' 2>/dev/null || echo 0"
+        ).exec()
+        val p0Count = p0Check.out.firstOrNull()?.trim()?.toIntOrNull() ?: 0
+        if (p0Count > 0) return@withContext MmkvKeyFormat.LEGACY
+
+        MmkvKeyFormat.UNKNOWN
     }
 
     /**

@@ -81,6 +81,11 @@
 -keep class de.robv.android.xposed.** { *; }
 -dontwarn de.robv.android.xposed.**
 
+# libxposed api101 Hook 入口
+-keep class com.silas.omaster.xposed.CameraHookV2 { *; }
+-keep class io.github.libxposed.** { *; }
+-dontwarn io.github.libxposed.**
+
 # ===== MMKV =====
 -keep class com.tencent.mmkv.** { *; }
 -dontwarn com.tencent.mmkv.**

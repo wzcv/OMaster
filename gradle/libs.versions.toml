@@ -18,6 +18,7 @@ ktor = "3.4.2"
 material3 = "1.4.0"
 # Xposed + Root + MMKV
 xposed-api = "82"
+libxposed-api = "101.0.0"
 libsu = "6.0.0"
 mmkv = "2.3.0"
 
@@ -56,6 +57,8 @@ androidx-material3 = { group = "androidx.compose.material3", name = "material3",
 
 # Xposed + Root + MMKV
 xposed-api = { group = "de.robv.android.xposed", name = "api", version.ref = "xposed-api" }
+libxposed-api = { group = "io.github.libxposed", name = "api", version.ref = "libxposed-api" }
+libxposed-service = { group = "io.github.libxposed", name = "service", version.ref = "libxposed-api" }
 libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
 mmkv = { group = "com.tencent", name = "mmkv", version.ref = "mmkv" }
 

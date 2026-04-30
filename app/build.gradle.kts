@@ -26,6 +26,17 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    flavorDimensions += "xposedApi"
+    productFlavors {
+        create("legacyXposed") {
+            dimension = "xposedApi"
+        }
+        create("libxposed") {
+            dimension = "xposedApi"
+            versionNameSuffix = "-libxposed"
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
@@ -63,6 +74,7 @@ android {
 
     packaging {
         resources {
+            merges += "META-INF/xposed/*"
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
@@ -104,7 +116,11 @@ dependencies {
     implementation(libs.gson)
 
     // Room 数据库已移除，使用 SharedPreferences 替代
-    compileOnly(libs.xposed.api)
+    // legacy flavor：de.robv api82
+    "legacyXposedCompileOnly"(libs.xposed.api)
+    // libxposed flavor：io.github.libxposed api101
+    "libxposedCompileOnly"(libs.libxposed.api)
+    "libxposedImplementation"(libs.libxposed.service)
     implementation(libs.libsu.core)
     implementation(libs.mmkv)
     implementation(libs.androidx.material3)

@@ -111,24 +111,18 @@ class FilterMapManager private constructor(private val context: Context) {
     }
 
     /**
-     * 根据滤镜中文名查找索引
-     * 用于将 MasterPreset.filter 中的名称自动匹配到滤镜索引
+     * 根据滤镜中文名查找对应的 FilterEntry（含 lutFile）
      * 支持模糊匹配（去除百分比后缀和空格）
      */
-    fun getFilterIndexByName(filterName: String): Int? {
+    fun getFilterByName(filterName: String): FilterEntry? {
         val cleanName = filterName
-            .replace(Regex("\\s*\\d+%$"), "")  // 去除尾部百分比（如 "复古 100%" → "复古"）
+            .replace(Regex("\\s*\\d+%$"), "")
             .trim()
 
-        // 精确匹配
-        _filterMap.value.find { it.name == cleanName }?.let { return it.index }
-
-        // 模糊匹配：滤镜名包含目标名或反之
-        _filterMap.value.find {
+        _filterMap.value.find { it.name == cleanName }?.let { return it }
+        return _filterMap.value.find {
             it.name.contains(cleanName) || cleanName.contains(it.name)
-        }?.let { return it.index }
-
-        return null
+        }
     }
 
     /**
