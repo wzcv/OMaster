@@ -425,14 +425,6 @@
     <string name="floating_window_mode_compact_desc">最小限の表示、横画面撮影に最適</string>
     <string name="floating_window_realme_tip">RealmeプリセットはProモードでのみ完全に表示されます</string>
 
-    <!-- 発見ページ機能 -->
-    <string name="feature_color_walk">Color Walk</string>
-    <string name="feature_color_walk_desc">毎日の色のインスピレーションを記録</string>
-    <string name="feature_frame_art">Frame Art</string>
-    <string name="feature_frame_art_desc">写真にパレットカラーのフレームを付けてシェア</string>
-    <string name="feature_shutter_diary">Shutter Diary</string>
-    <string name="feature_shutter_diary_desc">撮影習慣と成長を記録</string>
-
     <!-- Color Walk -->
     <string name="colorwalk_title">Color Walk</string>
     <string name="colorwalk_subtitle">毎日の色のインスピレーション</string>
