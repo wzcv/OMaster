@@ -33,12 +33,9 @@ android {
         }
         create("libxposed") {
             dimension = "xposedApi"
+            minSdk = 26
             versionNameSuffix = "-libxposed"
         }
-    }
-
-    lint {
-        baseline = file("lint-baseline.xml")
     }
 
     buildTypes {
