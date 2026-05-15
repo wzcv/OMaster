@@ -31,11 +31,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -66,6 +64,7 @@ import androidx.compose.material.icons.outlined.Tune
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import com.silas.omaster.util.perform
+import com.silas.omaster.util.rememberScrollHaptics
 
 import com.silas.omaster.model.PresetSection
 
@@ -91,17 +90,10 @@ fun DetailScreen(
         viewModel.loadPreset(presetId)
     }
     
-    // 当 refreshTrigger 变化时重新加载数据（用于编辑后刷新）
-    // 使用 snapshotFlow 确保持续监听，即使页面不可见时也能捕获变化
-    var lastRefreshTrigger by remember { mutableIntStateOf(refreshTrigger) }
-    LaunchedEffect(Unit) {
-        snapshotFlow { refreshTrigger }
-            .collect { newValue ->
-                if (newValue != lastRefreshTrigger && newValue > 0) {
-                    lastRefreshTrigger = newValue
-                    viewModel.loadPreset(presetId)
-                }
-            }
+    LaunchedEffect(refreshTrigger) {
+        if (refreshTrigger > 0) {
+            viewModel.loadPreset(presetId)
+        }
     }
 
     val preset by viewModel.preset.collectAsState()
@@ -221,28 +213,7 @@ fun DetailScreen(
                 val scrollState = rememberScrollState()
 
                 // 滚动到顶/底部震感
-                var lastScrollValue by remember { mutableIntStateOf(0) }
-                var hasHapticAtTop by remember { mutableStateOf(false) }
-                var hasHapticAtBottom by remember { mutableStateOf(false) }
-
-                LaunchedEffect(scrollState.value) {
-                    val currentValue = scrollState.value
-                    val maxValue = scrollState.maxValue
-
-                    if (currentValue == 0 && !hasHapticAtTop) {
-                        haptic.perform(HapticFeedbackType.TextHandleMove)
-                        hasHapticAtTop = true
-                        hasHapticAtBottom = false
-                    } else if (maxValue > 0 && currentValue >= maxValue && !hasHapticAtBottom) {
-                        haptic.perform(HapticFeedbackType.TextHandleMove)
-                        hasHapticAtBottom = true
-                        hasHapticAtTop = false
-                    } else if (currentValue > 0 && currentValue < maxValue) {
-                        hasHapticAtTop = false
-                        hasHapticAtBottom = false
-                    }
-                    lastScrollValue = currentValue
-                }
+                rememberScrollHaptics(scrollState)
 
                 Column(
                     modifier = Modifier

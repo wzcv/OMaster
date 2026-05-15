@@ -38,7 +38,8 @@ enum class DarkMode {
 enum class AppLanguage {
     SYSTEM,     // 跟随系统
     CHINESE,    // 简体中文
-    ENGLISH     // English
+    ENGLISH,    // English
+    JAPANESE    // 日本語
 }
 
 @Deprecated(

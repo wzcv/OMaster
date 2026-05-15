@@ -1,6 +1,7 @@
 package com.silas.omaster.ui.home
 
-import android.content.Context
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -25,9 +26,11 @@ import kotlinx.coroutines.delay
  * 3. refresh() 现在会从远程获取最新预设
  */
 class HomeViewModel(
-    private val repository: PresetRepository,
-    private val context: Context
-) : ViewModel() {
+    application: Application,
+    private val repository: PresetRepository
+) : AndroidViewModel(application) {
+
+    private val appContext = getApplication<Application>()
 
     // 所有预设
     private val _allPresets = MutableStateFlow<List<MasterPreset>>(emptyList())
@@ -117,7 +120,7 @@ class HomeViewModel(
     fun refresh(onComplete: (RefreshResult) -> Unit = {}) {
         viewModelScope.launch {
             // 1. 先尝试从远程更新所有启用的订阅
-            val config = ConfigCenter.getInstance(context)
+            val config = ConfigCenter.getInstance(appContext)
             val subscriptions = config.subscriptionsFlow.value
             val enabledSubs = subscriptions.filter { it.isEnabled }
 
@@ -128,7 +131,7 @@ class HomeViewModel(
             if (enabledSubs.isNotEmpty()) {
                 for (sub in enabledSubs) {
                     try {
-                        val result = PresetRemoteManager.fetchAndSave(context, sub.url)
+                        val result = PresetRemoteManager.fetchAndSave(appContext, sub.url)
                         if (result.isSuccess) {
                             successCount++
                         } else if (result.exceptionOrNull()?.message == "无需更新") {
@@ -189,12 +192,12 @@ class HomeViewModel(
  */
 class HomeViewModelFactory(
     private val repository: PresetRepository,
-    private val context: Context
+    private val application: Application
 ) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            return HomeViewModel(repository, context) as T
+            return HomeViewModel(application, repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -50,6 +50,9 @@
     <string name="settings_theme_dialog_title">Select Theme Color</string>
     <string name="settings_dark_mode">Dark Mode</string>
     <string name="settings_dark_mode_desc">Switch between dark and light theme</string>
+    <string name="dark_mode_system">System Default</string>
+    <string name="dark_mode_light">Light Mode</string>
+    <string name="dark_mode_dark">Dark Mode</string>
     <string name="floating_window_opacity">Floating Window Opacity</string>
     <string name="analytics_enabled">Enable Analytics</string>
     <string name="analytics_restart_hint">Help us understand app usage and improve product experience. Collected data is used for statistical analysis only and does not contain personal privacy information. Restart app to apply</string>
@@ -62,12 +65,15 @@
     <string name="language_system">System Default</string>
     <string name="language_chinese">Simplified Chinese</string>
     <string name="language_english">English</string>
+    <string name="language_japanese">Japanese</string>
 
     <!-- Update Settings -->
     <string name="settings_section_update">Update</string>
     <string name="update_channel">Update Channel</string>
     <string name="update_channel_gitee">Gitee (China)</string>
     <string name="update_channel_github">GitHub (International)</string>
+    <string name="auto_check_update">Auto Check Update</string>
+    <string name="auto_check_update_desc">Automatically check for new version on app startup</string>
 
     <!-- Storage -->
     <string name="settings_section_storage">Storage</string>
@@ -103,6 +109,7 @@
     <string name="language_system_desc">Use system default language</string>
     <string name="language_chinese_desc">Simplified Chinese</string>
     <string name="language_english_desc">English</string>
+    <string name="language_japanese_desc">Japanese</string>
 
     <!-- Toast Messages -->
     <string name="toast_language_changed">Language changed, restarting app…</string>
@@ -687,10 +694,11 @@
     <!-- Discover / Check-in -->
     <string name="discover_more_coming">More features are on the way...</string>
     <string name="discover_stay_tuned">Stay tuned</string>
-    <string name="discover_checkin_title">Photo Habit Log</string>
-    <string name="discover_checkin_subtitle">Keep a record of your shooting rhythm</string>
+    <string name="discover_checkin_title">Shutter Diary</string>
+    <string name="discover_checkin_subtitle">Every shutter click, your exclusive memory</string>
+    <string name="discover_checkin_not_today">Haven\'t checked in yet today</string>
     <string name="discover_checkin_subtitle_active">Active for %1$d days in a row</string>
-    <string name="checkin_sheet_title">Photo Habit Log</string>
+    <string name="checkin_sheet_title">Shutter Diary</string>
     <string name="checkin_current_streak">Current Streak</string>
     <string name="checkin_longest_streak">Best Streak</string>
     <string name="checkin_month_total">This Month</string>
@@ -715,6 +723,8 @@
     <string name="checkin_weekday_sat">S</string>
     <string name="checkin_mark_complete">Mark complete</string>
     <string name="checkin_completed">Completed</string>
+    <string name="photoframe_card_title">Photo Frame</string>
+    <string name="photoframe_card_desc">Auto-read shooting info, frame your photo for sharing</string>
 
     <!-- Xposed Tool -->
     <string name="xposed_tool_entry">Xposed Tool</string>
@@ -752,4 +762,34 @@
     <string name="xposed_kill_camera">Restart Camera</string>
     <string name="xposed_kill_camera_hint">Force kill camera process to apply written params</string>
 
+    <!-- Frame Art Screen -->
+    <string name="photoframe_permission_media_name">photos &amp; videos</string>
+    <string name="photoframe_permission_storage_name">storage</string>
+    <string name="photoframe_permission_denied">%1$s permission is required to select images. Please grant it in system settings.</string>
+    <string name="photoframe_saved">Saved to Gallery</string>
+    <string name="photoframe_save_failed">Save failed</string>
+    <string name="photoframe_pick_photo">Select a Photo</string>
+    <string name="photoframe_pick_desc">Auto-read shooting time to create beautiful shareable art</string>
+    <string name="photoframe_preview">Preview</string>
+    <string name="photoframe_original">Original</string>
+    <string name="photoframe_aspect_ratio">Aspect Ratio</string>
+    <string name="photoframe_shoot_time">Shooting Time</string>
+    <string name="photoframe_time_placeholder">e.g. 2024.03.15 14:30</string>
+    <string name="photoframe_image_style">Image Style</string>
+    <string name="photoframe_rounded">Rounded</string>
+    <string name="photoframe_sharp">Sharp</string>
+    <string name="photoframe_reselect">Reselect Photo</string>
+
+    <!-- Dark Mode Descriptions -->
+    <string name="dark_mode_system_desc">Auto switch based on system settings</string>
+    <string name="dark_mode_light_desc">Always use light theme</string>
+    <string name="dark_mode_dark_desc">Always use dark theme</string>
+    <string name="settings_dark_mode_dialog_title">Select Dark Mode</string>
+
+    <!-- Channel Descriptions (Detail) -->
+    <string name="channel_gitee_desc_detail">Faster access in China</string>
+    <string name="channel_github_desc_detail">International access, may be slower</string>
+
+    <!-- Version Check Hint -->
+    <string name="version_check_hint">Tap to check for updates</string>
 </resources>

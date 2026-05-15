@@ -31,6 +31,7 @@ object LanguageUtil {
             AppLanguage.SYSTEM -> getSystemLocale()
             AppLanguage.CHINESE -> Locale.SIMPLIFIED_CHINESE
             AppLanguage.ENGLISH -> Locale.ENGLISH
+            AppLanguage.JAPANESE -> Locale.JAPANESE
         }
     }
 
@@ -42,6 +43,7 @@ object LanguageUtil {
             AppLanguage.SYSTEM -> getSystemLocale()
             AppLanguage.CHINESE -> Locale.SIMPLIFIED_CHINESE
             AppLanguage.ENGLISH -> Locale.ENGLISH
+            AppLanguage.JAPANESE -> Locale.JAPANESE
         }
 
         Locale.setDefault(locale)

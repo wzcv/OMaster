@@ -13,15 +13,15 @@ android {
 
     defaultConfig {
         applicationId = "com.silas.omaster"
-        minSdk = 33  // Android 13
+        minSdk = 23  // Android 6
         targetSdk = 36
         // 版本号规范：
         // versionCode: 内部版本号，每次发布必须递增
         // versionName: 对外显示版本号，格式 主.次.修订
         // 正式版: 1.0, 1.0.1, 1.1.0, 2.0.0
         // 测试版: 1.0.0-beta1, 1.0.0-beta2
-        versionCode = 11
-        versionName = "1.4.1-root"
+        versionCode = 13
+        versionName = "1.5.1-root"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -35,6 +35,10 @@ android {
             dimension = "xposedApi"
             versionNameSuffix = "-libxposed"
         }
+    }
+
+    lint {
+        baseline = file("lint-baseline.xml")
     }
 
     buildTypes {
@@ -124,6 +128,12 @@ dependencies {
     implementation(libs.libsu.core)
     implementation(libs.mmkv)
     implementation(libs.androidx.material3)
+
+    // 图片边框 - 主色调提取
+    implementation(libs.androidx.palette)
+
+    // 图片边框 - EXIF信息读取
+    implementation(libs.androidx.exifinterface)
 
     // 测试依赖（已使用 catalog）
     testImplementation(libs.junit)

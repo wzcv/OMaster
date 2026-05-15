@@ -50,6 +50,10 @@ fun UniversalCreatePresetScreen(
         viewModel.updateImageUri(uri)
     }
 
+    fun launchImagePicker() {
+        imagePicker.launch("image/*")
+    }
+
     // Dialog states
     var showAddSectionDialog by remember { mutableStateOf(false) }
     var showAddItemDialog by remember { mutableStateOf(false) }
@@ -160,7 +164,7 @@ fun UniversalCreatePresetScreen(
                                 .height(200.dp)
                                 .clip(RoundedCornerShape(12.dp))
                                 .background(MaterialTheme.colorScheme.surfaceVariant)
-                                .clickable { imagePicker.launch("image/*") },
+                                .clickable { launchImagePicker() },
                             contentAlignment = Alignment.Center
                         ) {
                             if (uiState.imageUri != null) {

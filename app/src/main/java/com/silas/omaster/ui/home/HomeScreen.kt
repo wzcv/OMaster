@@ -1,5 +1,6 @@
 package com.silas.omaster.ui.home
 
+import android.app.Application
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -95,7 +96,7 @@ fun HomeScreen(
     val context = LocalContext.current
     val repository = remember { PresetRepository.getInstance(context) }
     val viewModel: HomeViewModel = viewModel(
-        factory = HomeViewModelFactory(repository, context)
+        factory = HomeViewModelFactory(repository, context.applicationContext as Application)
     )
     val haptic = LocalHapticFeedback.current
     val scope = rememberCoroutineScope()

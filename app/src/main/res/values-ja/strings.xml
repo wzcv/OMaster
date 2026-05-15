@@ -1,0 +1,558 @@
+<resources>
+    <!-- アプリ名 -->
+    <string name="app_name">OMaster</string>
+    <string name="app_slogan">マスターモードカラーグレーディングライブラリ</string>
+
+    <!-- 共通ボタン -->
+    <string name="confirm">確定</string>
+    <string name="cancel">キャンセル</string>
+    <string name="close">閉じる</string>
+    <string name="save">保存</string>
+    <string name="delete">削除</string>
+    <string name="edit">編集</string>
+    <string name="back">戻る</string>
+    <string name="refresh">更新</string>
+    <string name="update">更新</string>
+    <string name="retry">再試行</string>
+    <string name="loading">読み込み中…</string>
+    <string name="checking">確認中…</string>
+
+    <!-- ボトムナビゲーション -->
+    <string name="nav_home">ホーム</string>
+    <string name="nav_discover">発見</string>
+    <string name="nav_about">について</string>
+    <string name="nav_settings">設定</string>
+
+    <!-- サブスクリプション -->
+    <string name="sub_title">サブスクリプション管理</string>
+    <string name="sub_add">サブスクリプション追加</string>
+    <string name="sub_url_label">リンク (JSON URL)</string>
+    <string name="sub_name_label">名前 (オプション)</string>
+    <string name="sub_empty">サブスクリプションがありません</string>
+    <string name="sub_delete_confirm_title">削除の確認</string>
+    <string name="sub_delete_confirm_msg">このサブスクリプションを削除してもよろしいですか？関連するプリセットも表示されなくなります。</string>
+    <string name="sub_details">詳細</string>
+    <string name="sub_edit_title">編集</string>
+    <string name="sub_update_status">更新完了: %1$d/%2$d</string>
+    <string name="sub_preset_count">プリセット数: %1$d</string>
+    <string name="sub_last_update">更新日時: %1$s</string>
+    <string name="sub_no_name">名前なしサブスクリプション</string>
+
+    <!-- 設定 -->
+    <string name="settings_title">設定</string>
+    <string name="settings_section_general">一般</string>
+    <string name="settings_section_appearance">外観</string>
+    <string name="settings_section_floating_window">フローティングウィンドウ</string>
+    <string name="settings_section_privacy">プライバシー</string>
+    <string name="vibration_feedback">振動フィードバック</string>
+    <string name="default_start_tab">デフォルト開始タブ</string>
+    <string name="settings_theme_title">テーマカラー</string>
+    <string name="settings_theme_dialog_title">テーマカラーを選択</string>
+    <string name="settings_dark_mode">ダークモード</string>
+    <string name="settings_dark_mode_desc">ダーク/ライトテーマを切り替え</string>
+    <string name="dark_mode_system">システムに従う</string>
+    <string name="dark_mode_system_desc">システム設定に基づいて自動切り替え</string>
+    <string name="dark_mode_light">ライトモード</string>
+    <string name="dark_mode_light_desc">常にライトテーマを使用</string>
+    <string name="dark_mode_dark">ダークモード</string>
+    <string name="dark_mode_dark_desc">常にダークテーマを使用</string>
+    <string name="floating_window_opacity">フローティングウィンドウ透明度</string>
+    <string name="analytics_enabled">分析を有効化</string>
+    <string name="analytics_restart_hint">アプリの使用状況を把握し、製品体験を向上させるために役立ちます。収集されたデータは統計分析のみに使用され、個人のプライバシー情報は含まれません。アプリを再起動して適用</string>
+    <string name="clear_cache">画像キャッシュをクリア</string>
+    <string name="clear_cache_desc">ストレージ容量を解放、次回閲覧時に再ダウンロード</string>
+    <string name="cache_size_format">キャッシュサイズ: %.2f MB</string>
+    <string name="cache_cleared">キャッシュをクリアしました</string>
+
+    <!-- 言語設定 -->
+    <string name="language">言語</string>
+    <string name="language_system">システムデフォルト</string>
+    <string name="language_chinese">簡体字中国語</string>
+    <string name="language_english">English</string>
+    <string name="language_japanese">日本語</string>
+
+    <!-- 更新設定 -->
+    <string name="settings_section_update">更新設定</string>
+    <string name="update_channel">更新チャンネル</string>
+    <string name="update_channel_gitee">Gitee（中国推奨）</string>
+    <string name="update_channel_github">GitHub（国際）</string>
+    <string name="auto_check_update">起動時に自動更新確認</string>
+    <string name="auto_check_update_desc">アプリを開くたびに新しいバージョンを自動確認</string>
+
+    <!-- ストレージ -->
+    <string name="settings_section_storage">ストレージ</string>
+    <string name="export_logs">ログをエクスポート</string>
+    <string name="log_size">ログサイズ: %1$s</string>
+    <string name="clear_logs">ログをクリア</string>
+    <string name="clear_logs_confirm_title">ログをクリア</string>
+    <string name="clear_logs_confirm_msg">すべてのログファイルをクリアしてもよろしいですか？この操作は元に戻せません。</string>
+    <string name="logs_cleared">ログをクリアしました</string>
+
+    <!-- ダイアログ -->
+    <string name="cache_clear_confirm">現在のキャッシュサイズは %.2f MBです。クリアするとストレージ容量が解放され、次回閲覧時に画像を再ダウンロードする必要があります。</string>
+    <string name="cache_empty">キャッシュ画像がありません</string>
+    <string name="clear">クリア</string>
+    <string name="recommended">推奨</string>
+
+    <!-- ダイアログタイトル -->
+    <string name="dialog_title_select_tab">デフォルトタブを選択</string>
+    <string name="dialog_title_select_channel">更新チャンネルを選択</string>
+    <string name="dialog_title_select_language">言語を選択</string>
+
+    <!-- タブ名 -->
+    <string name="tab_all">すべて</string>
+    <string name="tab_favorites">お気に入り</string>
+    <string name="tab_my">マイプリセット</string>
+
+    <!-- チャンネル説明 -->
+    <string name="channel_gitee_desc">中国での高速アクセス</string>
+    <string name="channel_github_desc">国際アクセス、中国ではプロキシが必要な場合あり</string>
+    <string name="channel_gitee_desc_detail">中国での高速アクセス</string>
+    <string name="channel_github_desc_detail">国際アクセス、速度が遅い場合あり</string>
+
+    <!-- 言語説明 -->
+    <string name="language_system_desc">システムデフォルト言語を使用</string>
+    <string name="language_chinese_desc">簡体字中国語</string>
+    <string name="language_english_desc">英語</string>
+    <string name="language_japanese_desc">日本語</string>
+
+    <!-- Toastメッセージ -->
+    <string name="toast_language_changed">言語を変更しました、アプリを再起動しています…</string>
+
+    <!-- 外観設定 -->
+    <string name="premium_glass_effect">プレミアムガラスエフェクト</string>
+    <string name="premium_glass_effect_desc">6層ガラスエフェクトを有効化、より立体的な質感</string>
+
+    <!-- ソフトウェア更新 -->
+    <string name="version_check_hint">タップして更新を確認</string>
+    <string name="new_version_available">新しいバージョンが見つかりました</string>
+    <string name="downloading">ダウンロード中</string>
+    <string name="dialog_title_select_floating_mode">フローティングウィンドウモードを選択</string>
+    <string name="settings_dark_mode_dialog_title">ダークモードを選択</string>
+    <string name="language_dialog_title">言語を選択</string>
+
+    <!-- ブランド名 -->
+    <string name="brand_hasselblad">Hasselblad</string>
+    <string name="brand_zeiss">ZEISS</string>
+    <string name="brand_leica">Leica</string>
+    <string name="brand_ricoh">Ricoh</string>
+    <string name="brand_fujifilm">Fujifilm</string>
+    <string name="brand_canon">Canon</string>
+    <string name="brand_nikon">Nikon</string>
+    <string name="brand_sony">Sony</string>
+    <string name="brand_phaseone">Phase One</string>
+
+    <!-- ブランドカラー名 -->
+    <string name="color_hasselblad_orange">Hasselbladオレンジ</string>
+    <string name="color_zeiss_blue">ZEISSブルー</string>
+    <string name="color_leica_red">Leicaレッド</string>
+    <string name="color_ricoh_green">Ricohグリーン</string>
+    <string name="color_fujifilm_green">Fujifilmグリーン</string>
+    <string name="color_canon_red">Canonレッド</string>
+    <string name="color_nikon_yellow">Nikonイエロー</string>
+    <string name="color_sony_orange">Sonyオレンジ</string>
+    <string name="color_phaseone_grey">Phase Oneグレー</string>
+
+    <!-- ホームタブ -->
+    <string name="tab_my_home">マイ</string>
+
+    <!-- ホームアクション -->
+    <string name="create_preset">プリセット作成</string>
+    <string name="delete_preset_title">削除の確認</string>
+    <string name="delete_preset_message">このプリセットを削除してもよろしいですか？この操作は元に戻せません。</string>
+
+    <!-- 空状態 -->
+    <string name="empty_no_presets">プリセットデータがありません</string>
+    <string name="empty_no_favorites">お気に入りのプリセットがありません</string>
+    <string name="empty_no_custom">カスタムプリセットがありません</string>
+    <string name="empty_no_data">データがありません</string>
+    <string name="empty_hint_add_presets">「について」ページでサブスクリプションを追加するか、新しいプリセットを作成してください</string>
+    <string name="empty_hint_favorite">ハートアイコンをタップしてプリセットをお気に入りに追加</string>
+    <string name="empty_hint_create">右下のボタンをタップしてプリセットを作成</string>
+    <string name="load_more_hint">続々更新中 · お楽しみに</string>
+    <string name="loading_more">さらに読み込み中…</string>
+    <string name="no_more_data">これ以上データはありません</string>
+
+    <!-- 設定更新 -->
+    <string name="config_update_title">設定更新</string>
+    <string name="set_update_url">更新リンクを設定</string>
+    <string name="fetch_presets_desc">リモートサーバーから最新のプリセット設定を取得</string>
+    <string name="config_update_success">設定の更新に成功しました</string>
+    <string name="config_update_failed">設定の更新に失敗しました</string>
+    <string name="config_update_failed_prefix">設定の更新に失敗しました: </string>
+    <string name="updating">更新中…</string>
+    <string name="check_now">今すぐ確認</string>
+    <string name="update_url_saved">更新リンクを保存しました</string>
+
+    <!-- プリセットカード -->
+    <string name="preset_favorite">お気に入り</string>
+    <string name="preset_favorited">お気に入り済み</string>
+    <string name="preset_delete">削除</string>
+    <string name="preset_new">NEW</string>
+
+    <!-- 詳細ページ -->
+    <string name="detail_title">プリセット詳細</string>
+    <string name="detail_load_failed">プリセットデータの読み込みに失敗しました</string>
+    <string name="floating_window">フローティングウィンドウ</string>
+
+    <!-- プロパラメータ -->
+    <string name="param_iso">ISO</string>
+    <string name="param_shutter">シャッター</string>
+    <string name="param_exposure">露出補正</string>
+    <string name="param_color_temp">色温度</string>
+    <string name="param_white_balance">ホワイトバランス</string>
+    <string name="param_tone">トーン</string>
+    <string name="param_tone_style">トーンスタイル</string>
+    <string name="param_pro_adjust">プロパラメータ（環境に応じて調整）</string>
+
+    <!-- カラーグレーディングパラメータ -->
+    <string name="section_color_grading">カラーグレーディング</string>
+    <string name="param_filter">フィルター</string>
+    <string name="param_soft_light">ソフトライト</string>
+    <string name="param_tone_curve">トーンカーブ</string>
+    <string name="param_saturation">彩度</string>
+    <string name="param_warm_cool">暖色/寒色</string>
+    <string name="param_brightness">明るさ</string>
+    <string name="param_cyan_magenta">シアン/マゼンタ</string>
+    <string name="param_hue">色相</string>
+    <string name="param_sharpness">シャープネス</string>
+    <string name="param_vignette">ビネット</string>
+
+    <!-- Realme特有パラメータ -->
+    <string name="param_contrast">コントラスト</string>
+    <string name="param_contrast_highlight">コントラスト（ハイライト）</string>
+    <string name="param_contrast_shadow">コントラスト（シャドウ）</string>
+    <string name="param_clarity">クリア</string>
+    <string name="param_grain">グレイン強度</string>
+    <string name="param_grain_size">グレインサイズ</string>
+
+    <!-- 撮影モード -->
+    <string name="mode_pro">Proモード</string>
+    <string name="mode_auto">Autoモード</string>
+
+    <!-- 作成/編集プリセット -->
+    <string name="create_preset_title">プリセット作成</string>
+    <string name="edit_preset_title">プリセット編集</string>
+    <string name="save_preset">プリセットを保存</string>
+    <string name="save_changes">変更を保存</string>
+    <string name="save_failed">保存に失敗しました、もう一度お試しください</string>
+    <string name="feature_coming_soon">機能はまもなく公開されます、お楽しみに</string>
+    <string name="add_item">パラメータを追加</string>
+    <string name="edit_item">パラメータを編集</string>
+    <string name="param_label">パラメータ名 (Label)</string>
+    <string name="param_value">パラメータ値 (Value)</string>
+    <string name="span_label">幅割合 (Span): %1$d</string>
+    <string name="add_section">カテゴリを追加</string>
+    <string name="section_name">カテゴリ名</string>
+    <string name="remove_item">パラメータを削除</string>
+    <string name="remove_section">カテゴリを削除</string>
+    <string name="select_template">プリセットテンプレートを選択</string>
+    <string name="start_from_scratch">ゼロから作成</string>
+    <string name="or_choose_template">または既存のプリセットを起点として選択：</string>
+    <string name="upload_cover_hint">タップしてカバーをアップロード</string>
+    <string name="unnamed_section">名前なしグループ</string>
+
+    <!-- カバー画像 -->
+    <string name="cover_image">カバー画像</string>
+    <string name="change_image">タップして画像を変更</string>
+    <string name="select_image">カバー画像を選択</string>
+    <string name="image_ratio_hint">16:9比率の画像を推奨</string>
+
+    <!-- プリセット名 -->
+    <string name="preset_name">プリセット名</string>
+    <string name="preset_name_hint">プリセットに名前を付けてください</string>
+
+    <!-- パラメータカテゴリ -->
+    <string name="section_basic">基本パラメータ</string>
+    <string name="section_pro">プロパラメータ</string>
+    <string name="section_color">カラーパラメータ</string>
+    <string name="section_other">その他</string>
+    <string name="shooting_mode">撮影モード</string>
+    <string name="shooting_tips">撮影アドバイス</string>
+    <string name="filter_style">フィルタースタイル</string>
+    <string name="filter_intensity">フィルター強度</string>
+    <string name="soft_light_effect">ソフトライト効果</string>
+
+    <!-- フィルターオプション -->
+    <string name="filter_standard">標準</string>
+    <string name="filter_neon">ネオン</string>
+    <string name="filter_fresh">フレッシュ</string>
+    <string name="filter_vintage">ビンテージ</string>
+    <string name="filter_clear">クリア</string>
+    <string name="filter_vivid">ビビッド</string>
+    <string name="filter_fairy">フェアリー</string>
+    <string name="filter_humanities">ヒューマニティ</string>
+    <string name="filter_natural">ナチュラル</string>
+    <string name="filter_delicious">デリシャス</string>
+    <string name="filter_cool">クール</string>
+    <string name="filter_warm">ウォーム</string>
+    <string name="filter_rich">リッチ</string>
+    <string name="filter_advanced_gray">アドバンスドグレー</string>
+    <string name="filter_bw">モノクロ</string>
+    <string name="filter_mono">モノ</string>
+    <string name="filter_cyberpunk">サイバーパンク</string>
+
+    <!-- ソフトライトオプション -->
+    <string name="soft_none">なし</string>
+    <string name="soft_gentle">ジェントル</string>
+    <string name="soft_dreamy">ドリーミー</string>
+    <string name="soft_hazy">ヘイジー</string>
+
+    <!-- ビネットオプション -->
+    <string name="vignette_on">オン</string>
+    <string name="vignette_off">オフ</string>
+
+    <!-- ホワイトバランスオプション -->
+    <string name="white_balance_cloudy">曇り</string>
+    <string name="white_balance_daylight">昼光</string>
+    <string name="white_balance_fluorescent">蛍光灯</string>
+    <string name="white_balance_incandescent">白熱灯</string>
+    <string name="white_balance_auto">自動</string>
+
+    <!-- トーンオプション -->
+    <string name="tone_warm">暖色</string>
+    <string name="tone_cool">寒色</string>
+
+    <!-- プリセット名 -->
+    <string name="preset_fuji_film">Fujiフィルム</string>
+    <string name="preset_film_feel">フィルム感</string>
+    <string name="preset_fairy_tale">フェアリーテイル</string>
+    <string name="preset_high_contrast_bw">ハイコントラストモノクロ</string>
+    <string name="preset_ricoh_green">Ricohグリーン</string>
+    <string name="preset_ricoh_blue">Ricohブルー</string>
+    <string name="preset_blue_hour">ブルーアワー</string>
+    <string name="preset_dreamy_blackmist">ドリーミーブラックミスト</string>
+    <string name="preset_fuji_nc">Fuji NC</string>
+    <string name="preset_humanities">ヒューマニティ</string>
+    <string name="preset_fresh_humanities">フレッシュヒューマニティ</string>
+    <string name="preset_snowy_night">スノーナイト</string>
+    <string name="preset_delicious">デリシャス</string>
+    <string name="preset_mobile_leica">モバイルLeica</string>
+    <string name="preset_dreamy_fuji">ドリーミーFuji</string>
+    <string name="preset_hasselblad_rich">Hasselbladリッチ</string>
+    <string name="preset_holiday_fresh">ホリデーフレッシュ</string>
+    <string name="preset_dreamy_bw">ドリーミーモノクロ</string>
+    <string name="preset_delicious_dream">デリシャスドリーム</string>
+    <string name="preset_blue_clear">ブルークリア</string>
+    <string name="preset_sunny_vintage">サニービンテージ</string>
+    <string name="preset_neon_lights">ネオンライト</string>
+    <string name="preset_retro_nostalgia">レトロノスタルジア</string>
+
+    <!-- 撮影アドバイス -->
+    <string name="tips_fuji_film">【環境】日中の屋外または明るい室内\n【シーン】ストリート、ポートレート、風景、建築\n【ポイント】クラシックなフィルム質感を追求するシーンに適しています。色彩が濃厚でレトロな雰囲気を持ち、光と影のコントラストがあるシーンで奥行き感を強化することをお勧めします</string>
+    <string name="tips_film_feel">【環境】自然光または柔らかい人工光源\n【シーン】ポートレート、静物、カフェ、芸術的なシーン\n【ポイント】ソフトライトが幻想的な雰囲気を作り出します。感情的な写真に最適で、被写体に鮮明にピントを合わせることをお勧めします</string>
+    <string name="tips_fairy_tale">【環境】朝、夕暮れまたは曇りの拡散光\n【シーン】子供写真、庭、公園、ロマンチックなシーン\n【ポイント】暗いトーンが神秘感を生み出します。幻想的なソフトライトがおとぎ話のような雰囲気を演出します。色彩豊かなシーンを探すことをお勧めします</string>
+    <string name="tips_high_contrast_bw">【環境】強い光と影のコントラスト、直射日光またはスポットライト\n【シーン】建築、ドキュメンタリー、ストリート、アートポートレート\n【ポイント】明暗のコントラストを利用して被写体の輪郭を際立たせます。幾何学的なラインや質感豊かなシーンに最適です。シンプルで力強い構図に注意してください</string>
+    <string name="tips_ricoh_green">【環境】屋外の自然光、森、草地、植物が豊富なシーン\n【シーン】植物、森林散策、春の屋外、フレッシュなポートレート\n【ポイント】明るいトーンが清新感を際立たせます。緑が自然で透明感のある表現になります。植物や自然のシーン撮影に最適です</string>
+    <string name="tips_ricoh_blue">【環境】晴れた天気または青空の背景\n【シーン】海辺、都市建築、空、寒色系のシーン\n【ポイント】寒色系のトーンが青の表現力を強化します。空、水面、都市建築の撮影に最適で、透明感と冷静な雰囲気を演出します</string>
+    <string name="tips_blue_hour">【環境】日の出前または日没後20分のブルーアワー\n【シーン】都市夜景、輝くライト、水面の反射\n【ポイント】暖色と寒色のコントラストが強く、都市のライトや夜景に最適です。水面のあるシーンで反射効果を強化することをお勧めします</string>
+    <string name="tips_dreamy_blackmist">【環境】逆光またはサイドライトのシーン\n【シーン】ポートレート、感情写真、アートシーン、柔らかい美しさ\n【ポイント】ブラックミストフィルター効果が幻想的な雰囲気を作り出します。美しいポートレート撮影に最適で、逆光を利用してハロー効果を作り出すことをお勧めします</string>
+    <string name="tips_fuji_nc">【環境】日中の屋外または十分な自然光\n【シーン】日系ポートレート、ストリート、日常記録、旅行\n【ポイント】Fuji NCフィルム効果をシミュレート。明るいトーンで、色彩が柔らかく自然です。日常記録や日系スタイルの撮影に最適です</string>
+    <string name="tips_humanities">【環境】自然光または柔らかい人工光源\n【シーン】ストリートドキュメンタリー、人文写真、生活記録、ストーリー性のあるシーン\n【ポイント】Proモードでパラメータを固定。ISO 50で純粋な画質を確保。軽いアンダー露出でディテールを保持。リアルな生活の瞬間を捉えるのに最適です</string>
+    <string name="tips_fresh_humanities">【環境】明るい屋外または室内の自然光\n【シーン】フレッシュな日系ポートレート、キャンパス、旅行、日常生活\n【ポイント】明るいトーンで彩度が高め。フレッシュで明るいポートレートやシーンに最適です。光の十分なシーンを探して撮影することをお勧めします</string>
+    <string name="tips_snowy_night">【環境】雪天、曇りまたは低色温度のシーン\n【シーン】雪景色、冬の街並み、暖かい室内、祝祭的な雰囲気\n【ポイント】暖色系のトーンが雪の寒色をバランスさせ、温かみのある雰囲気を作り出します。冬のシーンや暖かい光の環境に最適です</string>
+    <string name="tips_delicious">【環境】レストラン、キッチン、フード撮影シーン\n【シーン】フード写真、飲み物、ベーカリー、繊細な料理\n【ポイント】暗めのトーンが食べ物の質感を際立たせます。適度な彩度で食べ物の本来の色を保持。繊細な料理や飲み物の撮影に最適です</string>
+    <string name="tips_mobile_leica">【環境】日中の屋外または十分な光\n【シーン】ストリート、建築、風景、日常記録\n【ポイント】Leicaのドイツスタイルをシミュレート。深いトーンで、色彩が控えめです。Leicaの美学を追求する写真愛好家に最適です</string>
+    <string name="tips_dreamy_fuji">【環境】日中の屋外または柔らかい光\n【シーン】ポートレート、風景、日系シーン、アート写真\n【ポイント】Proモード自動露出。軽いオーバー露出で幻想的な雰囲気を作り出します。ビンテージトーンに幻想的なソフトライト。美しいポートレートや風景に最適です</string>
+    <string name="tips_hasselblad_rich">【環境】明るい屋外または室内\n【シーン】風景、建築、ポートレート、アート写真\n【ポイント】Hasselblad Natural Color Solutionをシミュレート。濃厚でありながら自然な色彩。高品質な色彩表現に最適です</string>
+    <string name="tips_holiday_fresh">【環境】晴れた天気または明るいバケーションシーン\n【シーン】海辺、バケーション、旅行、夏の屋外\n【ポイント】明るく透明感のあるトーン。低彩度で清新感を作り出します。バケーションや旅行のシーンに最適です。楽しい瞬間を捉えてください</string>
+    <string name="tips_dreamy_bw">【環境】柔らかい光または曇り\n【シーン】感情的なポートレート、アート写真、静物、建築\n【ポイント】わずかな色彩情報を保持。幻想的なソフトライトが芸術的な雰囲気を作り出します。表現力豊かなモノクロ写真に最適です</string>
+    <string name="tips_delicious_dream">【環境】レストラン、カフェ、居心地の良い室内\n【シーン】食べ物、デザート、飲み物、繊細なアイテム\n【ポイント】幻想的なソフトライトが温かみのある雰囲気を作り出します。暗めのトーンが質感を際立たせ。繊細な料理や居心地の良いシーンに最適です</string>
+    <string name="tips_blue_clear">【環境】日中の屋外または室内、海辺、空、水面\n【シーン】風景、建築、ポートレート、静物\n【ポイント】ブルークリアスタイルの寒色系が清新で透明感のある雰囲気を作り出します。軽いアンダー露出でディテールを保持。幻想的なソフトライトが雰囲気を加えます。清新な風景やポートレートに最適です</string>
+    <string name="tips_sunny_vintage">【環境】晴れた屋外、明るいシーン\n【シーン】ストリート、ポートレート、風景、ビンテージシーン\n【ポイント】サニービンテージスタイルで5000Kの色温度で自然な色彩。ネガティブトーンがビンテージ感を作り出します。軽いアンダー露出でハイライトディテールを保持。温かいソフトライトがレトロな雰囲気を加えます。晴れた屋外のポートレートや風景に最適です</string>
+    <string name="tips_neon_lights">【環境】夜の都市、ネオンサイン、賑やかな街\n【シーン】夜景、街並み、ポートレート、都市風景\n【ポイント】ネオンライトスタイルの豊かなフィルターが色彩の彩度を強化。ジェントルなソフトライトが幻想的な雰囲気を作り出します。軽いアンダー露出でネオンのディテールを保持。夜の都市ネオンシーンに最適です</string>
+    <string name="tips_retro_nostalgia">【環境】古い地区、ビンテージシーン、ノスタルジックな室内\n【シーン】古い物、街並み、ポートレート、ストーリー性のあるシーン\n【ポイント】レトロノスタルジアスタイルで65%のビンテージフィルターがノスタルジックな雰囲気を作り出します。低トーンがレトロな雰囲気を加えます。彩度を下げて古い写真の質感をシミュレート。ノスタルジックなテーマの写真に最適です</string>
+
+    <!-- バージョンチェック -->
+    <string name="version_current">現在のバージョン: v%1$s</string>
+    <string name="version_check">タップして更新を確認</string>
+    <string name="version_checking">更新を確認中…</string>
+    <string name="version_new_found">新しいバージョン v%1$s が見つかりました</string>
+    <string name="version_latest">最新バージョンです</string>
+    <string name="version_check_failed">確認に失敗しました</string>
+    <string name="version_download">ダウンロード</string>
+    <string name="version_download_btn">更新</string>
+    <string name="version_is_latest">最新です</string>
+    <string name="version_retry">タップして再試行</string>
+    <string name="last_check">最終確認: %1$s</string>
+    <string name="time_just_now">たった今</string>
+    <string name="time_minutes_ago">%1$d 分前</string>
+    <string name="time_hours_ago">%1$d 時間前</string>
+    <string name="time_days_ago">%1$d 日前</string>
+
+    <!-- 機能紹介 -->
+    <string name="feature_title">機能</string>
+    <string name="feature_custom_title">パーソナライズ</string>
+    <string name="feature_custom_desc">豊富なプリセットパラメータ、様々なシーンに対応</string>
+    <string name="feature_cloud_title">クラウドサブスクリプション</string>
+    <string name="feature_cloud_desc">クラウドプリセットライブラリを購読し、手動で更新</string>
+    <string name="feature_update_title">継続的な更新</string>
+    <string name="feature_update_desc">コミュニティ作成のプリセット、定期的なコンテンツ更新</string>
+    <string name="feature_safe_title">安全で信頼性が高い</string>
+    <string name="feature_safe_desc">ローカルストレージ優先、ユーザーのプライバシーを保護</string>
+
+    <!-- クレジット -->
+    <string name="credits_title">クレジット</string>
+    <string name="developer">開発者</string>
+    <string name="developer_name">Silas</string>
+    <string name="material_provider">素材提供者</string>
+
+    <!-- フッター -->
+    <string name="footer_local">純粋なローカル操作、データはローカルに保存</string>
+    <string name="user_agreement">利用規約</string>
+    <string name="privacy_policy">プライバシーポリシー</string>
+    <string name="open_source_license">オープンソースライセンス</string>
+
+    <!-- プライバシーポリシーページ -->
+    <string name="privacy_title">利用規約とプライバシーポリシー</string>
+    <string name="welcome_title">OMasterへようこそ</string>
+    <string name="welcome_desc">OMasterは、OPPO/OnePlus/Realmeモバイル写真愛好家向けのカラーグレーディングパラメータ管理ツールです。ここでは、マスターモードの写真カラーグレーディングパラメータを表示、お気に入り登録、再現することができます。</string>
+    <string name="features_title">機能</string>
+    <string name="features_list">• マスターモードカラーグレーディングパラメータの表示\n• 複数のプリセットスタイルのサポート\n• 純粋なローカル操作、データはローカルに保存\n• インターネット不要</string>
+    <string name="data_collection_title">データ収集</string>
+    <string name="data_collection_desc">より良いサービスを提供するために、Umeng Analytics SDKを使用してアプリの使用データを収集しています。</string>
+    <string name="local_storage_title">ローカルデータストレージ</string>
+    <string name="local_storage_desc">アプリは以下のデータをローカルに保存します:\n\n• サブスクリプション設定（URL、バージョンなど）\n• プリセット画像キャッシュ\n• ユーザー設定（テーマ、言語など）\n• お気に入りプリセットリスト\n\nすべてのデータはお使いのデバイスに保存され、個人情報はアップロードされません。</string>
+    <string name="permission_title">権限</string>
+    <string name="permission_desc">フローティングウィンドウ機能は、他のアプリの上に撮影パラメータを表示するためにSYSTEM_ALERT_WINDOW権限が必要です。この権限はプリセットパラメータの表示のみに使用され、画面コンテンツにアクセスしたり、データを収集したりすることはありません。</string>
+    <string name="sdk_info_title">Umeng SDK情報</string>
+
+    <!-- フローティングウィンドウ -->
+    <string name="floating_window_mode">フローティングウィンドウモード</string>
+    <string name="floating_window_mode_standard">標準モード</string>
+    <string name="floating_window_mode_standard_desc">詳細なパラメータ表示、縦画面に最適</string>
+    <string name="floating_window_mode_compact">コンパクトモード</string>
+    <string name="floating_window_mode_compact_desc">最小限の表示、横画面撮影に最適</string>
+    <string name="floating_window_realme_tip">RealmeプリセットはProモードでのみ完全に表示されます</string>
+
+    <!-- Color Walk -->
+    <string name="colorwalk_title">Color Walk</string>
+    <string name="colorwalk_subtitle">毎日の色のインスピレーション</string>
+    <string name="colorwalk_today_color">今日の色</string>
+    <string name="colorwalk_draw_card">カードを引く</string>
+    <string name="colorwalk_today_challenge">今日のチャレンジ</string>
+    <string name="colorwalk_shooting_guide">撮影ガイド</string>
+    <string name="colorwalk_complete_challenge">チャレンジを完了</string>
+    <string name="colorwalk_completed">完了済み</string>
+    <string name="colorwalk_color_card">カラーカード</string>
+    <string name="colorwalk_my_colors">マイカラー</string>
+    <string name="colorwalk_favorites">お気に入り</string>
+    <string name="colorwalk_no_favorites">まだお気に入りのカラーがありません</string>
+    <string name="colorwalk_favorite_hint">カラーカードをお気に入りに追加してコレクションを作成</string>
+    <string name="colorwalk_unlock_achievement">実績をアンロック</string>
+    <string name="colorwalk_palette_extracted">パレットを抽出しました</string>
+    <string name="colorwalk_colors_count">%1$d 色</string>
+    <string name="colorwalk_share">シェア</string>
+    <string name="colorwalk_share_title">今日の色のインスピレーション</string>
+    <string name="colorwalk_share_text">今日の色は「%1$s」、HEX: %2$s。一緒にColor Walkを始めましょう！</string>
+    <string name="colorwalk_save">保存</string>
+    <string name="colorwalk_saved">カラーカードを保存しました</string>
+    <string name="colorwalk_favorite">お気に入り</string>
+    <string name="colorwalk_favorited">お気に入り済み</string>
+    <string name="colorwalk_unfavorited">お気に入りを解除しました</string>
+    <string name="colorwalk_delete">削除</string>
+    <string name="colorwalk_delete_confirm">このカラーカードを削除してもよろしいですか？</string>
+    <string name="colorwalk_deleted">削除しました</string>
+    <string name="colorwalk_no_records">まだカラーカードがありません</string>
+    <string name="colorwalk_start_hint">今日のカラーカードを引いて始めましょう</string>
+    <string name="colorwalk_tap_to_flip">タップして裏返す</string>
+    <string name="colorwalk_guide_title">撮影ガイド</string>
+    <string name="colorwalk_guide_close">閉じる</string>
+    <string name="colorwalk_guide_fullscreen">全画面</string>
+    <string name="colorwalk_guide_exit_fullscreen">全画面を終了</string>
+    <string name="colorwalk_guide_step1_title">ステップ1: 色を観察</string>
+    <string name="colorwalk_guide_step1_desc">この色の特徴を観察してください。暖色または寒色？明るいまたは暗い？</string>
+    <string name="colorwalk_guide_step2_title">ステップ2: 環境を見つける</string>
+    <string name="colorwalk_guide_step2_desc">この色を持つまたは補完するシーンを見つけてください</string>
+    <string name="colorwalk_guide_step3_title">ステップ3: 撮影</string>
+    <string name="colorwalk_guide_step3_desc">マスターモードを使用し、適切なパラメータを調整して撮影</string>
+    <string name="colorwalk_guide_tip">ヒント: 同じ色の異なる深さを探すか、補色を使用してコントラストを作り出してください</string>
+    <string name="colorwalk_card_color_name">色名</string>
+    <string name="colorwalk_card_hex">HEX</string>
+    <string name="colorwalk_card_rgb">RGB</string>
+    <string name="colorwalk_card_date">日付</string>
+    <string name="colorwalk_card_challenge">チャレンジ</string>
+    <string name="colorwalk_achievement_first_step">ファーストステップ</string>
+    <string name="colorwalk_achievement_first_step_desc">最初のカラーカードを引く</string>
+    <string name="colorwalk_achievement_collector">コレクター</string>
+    <string name="colorwalk_achievement_collector_desc">10枚のカラーカードを収集</string>
+    <string name="colorwalk_achievement_persistence">継続力</string>
+    <string name="colorwalk_achievement_persistence_desc">7日連続でチェックイン</string>
+    <string name="colorwalk_achievement_master">カラーマスター</string>
+    <string name="colorwalk_achievement_master_desc">30枚のカラーカードを収集</string>
+    <string name="colorwalk_challenge_prefix">今日のミッション：</string>
+    <string name="colorwalk_no_challenge">今日のチャレンジはありません、まずカードを引いてください</string>
+    <string name="colorwalk_public_palette">公開パレット</string>
+
+    <!-- シャッターダイアリー -->
+    <string name="shutter_diary_title">Shutter Diary</string>
+    <string name="shutter_diary_subtitle">あなたの撮影習慣を記録</string>
+    <string name="shutter_diary_today_status">今日のステータス</string>
+    <string name="shutter_diary_check_in">チェックイン</string>
+    <string name="shutter_diary_checked_in">チェックイン済み</string>
+    <string name="shutter_diary_consecutive_days">連続 %1$d 日</string>
+    <string name="shutter_diary_total_days">累計 %1$d 日</string>
+    <string name="shutter_diary_weekly_stats">週間統計</string>
+    <string name="shutter_diary_monthly_calendar">月間カレンダー</string>
+    <string name="shutter_diary_no_records">まだ記録がありません</string>
+    <string name="shutter_diary_start_hint">今日のチェックインから始めて、撮影習慣を育てましょう</string>
+    <string name="shutter_diary_activity_draw">カラーカードを描画</string>
+    <string name="shutter_diary_activity_challenge">チャレンジを完了</string>
+    <string name="shutter_diary_activity_favorite">インスピレーションを保存</string>
+    <string name="shutter_diary_activity_visit">チェックイン</string>
+    <string name="shutter_diary_view_detail">詳細を表示</string>
+    <string name="shutter_diary_mark_complete">完了としてマーク</string>
+    <string name="shutter_diary_marked">マーク済み</string>
+    <string name="shutter_diary_achievement">実績</string>
+    <string name="shutter_diary_achievement_collector">コレクター</string>
+    <string name="shutter_diary_achievement_collector_desc">7日間の記録を完了</string>
+    <string name="shutter_diary_achievement_enthusiast">愛好家</string>
+    <string name="shutter_diary_achievement_enthusiast_desc">30日間の記録を完了</string>
+    <string name="shutter_diary_achievement_master">マスター</string>
+    <string name="shutter_diary_achievement_master_desc">100日間の記録を完了</string>
+    <string name="shutter_diary_share">シェア</string>
+    <string name="shutter_diary_share_title">私のShutter Diary</string>
+    <string name="shutter_diary_share_text">OMasterで %1$d 日間の撮影習慣を記録しました！一緒に始めましょう！</string>
+    <string name="checkin_calendar_title">カレンダー</string>
+    <string name="checkin_calendar_close">閉じる</string>
+    <string name="checkin_calendar_prev_month">前月</string>
+    <string name="checkin_calendar_next_month">翌月</string>
+    <string name="checkin_no_record">この日の記録はまだありません。</string>
+    <string name="checkin_activity_draw">カラーカードを描画</string>
+    <string name="checkin_activity_draw_default">今日の色のインスピレーション</string>
+    <string name="checkin_activity_challenge">チャレンジを完了</string>
+    <string name="checkin_activity_challenge_desc">今日の撮影タスクを完了としてマークしました。</string>
+    <string name="checkin_activity_favorite">インスピレーションを保存</string>
+    <string name="checkin_activity_favorite_desc">今日、カラーカードまたは関連するインスピレーションを保存しました。</string>
+    <string name="checkin_activity_visit">チェックイン</string>
+    <string name="checkin_activity_visit_desc">発見を開き、今日の記録を残しました。</string>
+    <string name="checkin_weekday_sun">日</string>
+    <string name="checkin_weekday_mon">月</string>
+    <string name="checkin_weekday_tue">火</string>
+    <string name="checkin_weekday_wed">水</string>
+    <string name="checkin_weekday_thu">木</string>
+    <string name="checkin_weekday_fri">金</string>
+    <string name="checkin_weekday_sat">土</string>
+    <string name="checkin_mark_complete">完了としてマーク</string>
+    <string name="checkin_completed">完了済み</string>
+
+    <!-- Frame Art画面 -->
+    <string name="photoframe_card_title">フォトフレーム</string>
+    <string name="photoframe_card_desc">撮影情報を自動読取、美しいフレーム付き画像を生成</string>
+    <string name="photoframe_permission_media_name">写真と動画</string>
+    <string name="photoframe_permission_storage_name">ストレージ</string>
+    <string name="photoframe_permission_denied">画像を選択するには%1$s権限が必要です。システム設定で許可してください。</string>
+    <string name="photoframe_saved">ギャラリーに保存しました</string>
+    <string name="photoframe_save_failed">保存に失敗しました</string>
+    <string name="photoframe_pick_photo">写真を選択</string>
+    <string name="photoframe_pick_desc">撮影時間を自動読み取り、美しいシェア画像を作成</string>
+    <string name="photoframe_preview">プレビュー</string>
+    <string name="photoframe_original">オリジナル</string>
+    <string name="photoframe_aspect_ratio">アスペクト比</string>
+    <string name="photoframe_shoot_time">撮影時間</string>
+    <string name="photoframe_time_placeholder">例: 2024.03.15 14:30</string>
+    <string name="photoframe_image_style">画像スタイル</string>
+    <string name="photoframe_rounded">角丸</string>
+    <string name="photoframe_sharp">シャープ</string>
+    <string name="photoframe_reselect">写真を再選択</string>
+</resources>
